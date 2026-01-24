@@ -1,0 +1,18 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Firebase cache
+.firebase/
+
+# Firebase configuration caches
+.firebaserc
+firebase-debug.log
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

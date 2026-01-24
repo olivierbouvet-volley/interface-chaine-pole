@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gérer le Match - Interface Parent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #F59E0B;
+            --success: #10B981;
+            --danger: #EF4444;
+            --dark: #1F2937;
+            --gray: #6B7280;
+            --light-gray: #F3F4F6;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 16px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .match-info {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .youtube-section {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #DC2626);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+        }
+
+        .score-board {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .team {
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .sets-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .vs-separator {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gray);
+            opacity: 0.3;
+        }
+
+        .score-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .score-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .checklist li::before {
+            content: '✓';
+            width: 28px;
+            height: 28px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .guide-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 146, 60, 0.1));
+            border-left: 4px solid var(--secondary);
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .guide-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--secondary);
+        }
+
+        .guide-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .guide-box li {
+            padding: 6px 0;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .guide-box li::before {
+            content: '📹 ';
+            margin-right: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-upcoming {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--secondary);
+        }
+
+        .status-live {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-finished {
+            background: rgba(107, 114, 128, 0.2);
+            color: var(--gray);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .end-set-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px dashed var(--light-gray);
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .alert-info {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            color: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Indicateurs Balle de Set/Match */
+        .balle-de-set {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .balle-de-match {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            animation: pulse 1s infinite;
+            font-size: 1.5rem !important;
+        }
+
+        /* Historique des sets */
+        .set-history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .set-label {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .set-score {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .set-winner {
+            font-size: 0.9rem;
+            color: var(--success);
+        }
+
+        /* Modal de confirmation de set */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            margin-bottom: 24px;
+            color: var(--dark);
+        }
+
+        .modal-score-display {
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .modal-score-display .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+
+        .modal-score-display .team-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .modal-score-display .team-score {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'DS-Digital', monospace;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        /* Mini-lecteur vidéo */
+        .video-mini-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            z-index: 1000;
+            display: none;
+        }
+
+        .video-mini-player.show {
+            display: block;
+            animation: slideInUp 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .video-mini-header {
+            background: var(--primary);
+            color: white;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .video-mini-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-mini-content {
+            width: 100%;
+            height: 180px;
+            background: black;
+        }
+
+        .video-mini-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .match-phase {
+            margin: 20px 0;
+            padding: 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+        }
+
+        .match-phase-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .match-phase-status {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .phase-ready {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success);
+        }
+
+        .phase-ready .match-phase-title {
+            color: var(--success);
+        }
+
+        .video-source-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .video-tab {
+            flex: 1;
+            padding: 10px;
+            background: var(--light-gray);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .video-tab.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .compact-mode .card:not(.score-card) {
+            display: none;
+        }
+
+        .compact-mode .score-card {
+            margin-top: 0;
+        }
+
+        .toggle-compact {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .score-display {
+                font-size: 3rem;
+            }
+
+            .score-board {
+                gap: 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Interface Parent - Gestion du Match</h1>
+        </div>
+
+        <div class="card">
+            <h2>📋 Informations du Match</h2>
+            <div class="match-info" id="matchInfo">
+                <div class="alert alert-info">
+                    🔄 Chargement des informations du match...
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <span class="status-badge status-upcoming" id="statusBadge">À venir</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎥 Guide de Cadrage Caméra</h2>
+            <div class="guide-box">
+                <h3>Position idéale</h3>
+                <ul>
+                    <li>Placez-vous derrière le but de handball (~5m derrière le terrain)</li>
+                    <li>Centrez la caméra par rapport au terrain de volley</li>
+                    <li>Utilisez un plan fixe, ne suivez pas le ballon</li>
+                    <li>Installez la caméra en hauteur (trépied ou pied haut)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>✅ Checklist avant de filmer</h2>
+            <ul class="checklist">
+                <li>Batterie du téléphone chargée à 100%</li>
+                <li>Connexion WiFi ou 4G/5G stable</li>
+                <li>Téléphone en mode "Ne pas déranger"</li>
+                <li>Trépied ou support stable installé</li>
+                <li>Cadrage vérifié (voir le terrain entier)</li>
+            </ul>
+        </div>
+
+        <div class="card youtube-section">
+            <h2>📺 Lien YouTube Live</h2>
+            <div class="input-group">
+                <input type="url" id="youtubeInput" placeholder="https://youtube.com/watch?v=..." />
+                <button class="btn btn-primary" onclick="saveYoutubeUrl()">
+                    💾 Enregistrer
+                </button>
+            </div>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: var(--gray);">
+                💡 Tip: Lancez YouTube, créez un live, puis collez le lien ici
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>⚡ Contrôle du Score</h2>
+
+            <!-- Indicateur Balle de Set/Match -->
+            <div id="balleDeIndicator" style="display: none; text-align: center; padding: 16px; border-radius: 8px; margin-bottom: 20px; font-weight: 900; font-size: 1.3rem; animation: pulse 1.5s infinite;">
+                ⚠️ BALLE DE SET ⚠️
+            </div>
+
+            <!-- Set actuel -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span id="currentSetNumber" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">Set 1</span>
+            </div>
+
+            <div class="score-board">
+                <!-- Équipe 1 -->
+                <div class="team">
+                    <div class="team-name" id="team1NameDisplay">Équipe 1</div>
+                    <div class="score-display" id="scoreTeam1">0</div>
+                    <div class="sets-display">Sets: <span id="setsTeam1">0</span></div>
+                    <div class="score-controls">
+                        <button class="btn btn-success score-btn" onclick="scoringSystem.addPoint('team1')" style="font-size: 2rem; padding: 20px 40px;">
+                            +1
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Séparateur -->
+                <div class="vs-separator">VS</div>
+
+                <!-- Équipe 2 -->
+                <div class="team">
+                    <div class="team-name" id="team2NameDisplay">Équipe 2</div>
+                    <div class="score-display" id="scoreTeam2">0</div>
+                    <div class="sets-display">Sets: <span id="setsTeam2">0</span></div>
+                    <div class="score-controls">
+                        <button class="btn btn-success score-btn" onclick="scoringSystem.addPoint('team2')" style="font-size: 2rem; padding: 20px 40px;">
+                            +1
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton Annuler Point -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="scoringSystem.undoLastPoint()" style="min-width: 200px;">
+                    ↶ Annuler le dernier point
+                </button>
+            </div>
+
+            <!-- Historique des Sets -->
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--light-gray);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 16px;">📊 Historique des Sets</h3>
+                <div id="setHistoryList">
+                    <p style="color: var(--gray); font-style: italic;">Aucun set terminé</p>
+                </div>
+                
+                <!-- Bouton Annuler Dernier Set -->
+                <button id="undoSetBtn" class="btn btn-danger" onclick="scoringSystem.undoLastSet()" style="margin-top: 16px; display: none; width: 100%;">
+                    ⚠️ Annuler la validation du dernier set
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎮 Actions Rapides</h2>
+            <div style="display: grid; gap: 12px;">
+                <button class="btn btn-success btn-block" onclick="startMatch()">
+                    ▶️ Démarrer le Match
+                </button>
+                <button class="btn btn-danger btn-block" onclick="endMatch()">
+                    ⏹️ Terminer le Match
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmation de Set -->
+    <div id="setConfirmationModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🏐 SET TERMINÉ ! 🏐</h2>
+            <div class="modal-score-display">
+                <div class="team-row">
+                    <span class="team-name" id="winningTeamName">ÉQUIPE</span>
+                    <span class="team-score" id="finalScoreTeam1">25</span>
+                </div>
+                <div class="team-row">
+                    <span class="team-name" id="losingTeamName">ÉQUIPE</span>
+                    <span class="team-score" id="finalScoreTeam2">23</span>
+                </div>
+            </div>
+            <p id="setNumber" style="font-size: 1.2rem; font-weight: 600; margin: 16px 0;">Set remporté</p>
+            <p id="setsScore" style="font-size: 1.1rem; color: var(--gray);">Score des sets</p>
+            <div class="modal-buttons">
+                <button id="cancelSetBtn" class="btn btn-secondary">✗ ANNULER</button>
+                <button id="confirmSetBtn" class="btn btn-primary">✓ VALIDER LE SET</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Services Firebase -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+    <script src="storage-service.js"></script>
+    <script src="scoring-system.js"></script>
+
+    <script>
+        let currentMatchId = null;
+        let currentMatch = null;
+        let selectedVideoSource = 'youtube';
+        let miniPlayerActive = false;
+        let matchStarted = false;
+
+        // Sélectionner la source vidéo
+        function selectVideoSource(source) {
+            selectedVideoSource = source;
+            document.getElementById('youtubeTab').classList.toggle('active', source === 'youtube');
+            document.getElementById('facebookTab').classList.toggle('active', source === 'facebook');
+            document.getElementById('youtubeSection').style.display = source === 'youtube' ? 'block' : 'none';
+            document.getElementById('facebookSection').style.display = source === 'facebook' ? 'block' : 'none';
+        }
+
+        // Sauvegarder l'URL vidéo (YouTube ou Facebook)
+        async function saveVideoUrl(source) {
+            const inputId = source === 'youtube' ? 'youtubeInput' : 'facebookInput';
+            const url = document.getElementById(inputId).value.trim();
+
+            if (!url) {
+                alert(`❌ Veuillez entrer un lien ${source === 'youtube' ? 'YouTube' : 'Facebook'}`);
+                return;
+            }
+
+            // Validation basique de l'URL
+            if (source === 'youtube' && !url.includes('youtube.com') && !url.includes('youtu.be')) {
+                alert('❌ Ce lien ne semble pas être un lien YouTube valide');
+                return;
+            }
+
+            if (source === 'facebook' && !url.includes('facebook.com') && !url.includes('fb.watch')) {
+                alert('❌ Ce lien ne semble pas être un lien Facebook valide');
+                return;
+            }
+
+            try {
+                // Sauvegarder dans Firebase
+                const updateData = {
+                    youtubeUrl: url,
+                    videoSource: source
+                };
+                
+                await dbService.updateYoutubeUrl(currentMatchId, url);
+                await firebase.database().ref(`matches/${currentMatchId}`).update({ videoSource: source });
+                
+                alert(`✅ Lien ${source === 'youtube' ? 'YouTube' : 'Facebook'} enregistré !`);
+                
+                // Masquer l'input et afficher l'indicateur
+                document.getElementById(source + 'Section').style.display = 'none';
+                document.getElementById('videoSavedIndicator').style.display = 'block';
+                
+                // Activer le bouton de démarrage
+                document.getElementById('startMatchBtn').disabled = false;
+                
+                // Mettre à jour la phase
+                updateMatchPhase();
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert(`❌ Erreur lors de l'enregistrement du lien`);
+            }
+        }
+
+        // Afficher l'input pour modifier le lien
+        function showVideoInput() {
+            document.getElementById('videoSavedIndicator').style.display = 'none';
+            document.getElementById(selectedVideoSource + 'Section').style.display = 'block';
+        }
+
+        // Démarrer le match
+        async function startMatch() {
+            if (!confirm('🟢 Démarrer le match maintenant ?\n\nLe match passera en statut "EN DIRECT" et sera visible sur la page Lives.')) return;
+
+            try {
+                await dbService.updateMatchStatus(currentMatchId, 'live');
+                matchStarted = true;
+                
+                // Masquer les sections de référence
+                document.querySelectorAll('.reference-section').forEach(el => el.style.display = 'none');
+                
+                // Activer le mini-lecteur
+                document.getElementById('miniPlayerToggle').style.display = 'inline-block';
+                
+                // Activer le bouton de fin
+                document.getElementById('endMatchBtn').disabled = false;
+                
+                // Désactiver le bouton de démarrage
+                document.getElementById('startMatchBtn').disabled = true;
+                document.getElementById('startMatchBtn').textContent = '✅ Match démarré';
+                
+                // Mettre à jour la phase
+                updateMatchPhase();
+                
+                alert('✅ Match démarré ! Le live est maintenant actif.\n\n📱 Vous pouvez maintenant gérer le score.');
+                
+                // Scroll vers le contrôle du score
+                document.querySelector('.score-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors du démarrage du match');
+            }
+        }
+
+        // Terminer le match
+        async function endMatch() {
+            if (!currentMatch || !currentMatch.score) {
+                alert('❌ Impossible de terminer le match : aucun score enregistré');
+                return;
+            }
+
+            const setsTeam1 = currentMatch.score.setsTeam1 || 0;
+            const setsTeam2 = currentMatch.score.setsTeam2 || 0;
+
+            if (setsTeam1 === 0 && setsTeam2 === 0) {
+                if (!confirm('⚠️ Aucun set n\'a été joué. Voulez-vous vraiment terminer le match ?')) {
+                    return;
+                }
+            }
+
+            const confirmMsg = `🏁 Terminer le match maintenant ?\n\nScore final : ${setsTeam1} - ${setsTeam2}\n\n⚠️ N'oubliez pas d'éteindre votre live YouTube/Facebook après !`;
+            
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                await dbService.updateMatchStatus(currentMatchId, 'finished');
+                
+                // Afficher notification avec rappel
+                setTimeout(() => {
+                    if (confirm('✅ Match terminé !\n\n📱 RAPPEL : Éteignez maintenant votre live YouTube/Facebook\n\nVoulez-vous ouvrir l\'application ?')) {
+                        if (currentMatch.videoSource === 'facebook') {
+                            window.open('https://www.facebook.com/', '_blank');
+                        } else {
+                            window.open('https://studio.youtube.com/', '_blank');
+                        }
+                    }
+                }, 500);
+                
+                // Désactiver le mini-lecteur
+                if (miniPlayerActive) {
+                    toggleMiniPlayer();
+                }
+                
+                // Désactiver les boutons
+                document.getElementById('endMatchBtn').disabled = true;
+                document.getElementById('endMatchBtn').textContent = '✅ Match terminé';
+                
+                // Mettre à jour la phase
+                updateMatchPhase();
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la fin du match');
+            }
+        }
+
+        // Toggle mini-lecteur
+        function toggleMiniPlayer() {
+            if (!currentMatch || !currentMatch.youtubeUrl) {
+                alert('❌ Aucun lien vidéo disponible');
+                return;
+            }
+
+            miniPlayerActive = !miniPlayerActive;
+            const player = document.getElementById('miniPlayer');
+            const content = document.getElementById('miniPlayerContent');
+
+            if (miniPlayerActive) {
+                // Extraire l'ID de la vidéo
+                let embedUrl = '';
+                
+                if (currentMatch.videoSource === 'facebook') {
+                    // Pour Facebook, utiliser l'embed player
+                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(currentMatch.youtubeUrl)}&show_text=false&autoplay=true&mute=false`;
+                } else {
+                    // YouTube
+                    const videoId = extractYouTubeId(currentMatch.youtubeUrl);
+                    if (videoId) {
+                        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
+                    }
+                }
+
+                if (embedUrl) {
+                    content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen allow="autoplay"></iframe>`;
+                    player.classList.add('show');
+                    document.getElementById('miniPlayerToggle').textContent = '❌ Fermer Vidéo';
+                } else {
+                    alert('❌ Impossible de charger la vidéo');
+                    miniPlayerActive = false;
+                }
+            } else {
+                player.classList.remove('show');
+                content.innerHTML = '';
+                document.getElementById('miniPlayerToggle').textContent = '📺 Mini Lecteur';
+            }
+        }
+
+        // Extraire l'ID YouTube
+        function extractYouTubeId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+                /youtube\.com\/embed\/([^&\n?#]+)/,
+                /youtube\.com\/v\/([^&\n?#]+)/
+            ];
+
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+            return null;
+        }
+
+        // Mettre à jour la phase du match
+        function updateMatchPhase() {
+            const phaseEl = document.getElementById('matchPhase');
+            const hasVideo = currentMatch && currentMatch.youtubeUrl;
+            const isLive = currentMatch && currentMatch.status === 'live';
+            const isFinished = currentMatch && currentMatch.status === 'finished';
+
+            if (isFinished) {
+                phaseEl.className = 'match-phase phase-ready';
+                phaseEl.innerHTML = `
+                    <div class="match-phase-title">✅ Phase : Match Terminé</div>
+                    <div class="match-phase-status">N'oubliez pas d'éteindre votre live !</div>
+                `;
+            } else if (isLive) {
+                phaseEl.className = 'match-phase phase-ready';
+                phaseEl.innerHTML = `
+                    <div class="match-phase-title">🔴 Phase : Match En Direct</div>
+                    <div class="match-phase-status">Gérez le score ci-dessous</div>
+                `;
+            } else if (hasVideo) {
+                phaseEl.className = 'match-phase phase-ready';
+                phaseEl.innerHTML = `
+                    <div class="match-phase-title">✅ Phase : Prêt à Démarrer</div>
+                    <div class="match-phase-status">Lien vidéo enregistré - Cliquez sur "Démarrer le Match"</div>
+                `;
+            } else {
+                phaseEl.className = 'match-phase';
+                phaseEl.innerHTML = `
+                    <div class="match-phase-title">📄 Phase : Préparation</div>
+                    <div class="match-phase-status">Enregistrez le lien vidéo pour continuer</div>
+                `;
+            }
+        }
+
+        // Récupérer l'ID du match depuis l'URL
+        function getMatchIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('match');
+        }
+
+        // Initialisation
+        window.addEventListener('DOMContentLoaded', () => {
+            currentMatchId = getMatchIdFromUrl();
+
+            if (!currentMatchId) {
+                alert('❌ Aucun match spécifié dans l\'URL');
+                return;
+            }
+
+            console.log('🏐 Chargement du match:', currentMatchId);
+            
+            // Initialiser le système de scoring professionnel
+            if (window.scoringSystem) {
+                scoringSystem.init(currentMatchId);
+                console.log('✅ Système de scoring professionnel initialisé');
+            }
+            
+            loadMatchData();
+        });
+
+        // Charger les données du match
+        function loadMatchData() {
+            dbService.listenToMatch(currentMatchId, (match) => {
+                if (!match) {
+                    document.getElementById('matchInfo').innerHTML =
+                        '<div class="alert alert-info">❌ Match non trouvé</div>';
+                    return;
+                }
+
+                currentMatch = match;
+                console.log('✅ Match chargé:', match);
+
+                // Afficher les informations
+                displayMatchInfo(match);
+                updateScoreDisplay(match.score);
+                updateStatus(match.status);
+
+                // Pré-remplir le lien YouTube si présent
+                if (match.youtubeUrl) {
+                    document.getElementById('youtubeInput').value = match.youtubeUrl;
+                }
+            });
+        }
+
+        // Afficher les informations du match
+        function displayMatchInfo(match) {
+            const matchInfoHtml = `
+                <div class="info-row">
+                    <span class="info-label">Joueuse</span>
+                    <span class="info-value">${match.team1?.declaringPlayer || 'Non renseigné'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Équipe 1 (Domicile)</span>
+                    <span class="info-value">${match.team1?.name || 'Non renseigné'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Équipe 2 (Adversaire)</span>
+                    <span class="info-value">${match.team2?.name || 'Non renseigné'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Type</span>
+                    <span class="info-value">${match.matchType || 'Championnat'} - ${match.category || ''}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date</span>
+                    <span class="info-value">${formatDate(match.date)} à ${match.time}</span>
+                </div>
+            `;
+
+            document.getElementById('matchInfo').innerHTML = matchInfoHtml;
+            // Les noms d'équipe sont maintenant gérés par scoringSystem.updateUI()
+        }
+
+        // Mettre à jour l'affichage du score (géré par scoringSystem maintenant)
+        function updateScoreDisplay(score) {
+            // Cette fonction est maintenant gérée par scoringSystem.updateUI()
+            // Conservée pour compatibilité mais ne fait rien
+        }
+
+        // Mettre à jour le statut
+        function updateStatus(status) {
+            const badge = document.getElementById('statusBadge');
+            badge.className = 'status-badge';
+
+            switch (status) {
+                case 'live':
+                    badge.classList.add('status-live');
+                    badge.textContent = '🔴 En Direct';
+                    break;
+                case 'finished':
+                    badge.classList.add('status-finished');
+                    badge.textContent = '✓ Terminé';
+                    break;
+                default:
+                    badge.classList.add('status-upcoming');
+                    badge.textContent = '⏳ À venir';
+            }
+        }
+
+        // Modifier le score
+        // ⚠️ FONCTION OBSOLÈTE - Conservée pour compatibilité
+        // Utiliser scoringSystem.addPoint() à la place
+        async function changeScore(team, delta) {
+            if (!currentMatch) return;
+
+            const field = team === 'home' ? 'pointsTeam1' : 'pointsTeam2';
+            const currentValue = currentMatch.score[field] || 0;
+            const newValue = Math.max(0, currentValue + delta);
+
+            await dbService.updateScore(currentMatchId, {
+                [field]: newValue
+            });
+
+            console.log(`✅ Score mis à jour: ${team} = ${newValue}`);
+        }
+
+        // Sauvegarder le lien YouTube
+        async function saveYoutubeUrl() {
+            const url = document.getElementById('youtubeInput').value.trim();
+
+            if (!url) {
+                alert('❌ Veuillez entrer un lien YouTube');
+                return;
+            }
+
+            try {
+                await dbService.updateYoutubeUrl(currentMatchId, url);
+                alert('✅ Lien YouTube enregistré !');
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de l\'enregistrement');
+            }
+        }
+
+        // Démarrer le match
+        async function startMatch() {
+            if (!confirm('Démarrer le match maintenant ?')) return;
+
+            try {
+                await dbService.updateMatchStatus(currentMatchId, 'live');
+                alert('✅ Match démarré !');
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors du démarrage');
+            }
+        }
+
+        // Terminer le match
+        async function endMatch() {
+            if (!confirm('Terminer le match maintenant ?')) return;
+
+            try {
+                await dbService.updateMatchStatus(currentMatchId, 'finished');
+                alert('✅ Match terminé !');
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la fin du match');
+            }
+        }
+
+        // ⚠️ FONCTION OBSOLÈTE - Conservée pour compatibilité
+        // Utiliser scoringSystem.validateSet() à la place
+        async function endSet() {
+            if (!currentMatch) return;
+
+            const homeScore = currentMatch.score.pointsTeam1 || 0;
+            const awayScore = currentMatch.score.pointsTeam2 || 0;
+
+            // Déterminer le gagnant du set
+            let winner = null;
+            if (homeScore > awayScore) {
+                winner = 'home';
+            } else if (awayScore > homeScore) {
+                winner = 'away';
+            }
+
+            if (winner) {
+                const setsField = winner === 'home' ? 'setsTeam1' : 'setsTeam2';
+                const currentSets = currentMatch.score[setsField] || 0;
+
+                // Mettre à jour le nombre de sets
+                await dbService.updateScore(currentMatchId, {
+                    [setsField]: currentSets + 1
+                });
+            }
+
+            // Déclencher l'overlay sponsors (2 minutes)
+            await dbService.triggerSponsorOverlay(currentMatchId);
+
+            alert('🎬 Écran sponsors activé ! (2 minutes)\nLes scores des points ont été remis à 0.');
+        }
+
+        // Formater la date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+
+</html>

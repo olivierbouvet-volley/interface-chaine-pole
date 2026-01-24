@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque de Replays - Pôle Espoir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-light: #818cf8;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to right, #fff, var(--text-dim));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+        }
+
+        /* Groupes par Date */
+        .date-section {
+            margin-bottom: 40px;
+        }
+
+        .date-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-header::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Grille de match */
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .replay-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .replay-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .teams {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-final {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .match-meta {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .player-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #2d3748;
+            object-fit: cover;
+        }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(99, 102, 241, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .replay-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo-pole-official.png" alt="Logo Pôle" style="height: 60px; border-radius: 8px;">
+                <h1>Bibliothèque Replays</h1>
+            </div>
+            <a href="index.html" class="btn-back">
+                <span>🏠 Accueil</span>
+            </a>
+        </header>
+
+        <div id="replaysList">
+            <!-- Chargement... -->
+            <div class="empty-state">
+                <div class="empty-icon">⏳</div>
+                <p>Récupération des archives...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <!-- Services -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+
+    <script>
+        function formatDate(dateStr) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', options);
+        }
+
+        function initReplays() {
+            dbService.listenToAllMatches((matches) => {
+                const container = document.getElementById('replaysList');
+                container.innerHTML = '';
+
+                // Filtrer seulement les matchs finis et ayant une vidéo
+                const finishedMatches = Object.entries(matches)
+                    .filter(([id, m]) => m.status === 'finished' && m.youtubeUrl)
+                    .map(([id, m]) => ({ id, ...m }));
+
+                if (finishedMatches.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">🎬</div>
+                            <p>Aucun replay disponible pour le moment.</p>
+                            <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Les matchs apparaîtront ici une fois terminés.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Grouper par date
+                const groups = {};
+                finishedMatches.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(m => {
+                    if (!groups[m.date]) groups[m.date] = [];
+                    groups[m.date].push(m);
+                });
+
+                Object.keys(groups).forEach(date => {
+                    const section = document.createElement('div');
+                    section.className = 'date-section';
+                    section.innerHTML = `
+                        <div class="date-header">${formatDate(date)}</div>
+                        <div class="match-grid"></div>
+                    `;
+
+                    const grid = section.querySelector('.match-grid');
+                    groups[date].forEach(match => {
+                        const card = document.createElement('div');
+                        card.className = 'replay-card';
+                        card.onclick = () => window.location.href = `match-viewer.html?id=${match.id}`;
+
+                        const scoreStr = match.score ? `${match.score.setsHome || 0} - ${match.score.setsAway || 0}` : '0 - 0';
+                        const playerPhoto = match.playerPhoto || 'https://via.placeholder.com/100';
+
+                        card.innerHTML = `
+                            <div class="play-overlay"><div class="play-btn">▶</div></div>
+                            <div class="card-body">
+                                <div class="teams">
+                                    <span>${match.clubName}</span>
+                                    <span class="score-final">${scoreStr}</span>
+                                </div>
+                                <div class="match-meta">${match.opponent}</div>
+                                <div class="player-info">
+                                    <img src="${playerPhoto}" class="player-img" alt="${match.playerName}">
+                                    <span class="player-name">Filmée par ${match.playerName}</span>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+
+                    container.appendChild(section);
+                });
+            });
+        }
+
+        window.onload = initReplays;
+    </script>
+</body>
+
+</html>

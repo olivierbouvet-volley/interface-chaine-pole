@@ -1,0 +1,132 @@
+<!-- SECTION FORMULAIRE CORRIGÉE - À INTÉGRER DANS formulaire-match.html -->
+
+<form id="matchForm">
+    <!-- Section Type de Match -->
+    <div class="form-section">
+        <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">📋 Type de Match</h3>
+
+        <div class="form-group">
+            <label>Type de compétition <span class="required">*</span></label>
+            <select id="matchType" required>
+                <option value="">Sélectionnez...</option>
+                <option value="championnat">Championnat (Best of 5)</option>
+                <option value="coupe">Coupe de France Jeunes (Best of 3)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Catégorie <span class="required">*</span></label>
+            <select id="category" required disabled>
+                <option value="">Sélectionnez d'abord le type de compétition...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Section Équipe 1 -->
+    <div class="form-section" style="border-left: 4px solid var(--primary); padding-left: 20px; margin-top: 30px;">
+        <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">🏐 Équipe 1 (Domicile)</h3>
+
+        <div class="form-group">
+            <label>Nom de l'équipe <span class="required">*</span></label>
+            <input type="text" id="team1Name" required placeholder="TOURCOING VOLLEY">
+        </div>
+
+        <div class="form-group">
+            <label>Couleur du maillot <span class="required">*</span></label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="color" id="team1Color" value="#1E3A8A" required
+                    style="width: 60px; height: 50px; border: none; border-radius: 8px; cursor: pointer;">
+                <input type="text" id="team1ColorHex" value="#1E3A8A" placeholder="#1E3A8A" style="flex: 1;" readonly>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Prénom de la joueuse déclarante <span class="required">*</span></label>
+            <input type="text" id="team1FirstName" required placeholder="Marie">
+        </div>
+
+        <div class="form-group">
+            <label>Nom de la joueuse déclarante <span class="required">*</span></label>
+            <input type="text" id="team1LastName" required placeholder="DUPONT">
+        </div>
+
+        <div class="form-group">
+            <label>Photo de la joueuse</label>
+            <div class="photo-upload" id="photoUpload1">
+                <input type="file" id="photoInput1" accept="image/*">
+                <div class="photo-upload-content">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="upload-text">Cliquez pour ajouter une photo</div>
+                    <div class="upload-hint">JPG, PNG ou WEBP • Max 10 MB</div>
+                    <img class="photo-preview" id="photoPreview1" alt="Aperçu">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Équipe 2 -->
+    <div class="form-section" style="border-left: 4px solid var(--danger); padding-left: 20px; margin-top: 30px;">
+        <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--danger);">🏐 Équipe 2 (Extérieur)</h3>
+
+        <div class="form-group">
+            <label>Nom de l'équipe <span class="required">*</span></label>
+            <input type="text" id="team2Name" required placeholder="CHAUMONT VB 52">
+        </div>
+
+        <div class="form-group">
+            <label>Couleur du maillot <span style="font-size: 0.85rem; opacity: 0.7;">(optionnel)</span></label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="color" id="team2Color" value="#6B7280"
+                    style="width: 60px; height: 50px; border: none; border-radius: 8px; cursor: pointer;" disabled>
+                <input type="text" id="team2ColorHex" value="#6B7280" placeholder="#6B7280" style="flex: 1;" readonly
+                    disabled>
+                <label
+                    style="display: flex; align-items: center; gap: 8px; margin: 0; font-size: 0.9rem; white-space: nowrap;">
+                    <input type="checkbox" id="team2ColorEnabled" style="width: auto;">
+                    Utiliser
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Informations du Match -->
+    <div class="form-section" style="margin-top: 30px;">
+        <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--dark);">📅 Informations du Match</h3>
+
+        <div class="form-group">
+            <label>Date du match <span class="required">*</span></label>
+            <input type="date" id="matchDate" required>
+        </div>
+
+        <div class="form-group">
+            <label>Heure du match <span class="required">*</span></label>
+            <input type="time" id="matchTime" required>
+        </div>
+
+        <div class="form-group">
+            <label>Affiche du match <span style="font-size: 0.85rem; opacity: 0.7;">(optionnel - affiche aléatoire par
+                    défaut)</span></label>
+            <div class="photo-upload" id="photoUploadPoster">
+                <input type="file" id="photoInputPoster" accept="image/*">
+                <div class="photo-upload-content">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="upload-text">Cliquez pour ajouter une affiche personnalisée</div>
+                    <div class="upload-hint">JPG, PNG ou WEBP • Max 10 MB</div>
+                    <img class="photo-preview" id="photoPreviewPoster" alt="Aperçu">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="submitBtn">
+        ✨ Déclarer le match
+    </button>
+</form>

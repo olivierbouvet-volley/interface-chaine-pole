@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lives du Week-end - Pôle Espoir Sablé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #e53e3e;
+            --accent-glow: #fc8181;
+            --live-pulse: #e53e3e;
+            --upcoming: #38a169;
+            --finished: #718096;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --gold: #f6ad55;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at top left, rgba(44, 82, 130, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(229, 62, 62, 0.1) 0%, transparent 50%);
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .sponsors {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .sponsor-logo {
+            height: 36px;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .sponsor-logo:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-title .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* MENU DÉROULANT JOUEUSES */
+        .player-dropdown {
+            position: relative;
+        }
+
+        .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dropdown-trigger:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--gold);
+        }
+
+        .dropdown-trigger svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s;
+        }
+
+        .player-dropdown.open .dropdown-trigger svg {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 280px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 200;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .player-dropdown.open .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .dropdown-item.is-live {
+            border-left-color: var(--accent);
+        }
+
+        .dropdown-item.is-upcoming {
+            border-left-color: var(--upcoming);
+        }
+
+        .dropdown-item.is-finished {
+            border-left-color: var(--finished);
+        }
+
+        .dropdown-item-photo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .dropdown-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-item-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-item-opponent {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-item-status {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .dropdown-item-status.live {
+            background: var(--accent);
+            color: white;
+        }
+
+        .dropdown-item-status.upcoming {
+            background: var(--upcoming);
+            color: white;
+        }
+
+        .dropdown-item-status.finished {
+            background: var(--finished);
+            color: white;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 2px solid var(--gold);
+        }
+
+        /* FILTRES / STATS BAR */
+        .filters-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background: rgba(30, 41, 59, 0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .filter-btn.active {
+            border-color: var(--gold);
+            background: rgba(246, 173, 85, 0.1);
+        }
+
+        .filter-btn.active .filter-value {
+            color: var(--gold);
+        }
+
+        .filter-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+
+        .filter-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-btn[data-filter="live"] .filter-value { color: var(--accent); }
+        .filter-btn[data-filter="upcoming"] .filter-value { color: var(--upcoming); }
+        .filter-btn[data-filter="finished"] .filter-value { color: var(--finished); }
+        .filter-btn[data-filter="victories"] .filter-value { color: var(--gold); }
+
+        /* GRID */
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* MATCH CARD - NOUVELLE STRUCTURE */
+        .match-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .match-card.hidden {
+            display: none;
+        }
+
+        .match-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .match-card.is-live {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(229, 62, 62, 0.2);
+        }
+
+        .match-card.is-live::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-glow), var(--accent));
+            animation: live-border 2s ease-in-out infinite;
+        }
+
+        /* DERBY PÔLE - Style spécial */
+        .match-card.is-derby {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(246, 173, 85, 0.2);
+        }
+
+        .match-card.is-derby.is-live {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(246, 173, 85, 0.3), 0 0 60px rgba(229, 62, 62, 0.15);
+        }
+
+        .match-card.is-derby::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), #ffd700, var(--gold));
+            animation: derby-border 2s ease-in-out infinite;
+        }
+
+        @keyframes derby-border {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .derby-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, var(--gold) 0%, #ffd700 100%);
+            color: #1a1a2e;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(246, 173, 85, 0.4);
+        }
+
+        /* Score banner pour Derby - deux photos */
+        .score-banner.derby-banner {
+            grid-template-columns: 1fr auto 1fr;
+        }
+
+        .team-home.derby-team, .team-away.derby-team {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .team-away.derby-team {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .derby-team .team-photo {
+            border: 2px solid var(--gold);
+        }
+
+        .derby-team .team-info .player-info-sub .position {
+            color: var(--gold);
+        }
+
+        /* Fullscreen Derby */
+        .fs-derby-header {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(246, 173, 85, 0.3);
+        }
+
+        .fs-derby-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--gold) 0%, #ffd700 100%);
+            color: #1a1a2e;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(246, 173, 85, 0.4);
+        }
+
+        .fs-team.derby .fs-team-player {
+            color: var(--gold);
+        }
+
+        @keyframes live-border {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* VIDEO SECTION */
+        .video-section {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+            cursor: pointer;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .video-placeholder.has-live {
+            background: 
+                linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225"><rect fill="%231a1a2e" width="400" height="225"/><text x="200" y="120" text-anchor="middle" fill="%23334155" font-size="16" font-family="sans-serif">LIVE VIDEO</text></svg>');
+            background-size: cover;
+        }
+
+        .play-button {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .play-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 22px solid white;
+            border-top: 13px solid transparent;
+            border-bottom: 13px solid transparent;
+            margin-left: 5px;
+        }
+
+        .match-card:hover .play-button {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .expand-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .match-card:hover .expand-hint {
+            opacity: 1;
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .status-badge.live {
+            background: var(--accent);
+            color: white;
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        .status-badge.live::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(229, 62, 62, 0); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-badge.upcoming {
+            background: var(--upcoming);
+            color: white;
+        }
+
+        .status-badge.finished {
+            background: var(--finished);
+            color: white;
+        }
+
+        /* COUNTDOWN */
+        .countdown-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .countdown-timer {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--gold);
+            letter-spacing: 3px;
+        }
+
+        .countdown-date {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* BANDEAU SCORE - NOUVEAU */
+        .score-banner {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            background: linear-gradient(180deg, #1a2744 0%, #0f172a 100%);
+            padding: 0.75rem 1rem;
+            gap: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .team-home, .team-away {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .team-away {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .team-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            color: var(--text-light);
+            border: 2px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .team-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-photo.away-team {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        }
+
+        .team-info h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+
+        .team-info .team-name-club {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .team-info .player-info-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .team-info .player-info-sub .position {
+            color: var(--gold);
+        }
+
+        .team-info .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .team-info .position {
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .score-sets {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-sets .home {
+            color: var(--gold);
+        }
+
+        .score-sets .separator {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        .score-sets .away {
+            color: var(--text-light);
+        }
+
+        .score-points {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-top: 0.25rem;
+        }
+
+        .score-points span {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* MATCH INFO BAR */
+        .match-info-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 0.6rem 1rem;
+            background: rgba(0,0,0,0.2);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .match-info-bar .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .match-info-bar svg {
+            width: 12px;
+            height: 12px;
+            opacity: 0.7;
+        }
+
+        /* RESULT BANNER */
+        .result-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-banner.victory {
+            background: linear-gradient(90deg, rgba(56, 161, 105, 0.2) 0%, rgba(56, 161, 105, 0.3) 50%, rgba(56, 161, 105, 0.2) 100%);
+            color: #68d391;
+        }
+
+        .result-banner.defeat {
+            background: linear-gradient(90deg, rgba(229, 62, 62, 0.2) 0%, rgba(229, 62, 62, 0.3) 50%, rgba(229, 62, 62, 0.2) 100%);
+            color: #fc8181;
+        }
+
+        /* FULLSCREEN MODE */
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s;
+        }
+
+        .fullscreen-close:hover {
+            background: var(--accent);
+        }
+
+        .fullscreen-video {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .fullscreen-video iframe,
+        .fullscreen-video .video-placeholder {
+            width: 100%;
+            height: 100%;
+            max-height: calc(100vh - 140px);
+        }
+
+        .fullscreen-score-banner {
+            background: linear-gradient(180deg, #1a2744 0%, #0f172a 100%);
+            padding: 1.5rem 2rem;
+            border-top: 3px solid var(--accent);
+        }
+
+        .fullscreen-score-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .fullscreen-score-content:has(.fs-derby-header) {
+            grid-template-rows: auto auto;
+        }
+
+        .fs-team {
+            text-align: center;
+        }
+
+        .fs-team.home {
+            text-align: right;
+        }
+
+        .fs-team.away {
+            text-align: left;
+        }
+
+        .fs-team-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            color: var(--text-light);
+        }
+
+        .fs-team.home .fs-team-name {
+            color: var(--gold);
+        }
+
+        .fs-team-player {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .fs-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .fs-score-sets {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5rem;
+            letter-spacing: 8px;
+            line-height: 1;
+        }
+
+        .fs-score-sets .home {
+            color: var(--gold);
+        }
+
+        .fs-score-sets .separator {
+            color: var(--text-muted);
+            margin: 0 0.5rem;
+        }
+
+        .fs-score-sets .away {
+            color: var(--text-light);
+        }
+
+        .fs-score-points {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.3);
+            padding: 0.4rem 1.2rem;
+            border-radius: 25px;
+            margin-top: 0.5rem;
+        }
+
+        .fs-score-points span {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        @media (max-width: 700px) {
+            .fullscreen-score-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .fs-team.home, .fs-team.away {
+                text-align: center;
+            }
+
+            .fs-score {
+                order: -1;
+            }
+
+            .fs-score-sets {
+                font-size: 3.5rem;
+            }
+
+            .fs-team-name {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* NO RESULTS */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .no-results h3 {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .matches-grid {
+                grid-template-columns: 1fr;
+                max-width: 550px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .sponsors {
+                order: 3;
+                gap: 0.5rem;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .dropdown-menu {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px);
+            }
+
+            .player-dropdown.open .dropdown-menu {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .header-title h1 {
+                font-size: 1.6rem;
+            }
+
+            .filters-bar {
+                gap: 0.5rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                min-width: 70px;
+            }
+
+            .filter-value {
+                font-size: 1.4rem;
+            }
+
+            .filter-label {
+                font-size: 0.6rem;
+            }
+
+            .matches-grid {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .score-banner {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .team-home, .team-away {
+                justify-content: center;
+            }
+
+            .team-away {
+                flex-direction: row;
+            }
+
+            .score-center {
+                order: -1;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .match-info-bar {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+        }
+
+        /* BANDEAU SPONSORS FIXE */
+        .sponsors-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 1) 100%);
+            border-top: 1px solid rgba(246, 173, 85, 0.3);
+            padding: 0.75rem 2rem;
+            z-index: 90;
+            backdrop-filter: blur(10px);
+        }
+
+        .sponsors-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .sponsors-banner-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .sponsors-banner-logos {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .sponsor-banner-item {
+            background: rgba(255,255,255,0.08);
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .sponsor-banner-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .sponsor-banner-item.main {
+            background: linear-gradient(135deg, var(--gold) 0%, #ffd700 100%);
+            color: #1a1a2e;
+            font-weight: 700;
+        }
+
+        /* Ajouter du padding en bas du body pour le bandeau */
+        body {
+            padding-bottom: 70px;
+        }
+
+        /* SPONSOR OVERLAY - ÉCRAN PUB MI-TEMPS */
+        .sponsor-fullscreen-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .sponsor-fullscreen-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .sponsor-fullscreen-content {
+            text-align: center;
+            max-width: 90%;
+            width: 600px;
+            padding: 2rem;
+        }
+
+        .sponsor-fullscreen-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .sponsor-fullscreen-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .sponsor-fullscreen-header .match-info {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .sponsor-fullscreen-header .match-score {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            color: var(--gold);
+            margin: 0.5rem 0;
+        }
+
+        .sponsor-fullscreen-logos {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sponsor-fullscreen-main {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px;
+            animation: sponsorGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes sponsorGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(246, 173, 85, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(246, 173, 85, 0.4); }
+        }
+
+        .sponsor-fullscreen-main .placeholder {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 3px;
+        }
+
+        .sponsor-fullscreen-secondary {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .sponsor-fullscreen-small {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sponsor-fullscreen-small .placeholder {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .sponsor-fullscreen-message {
+            color: var(--gold);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sponsor-fullscreen-countdown {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sponsor-fullscreen-countdown .timer {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--accent);
+            min-width: 50px;
+        }
+
+        .sponsor-fullscreen-close {
+            padding: 0.875rem 2rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sponsor-fullscreen-close:hover {
+            border-color: var(--text-light);
+            color: var(--text-light);
+        }
+
+        @media (max-width: 700px) {
+            .sponsors-banner-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .sponsors-banner-logos {
+                gap: 0.75rem;
+            }
+
+            .sponsor-banner-item {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.7rem;
+            }
+
+            body {
+                padding-bottom: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="sponsors">
+            <div class="sponsor-logo">SPONSOR 1</div>
+            <div class="sponsor-logo">SPONSOR 2</div>
+            <div class="sponsor-logo">SPONSOR 3</div>
+        </div>
+        <div class="header-title">
+            <h1>Lives du Week-end</h1>
+            <div class="subtitle">Pôle Espoir Volleyball Sablé</div>
+        </div>
+        <div class="header-right">
+            <!-- Menu déroulant joueuses -->
+            <div class="player-dropdown" id="playerDropdown">
+                <div class="dropdown-trigger" onclick="toggleDropdown()">
+                    <span>🏐 Joueuses</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="dropdown-menu">
+                    <div class="dropdown-menu-header">Accès rapide aux matchs</div>
+                    <div class="dropdown-item is-live" onclick="scrollToMatch('match-derby-emma-lea')" style="background: rgba(246, 173, 85, 0.1);">
+                        <div class="dropdown-item-photo" style="border: 2px solid var(--gold);">ED</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Emma DURAND</div>
+                            <div class="dropdown-item-opponent">🔥 Derby vs Léa</div>
+                        </div>
+                        <span class="dropdown-item-status live">Live</span>
+                    </div>
+                    <div class="dropdown-item is-live" onclick="scrollToMatch('match-derby-emma-lea')" style="background: rgba(246, 173, 85, 0.1);">
+                        <div class="dropdown-item-photo" style="border: 2px solid var(--gold);">LM</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Léa MARTIN</div>
+                            <div class="dropdown-item-opponent">🔥 Derby vs Emma</div>
+                        </div>
+                        <span class="dropdown-item-status live">Live</span>
+                    </div>
+                    <div class="dropdown-item is-live" onclick="scrollToMatch('match-manon')">
+                        <div class="dropdown-item-photo">MP</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Manon PETIT</div>
+                            <div class="dropdown-item-opponent">vs Paris UC Volley</div>
+                        </div>
+                        <span class="dropdown-item-status live">Live</span>
+                    </div>
+                    <div class="dropdown-item is-upcoming" onclick="scrollToMatch('match-chloe')">
+                        <div class="dropdown-item-photo">CR</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Chloé ROBERT</div>
+                            <div class="dropdown-item-opponent">vs Nantes VB Atlantique</div>
+                        </div>
+                        <span class="dropdown-item-status upcoming">16h30</span>
+                    </div>
+                    <div class="dropdown-item is-upcoming" onclick="scrollToMatch('match-sarah')">
+                        <div class="dropdown-item-photo">SB</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Sarah BERNARD</div>
+                            <div class="dropdown-item-opponent">vs Toulouse VB</div>
+                        </div>
+                        <span class="dropdown-item-status upcoming">18h00</span>
+                    </div>
+                    <div class="dropdown-item is-upcoming" onclick="scrollToMatch('match-julie')">
+                        <div class="dropdown-item-photo">JL</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Julie LEROY</div>
+                            <div class="dropdown-item-opponent">vs Montpellier HSC</div>
+                        </div>
+                        <span class="dropdown-item-status upcoming">Dim 10h30</span>
+                    </div>
+                    <div class="dropdown-item is-upcoming" onclick="scrollToMatch('match-marie')">
+                        <div class="dropdown-item-photo">MD</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Marie DUBOIS</div>
+                            <div class="dropdown-item-opponent">vs Rennes Volley</div>
+                        </div>
+                        <span class="dropdown-item-status upcoming">Dim 14h00</span>
+                    </div>
+                    <div class="dropdown-item is-finished" onclick="scrollToMatch('match-alice')">
+                        <div class="dropdown-item-photo">AM</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Alice MOREAU</div>
+                            <div class="dropdown-item-opponent">vs Lille UC Métropole</div>
+                        </div>
+                        <span class="dropdown-item-status finished">3-1 ✓</span>
+                    </div>
+                    <div class="dropdown-item is-finished" onclick="scrollToMatch('match-laura')">
+                        <div class="dropdown-item-photo">LG</div>
+                        <div class="dropdown-item-info">
+                            <div class="dropdown-item-name">Laura GARCIA</div>
+                            <div class="dropdown-item-opponent">vs Marseille VB</div>
+                        </div>
+                        <span class="dropdown-item-status finished">1-3</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-logo">🏐</div>
+        </div>
+    </header>
+
+    <!-- FILTRES CLIQUABLES -->
+    <div class="filters-bar">
+        <div class="filter-btn active" data-filter="all" onclick="filterMatches('all')">
+            <div class="filter-value">7</div>
+            <div class="filter-label">Tous</div>
+        </div>
+        <div class="filter-btn" data-filter="live" onclick="filterMatches('live')">
+            <div class="filter-value">2</div>
+            <div class="filter-label">En direct</div>
+        </div>
+        <div class="filter-btn" data-filter="upcoming" onclick="filterMatches('upcoming')">
+            <div class="filter-value">4</div>
+            <div class="filter-label">À venir</div>
+        </div>
+        <div class="filter-btn" data-filter="finished" onclick="filterMatches('finished')">
+            <div class="filter-value">2</div>
+            <div class="filter-label">Terminés</div>
+        </div>
+    </div>
+
+    <main class="matches-grid" id="matchesGrid">
+
+        <!-- DERBY PÔLE - Emma vs Léa -->
+        <div class="match-card is-live is-derby" data-status="live" id="match-derby-emma-lea">
+            <div class="video-section" onclick="openFullscreen('match-derby-emma-lea')">
+                <div class="status-badge live">En direct</div>
+                <div class="derby-badge">🔥 Derby Pôle</div>
+                <div class="video-placeholder has-live">
+                    <div class="play-button"></div>
+                    <span class="expand-hint">Cliquer pour agrandir</span>
+                </div>
+            </div>
+            <div class="score-banner derby-banner">
+                <div class="team-home derby-team">
+                    <div class="team-photo">ED</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">SCO Volley</h3>
+                        <span class="subtitle player-info-sub">Emma DURAND • <span class="position">Centrale</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">2</span>
+                        <span class="separator">-</span>
+                        <span class="away">1</span>
+                    </div>
+                    <div class="score-points">Set 4 : <span>22 - 20</span></div>
+                </div>
+                <div class="team-away derby-team">
+                    <div class="team-photo">LM</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">ASVB Pays de Loire</h3>
+                        <span class="subtitle player-info-sub">Léa MARTIN • <span class="position">Réceptionneuse</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Gymnase Léo Lagrange, Angers
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Samedi 18 jan. • 15h00
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH EN DIRECT 3 - MANON -->
+        <div class="match-card is-live" data-status="live" id="match-manon">
+            <div class="video-section" onclick="openFullscreen('match-manon')">
+                <div class="status-badge live">En direct</div>
+                <div class="video-placeholder has-live">
+                    <div class="play-button"></div>
+                    <span class="expand-hint">Cliquer pour agrandir</span>
+                </div>
+            </div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">MP</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">VB Nantes</h3>
+                        <span class="subtitle player-info-sub">Manon PETIT • <span class="position">Passeuse</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">2</span>
+                        <span class="separator">-</span>
+                        <span class="away">0</span>
+                    </div>
+                    <div class="score-points">Set 3 : <span>21 - 19</span></div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">PU</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Paris UC Volley</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Gymnase Charléty, Paris
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Samedi 18 jan. • 14h00
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH À VENIR 1 - CHLOÉ -->
+        <div class="match-card" data-status="upcoming" id="match-chloe">
+            <div class="video-section">
+                <div class="status-badge upcoming">À venir</div>
+                <div class="countdown-overlay">
+                    <span class="countdown-label">Début dans</span>
+                    <span class="countdown-timer">01:45:23</span>
+                    <span class="countdown-date">Samedi 18 jan. • 16h30</span>
+                </div>
+            </div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">CR</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Sablé Volley</h3>
+                        <span class="subtitle player-info-sub">Chloé ROBERT • <span class="position">Libéro</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">-</span>
+                        <span class="separator">vs</span>
+                        <span class="away">-</span>
+                    </div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">NV</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Nantes VB</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Palais des Sports, Nantes
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Samedi 18 jan. • 16h30
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH À VENIR 2 - SARAH -->
+        <div class="match-card" data-status="upcoming" id="match-sarah">
+            <div class="video-section">
+                <div class="status-badge upcoming">À venir</div>
+                <div class="countdown-overlay">
+                    <span class="countdown-label">Début dans</span>
+                    <span class="countdown-timer">03:15:00</span>
+                    <span class="countdown-date">Samedi 18 jan. • 18h00</span>
+                </div>
+            </div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">SB</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Tours VB</h3>
+                        <span class="subtitle player-info-sub">Sarah BERNARD • <span class="position">Opposée</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">-</span>
+                        <span class="separator">vs</span>
+                        <span class="away">-</span>
+                    </div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">TV</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Toulouse VB</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Gymnase Compans, Toulouse
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Samedi 18 jan. • 18h00
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH À VENIR DIMANCHE - JULIE -->
+        <div class="match-card" data-status="upcoming" id="match-julie">
+            <div class="video-section">
+                <div class="status-badge upcoming">Demain</div>
+                <div class="countdown-overlay">
+                    <span class="countdown-label">Début dans</span>
+                    <span class="countdown-timer">20:30:00</span>
+                    <span class="countdown-date">Dimanche 19 jan. • 10h30</span>
+                </div>
+            </div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">JL</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Angers ESPE VB</h3>
+                        <span class="subtitle player-info-sub">Julie LEROY • <span class="position">Centrale</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">-</span>
+                        <span class="separator">vs</span>
+                        <span class="away">-</span>
+                    </div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">MH</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Montpellier HSC</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Arena Sud de France, Montpellier
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Dimanche 19 jan. • 10h30
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH À VENIR - MARIE -->
+        <div class="match-card" data-status="upcoming" id="match-marie">
+            <div class="video-section">
+                <div class="status-badge upcoming">Demain</div>
+                <div class="countdown-overlay">
+                    <span class="countdown-label">Début dans</span>
+                    <span class="countdown-timer">22:00:00</span>
+                    <span class="countdown-date">Dimanche 19 jan. • 14h00</span>
+                </div>
+            </div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">MD</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Le Mans Sarthe VB</h3>
+                        <span class="subtitle player-info-sub">Marie DUBOIS • <span class="position">Réceptionneuse</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">-</span>
+                        <span class="separator">vs</span>
+                        <span class="away">-</span>
+                    </div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">RV</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Rennes Volley</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Gymnase Villejean, Rennes
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Dimanche 19 jan. • 14h00
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH TERMINÉ - ALICE (VICTOIRE) -->
+        <div class="match-card" data-status="finished" id="match-alice">
+            <div class="video-section" onclick="openFullscreen('match-alice')">
+                <div class="status-badge finished">Terminé</div>
+                <div class="video-placeholder">
+                    <div class="play-button"></div>
+                    <span class="expand-hint">Voir le replay</span>
+                </div>
+            </div>
+            <div class="result-banner victory">🎉 Victoire</div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">AM</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Laval Volley</h3>
+                        <span class="subtitle player-info-sub">Alice MOREAU • <span class="position">Réceptionneuse</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">3</span>
+                        <span class="separator">-</span>
+                        <span class="away">1</span>
+                    </div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">LU</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Lille UC</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Gymnase Faidherbe, Lille
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Samedi 18 jan. • 10h00
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH TERMINÉ - LAURA (DÉFAITE) -->
+        <div class="match-card" data-status="finished" id="match-laura">
+            <div class="video-section" onclick="openFullscreen('match-laura')">
+                <div class="status-badge finished">Terminé</div>
+                <div class="video-placeholder">
+                    <div class="play-button"></div>
+                    <span class="expand-hint">Voir le replay</span>
+                </div>
+            </div>
+            <div class="result-banner defeat">Défaite</div>
+            <div class="score-banner">
+                <div class="team-home">
+                    <div class="team-photo">LG</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Cholet VB</h3>
+                        <span class="subtitle player-info-sub">Laura GARCIA • <span class="position">Passeuse</span></span>
+                    </div>
+                </div>
+                <div class="score-center">
+                    <div class="score-sets">
+                        <span class="home">1</span>
+                        <span class="separator">-</span>
+                        <span class="away">3</span>
+                    </div>
+                </div>
+                <div class="team-away">
+                    <div class="team-photo away-team">MV</div>
+                    <div class="team-info">
+                        <h3 class="team-name-club">Marseille VB</h3>
+                        <span class="subtitle">Adversaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="match-info-bar">
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Palais des Sports, Marseille
+                </div>
+                <div class="info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Samedi 18 jan. • 11h00
+                </div>
+            </div>
+        </div>
+
+        <!-- Message si aucun résultat -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="no-results-icon">🏐</div>
+            <h3>Aucun match dans cette catégorie</h3>
+            <p>Sélectionnez un autre filtre pour voir les matchs disponibles.</p>
+        </div>
+
+    </main>
+
+    <!-- FULLSCREEN OVERLAY -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
+        <div class="fullscreen-video">
+            <div class="video-placeholder has-live" style="display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center;">
+                    <div class="play-button" style="margin: 0 auto 1rem;"></div>
+                    <p style="color: var(--text-muted);">Ici s'afficherait le flux YouTube en plein écran</p>
+                </div>
+            </div>
+        </div>
+        <div class="fullscreen-score-banner">
+            <div class="fullscreen-score-content" id="fullscreenScoreContent">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Pôle Espoir Volleyball Sablé • Saison 2024-2025</p>
+        <p>Propulsé par <a href="#">RPE Gen2</a></p>
+    </footer>
+
+    <script>
+        // Toggle dropdown joueuses
+        function toggleDropdown() {
+            const dropdown = document.getElementById('playerDropdown');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fermer dropdown si clic extérieur
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('playerDropdown');
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        // Scroll vers un match
+        function scrollToMatch(matchId) {
+            // Reset filter to show all
+            filterMatches('all');
+            
+            const match = document.getElementById(matchId);
+            if (match) {
+                match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight effect
+                match.style.boxShadow = '0 0 0 3px var(--gold)';
+                setTimeout(() => {
+                    match.style.boxShadow = '';
+                }, 2000);
+            }
+            
+            // Fermer le dropdown
+            document.getElementById('playerDropdown').classList.remove('open');
+        }
+
+        // Filtrer les matchs
+        function filterMatches(filter) {
+            const cards = document.querySelectorAll('.match-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            const noResults = document.getElementById('noResults');
+            let visibleCount = 0;
+
+            // Update active button
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter cards
+            cards.forEach(card => {
+                const status = card.dataset.status;
+                
+                if (filter === 'all' || status === filter) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Show/hide no results message
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        // Ouvrir plein écran
+        function openFullscreen(matchId) {
+            const overlay = document.getElementById('fullscreenOverlay');
+            const match = document.getElementById(matchId);
+            const isDerby = match.classList.contains('is-derby');
+            
+            // Extraire les données du match
+            const clubNameHome = match.querySelector('.team-home .team-name-club').textContent;
+            const playerInfoSubHome = match.querySelector('.team-home .player-info-sub').textContent;
+            const playerPartsHome = playerInfoSubHome.split('•');
+            const fullNameHome = playerPartsHome[0].trim();
+            const firstNameHome = fullNameHome.split(' ')[0];
+            const positionHome = playerPartsHome[1] ? playerPartsHome[1].trim() : '';
+            
+            const clubNameAway = match.querySelector('.team-away .team-name-club').textContent;
+            
+            // Pour le Derby, extraire aussi les infos de la joueuse adverse
+            let firstNameAway = '';
+            let positionAway = '';
+            if (isDerby) {
+                const playerInfoSubAway = match.querySelector('.team-away .player-info-sub').textContent;
+                const playerPartsAway = playerInfoSubAway.split('•');
+                const fullNameAway = playerPartsAway[0].trim();
+                firstNameAway = fullNameAway.split(' ')[0];
+                positionAway = playerPartsAway[1] ? playerPartsAway[1].trim() : '';
+            }
+            
+            const scoreHome = match.querySelector('.score-sets .home').textContent;
+            const scoreAway = match.querySelector('.score-sets .away').textContent;
+            
+            const pointsEl = match.querySelector('.score-points');
+            const pointsText = pointsEl ? pointsEl.innerHTML : '';
+            
+            // Générer le bandeau
+            const fullscreenContent = document.getElementById('fullscreenScoreContent');
+            
+            if (isDerby) {
+                // Bandeau spécial Derby
+                fullscreenContent.innerHTML = `
+                    <div class="fs-derby-header" style="grid-column: 1 / -1;">
+                        <span class="fs-derby-badge">🔥 DERBY PÔLE ESPOIR</span>
+                    </div>
+                    <div class="fs-team home derby">
+                        <div class="fs-team-name">${clubNameHome.toUpperCase()}</div>
+                        <div class="fs-team-player">(${firstNameHome} - ${positionHome})</div>
+                    </div>
+                    <div class="fs-score">
+                        <div class="fs-score-sets">
+                            <span class="home">${scoreHome}</span>
+                            <span class="separator">-</span>
+                            <span class="away">${scoreAway}</span>
+                        </div>
+                        ${pointsText ? `<div class="fs-score-points">${pointsText}</div>` : ''}
+                    </div>
+                    <div class="fs-team away derby">
+                        <div class="fs-team-name">${clubNameAway.toUpperCase()}</div>
+                        <div class="fs-team-player">(${firstNameAway} - ${positionAway})</div>
+                    </div>
+                `;
+            } else {
+                // Bandeau standard
+                fullscreenContent.innerHTML = `
+                    <div class="fs-team home">
+                        <div class="fs-team-name">${clubNameHome.toUpperCase()}</div>
+                        <div class="fs-team-player">(${firstNameHome} - ${positionHome})</div>
+                    </div>
+                    <div class="fs-score">
+                        <div class="fs-score-sets">
+                            <span class="home">${scoreHome}</span>
+                            <span class="separator">-</span>
+                            <span class="away">${scoreAway}</span>
+                        </div>
+                        ${pointsText ? `<div class="fs-score-points">${pointsText}</div>` : ''}
+                    </div>
+                    <div class="fs-team away">
+                        <div class="fs-team-name">${clubNameAway.toUpperCase()}</div>
+                        <div class="fs-team-player">Adversaire</div>
+                    </div>
+                `;
+            }
+            
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Fermer plein écran
+        function closeFullscreen() {
+            const overlay = document.getElementById('fullscreenOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Fermer avec Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeFullscreen();
+                closeSponsorOverlay();
+            }
+        });
+
+        // Countdown dynamique (simulation)
+        function updateCountdowns() {
+            // Ici on mettrait à jour les décomptes en temps réel
+            // Pour la démo, les valeurs sont statiques
+        }
+
+        setInterval(updateCountdowns, 1000);
+
+        // SPONSOR OVERLAY FUNCTIONS
+        let sponsorTimerInterval = null;
+
+        function showSponsorOverlay(matchName, score) {
+            const overlay = document.getElementById('sponsorFullscreenOverlay');
+            document.getElementById('sponsorMatchName').textContent = matchName || 'SCO Volley vs Saint-Étienne';
+            document.getElementById('sponsorScore').textContent = score || '2 - 1';
+            
+            overlay.classList.add('active');
+            
+            // Démarrer le compte à rebours de 45 secondes
+            let countdown = 45;
+            document.getElementById('sponsorTimerDisplay').textContent = countdown;
+            
+            if (sponsorTimerInterval) {
+                clearInterval(sponsorTimerInterval);
+            }
+            
+            sponsorTimerInterval = setInterval(() => {
+                countdown--;
+                document.getElementById('sponsorTimerDisplay').textContent = countdown;
+                
+                if (countdown <= 0) {
+                    closeSponsorOverlay();
+                }
+            }, 1000);
+        }
+
+        function closeSponsorOverlay() {
+            document.getElementById('sponsorFullscreenOverlay').classList.remove('active');
+            
+            if (sponsorTimerInterval) {
+                clearInterval(sponsorTimerInterval);
+                sponsorTimerInterval = null;
+            }
+        }
+
+        // Demo: Cliquer sur un bouton pour tester l'overlay sponsor
+        // En production, cela serait déclenché par Firebase quand un parent clique "Fin de set"
+    </script>
+
+    <!-- BANDEAU SPONSORS FIXE EN BAS -->
+    <div class="sponsors-banner">
+        <div class="sponsors-banner-content">
+            <span class="sponsors-banner-label">Nos partenaires</span>
+            <div class="sponsors-banner-logos">
+                <span class="sponsor-banner-item main">SPONSOR PRINCIPAL</span>
+                <span class="sponsor-banner-item">Sponsor 2</span>
+                <span class="sponsor-banner-item">Sponsor 3</span>
+                <span class="sponsor-banner-item">Sponsor 4</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERLAY SPONSOR MI-TEMPS -->
+    <div class="sponsor-fullscreen-overlay" id="sponsorFullscreenOverlay">
+        <div class="sponsor-fullscreen-content">
+            <div class="sponsor-fullscreen-header">
+                <h2>⏸️ PAUSE / MI-TEMPS</h2>
+                <div class="match-info" id="sponsorMatchName">SCO Volley vs Saint-Étienne</div>
+                <div class="match-score" id="sponsorScore">2 - 1</div>
+            </div>
+            
+            <div class="sponsor-fullscreen-logos">
+                <div class="sponsor-fullscreen-main">
+                    <span class="placeholder">SPONSOR PRINCIPAL</span>
+                </div>
+                <div class="sponsor-fullscreen-secondary">
+                    <div class="sponsor-fullscreen-small">
+                        <span class="placeholder">Sponsor 2</span>
+                    </div>
+                    <div class="sponsor-fullscreen-small">
+                        <span class="placeholder">Sponsor 3</span>
+                    </div>
+                    <div class="sponsor-fullscreen-small">
+                        <span class="placeholder">Sponsor 4</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sponsor-fullscreen-message">
+                🏐 Merci à nos partenaires pour leur soutien au Pôle Espoir !
+            </div>
+            
+            <div class="sponsor-fullscreen-countdown">
+                <span>Reprise dans</span>
+                <span class="timer" id="sponsorTimerDisplay">45</span>
+                <span>secondes</span>
+            </div>
+            
+            <button class="sponsor-fullscreen-close" onclick="closeSponsorOverlay()">
+                ✕ Fermer
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

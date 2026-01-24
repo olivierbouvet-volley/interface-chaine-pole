@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déclarer mon match - Pôle Espoir Sablé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #e53e3e;
+            --success: #38a169;
+            --warning: #f6ad55;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #2d3a4f;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --gold: #f6ad55;
+            --border: rgba(255,255,255,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at top left, rgba(44, 82, 130, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(229, 62, 62, 0.1) 0%, transparent 50%);
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--text-light);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--text-light);
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: 2px solid var(--gold);
+        }
+
+        /* NOTIFICATION BANNER */
+        .notification-banner {
+            background: linear-gradient(90deg, rgba(246, 173, 85, 0.15) 0%, rgba(246, 173, 85, 0.05) 100%);
+            border-left: 4px solid var(--gold);
+            padding: 1rem 1.5rem;
+            margin: 1rem;
+            border-radius: 0 12px 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-banner .icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-banner .text {
+            flex: 1;
+        }
+
+        .notification-banner .text strong {
+            display: block;
+            color: var(--gold);
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-banner .text span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* PLAYER CARD */
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            margin: 0 1rem 1rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            border: 2px solid var(--gold);
+            overflow: hidden;
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .player-info .position {
+            font-size: 0.8rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .player-info .club {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* FORM CONTAINER */
+        .form-container {
+            padding: 0 1rem 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-section-title .icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(246, 173, 85, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* FORM FIELDS */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label .required {
+            color: var(--accent);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* DATE TIME ROW */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* SELECT */
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+            transition: all 0.3s;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.15);
+        }
+
+        /* PHOTO UPLOAD */
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+            background: var(--bg-input);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .photo-upload:hover {
+            border-color: var(--gold);
+            background: rgba(246, 173, 85, 0.05);
+        }
+
+        .photo-upload.has-photo {
+            border-style: solid;
+            border-color: var(--success);
+        }
+
+        .photo-upload-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .photo-upload-text {
+            text-align: center;
+        }
+
+        .photo-upload-text strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .photo-upload-text span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .photo-preview {
+            display: none;
+            width: 100%;
+            max-width: 200px;
+            aspect-ratio: 4/3;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-preview.visible {
+            display: block;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview .remove-photo {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background: rgba(229, 62, 62, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* TOGGLE SWITCH */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toggle-label .icon {
+            font-size: 1.2rem;
+        }
+
+        .toggle-label .text strong {
+            display: block;
+            font-size: 0.95rem;
+            margin-bottom: 0.15rem;
+        }
+
+        .toggle-label .text span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-dark);
+            border-radius: 28px;
+            transition: 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+            background: white;
+        }
+
+        /* PARENT CONTACT */
+        .parent-contact-section {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .parent-contact-section.visible {
+            display: block;
+        }
+
+        /* SUBMIT BUTTON */
+        .submit-section {
+            padding: 1rem;
+            position: sticky;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, var(--bg-dark) 30%);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--gold) 0%, #ffd700 100%);
+            border: none;
+            border-radius: 12px;
+            color: #1a1a2e;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(246, 173, 85, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(246, 173, 85, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* NO MATCH OPTION */
+        .no-match-btn {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.75rem;
+        }
+
+        .no-match-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text-light);
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .success-overlay.visible {
+            display: flex;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success) 0%, #68d391 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-overlay h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-overlay p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 300px;
+        }
+
+        .success-overlay .back-link {
+            padding: 0.875rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .success-overlay .back-link:hover {
+            border-color: var(--gold);
+        }
+
+        /* MATCH SUMMARY IN SUCCESS */
+        .match-summary {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid var(--border);
+        }
+
+        .match-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .match-summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .match-summary-row .label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .match-summary-row .value {
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 500px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .notification-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .player-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Dashboard
+        </a>
+        <div class="header-title">
+            <h1>MON MATCH DU WEEK-END</h1>
+        </div>
+        <div class="header-logo">🏐</div>
+    </header>
+
+    <!-- Notification Rappel -->
+    <div class="notification-banner">
+        <div class="icon">📅</div>
+        <div class="text">
+            <strong>Rappel : Déclaration des matchs</strong>
+            <span>Merci de renseigner ton match avant samedi 8h pour qu'il apparaisse sur le Live du week-end.</span>
+        </div>
+    </div>
+
+    <!-- Player Card -->
+    <div class="player-card">
+        <div class="player-avatar">ED</div>
+        <div class="player-info">
+            <h2>Emma DURAND</h2>
+            <div class="position">Centrale</div>
+            <div class="club">SCO Volley • U18F</div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-container">
+        <form id="matchForm">
+            
+            <!-- Section Adversaire -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="icon">⚔️</div>
+                    <span>Informations du match</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        Nom de l'équipe adverse <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-input" id="opponent" placeholder="Ex: Saint-Étienne VB" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Compétition
+                    </label>
+                    <select class="form-select" id="competition">
+                        <option value="">Sélectionner...</option>
+                        <option value="coupe-m15">Coupe de France M15</option>
+                        <option value="coupe-m18">Coupe de France M18</option>
+                        <option value="champ-prenat">Championnat Pré-Nationale</option>
+                        <option value="champ-n3">Championnat N3</option>
+                        <option value="champ-n2">Championnat N2</option>
+                        <option value="champ-m15">Championnat M15</option>
+                        <option value="champ-m18">Championnat M18</option>
+                        <option value="tournoi">Tournoi</option>
+                        <option value="amical">Match amical</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section Lieu & Date -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="icon">📍</div>
+                    <span>Lieu et horaire</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Lieu du match <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-input" id="location" placeholder="Ex: Gymnase Jean Jaurès, Lyon" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Date <span class="required">*</span>
+                        </label>
+                        <input type="date" class="form-input" id="matchDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            Heure <span class="required">*</span>
+                        </label>
+                        <input type="time" class="form-input" id="matchTime" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Type de rencontre
+                    </label>
+                    <select class="form-select" id="matchType">
+                        <option value="away">🚗 Déplacement (Extérieur)</option>
+                        <option value="home">🏠 Réception (Domicile)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section Photo -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="icon">📸</div>
+                    <span>Photo (optionnel)</span>
+                </div>
+
+                <label class="photo-upload" id="photoUpload">
+                    <input type="file" accept="image/*" hidden id="photoInput">
+                    <div class="photo-upload-icon">📷</div>
+                    <div class="photo-upload-text">
+                        <strong>Ajouter une photo</strong>
+                        <span>Photo d'équipe, maillot, ou gymnase</span>
+                    </div>
+                    <div class="photo-preview" id="photoPreview">
+                        <img src="" alt="Preview" id="previewImg">
+                        <button type="button" class="remove-photo" onclick="removePhoto(event)">✕</button>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Section Live -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="icon">🎥</div>
+                    <span>Diffusion Live</span>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <div class="icon">📹</div>
+                        <div class="text">
+                            <strong>Match filmé ?</strong>
+                            <span>Un parent pourra diffuser le match en live</span>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="willBeFilmed" onchange="toggleParentContact()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="parent-contact-section" id="parentContactSection">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Nom du parent qui filme
+                        </label>
+                        <input type="text" class="form-input" id="parentName" placeholder="Ex: M. Durand">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            Téléphone du parent (optionnel)
+                        </label>
+                        <input type="tel" class="form-input" id="parentPhone" placeholder="Ex: 06 12 34 56 78">
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <div class="icon">🔔</div>
+                        <div class="text">
+                            <strong>Recevoir les notifications</strong>
+                            <span>Rappel avant le match + résultats</span>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notifications" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Submit Section -->
+    <div class="submit-section">
+        <button type="submit" class="submit-btn" onclick="submitForm(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Enregistrer mon match
+        </button>
+        <button type="button" class="no-match-btn" onclick="noMatch()">
+            Je n'ai pas de match ce week-end
+        </button>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-icon">✓</div>
+        <h2>MATCH ENREGISTRÉ !</h2>
+        <p>Ton match apparaîtra sur la page Live du week-end.</p>
+        
+        <div class="match-summary" id="matchSummary">
+            <div class="match-summary-row">
+                <span class="label">Adversaire</span>
+                <span class="value" id="summaryOpponent">-</span>
+            </div>
+            <div class="match-summary-row">
+                <span class="label">Date</span>
+                <span class="value" id="summaryDate">-</span>
+            </div>
+            <div class="match-summary-row">
+                <span class="label">Heure</span>
+                <span class="value" id="summaryTime">-</span>
+            </div>
+            <div class="match-summary-row">
+                <span class="label">Lieu</span>
+                <span class="value" id="summaryLocation">-</span>
+            </div>
+            <div class="match-summary-row">
+                <span class="label">Diffusion Live</span>
+                <span class="value" id="summaryLive">-</span>
+            </div>
+        </div>
+
+        <a href="#" class="back-link" onclick="goBack()">← Retour au Dashboard</a>
+    </div>
+
+    <script>
+        // Set default date to this weekend
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const daysUntilSaturday = (6 - dayOfWeek + 7) % 7 || 7;
+            const saturday = new Date(today);
+            saturday.setDate(today.getDate() + daysUntilSaturday);
+            
+            const dateInput = document.getElementById('matchDate');
+            dateInput.valueAsDate = saturday;
+            
+            // Default time
+            document.getElementById('matchTime').value = '14:30';
+        });
+
+        // Toggle parent contact section
+        function toggleParentContact() {
+            const checkbox = document.getElementById('willBeFilmed');
+            const section = document.getElementById('parentContactSection');
+            
+            if (checkbox.checked) {
+                section.classList.add('visible');
+            } else {
+                section.classList.remove('visible');
+            }
+        }
+
+        // Photo upload
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('photoPreview').classList.add('visible');
+                    document.getElementById('photoUpload').classList.add('has-photo');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function removePhoto(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById('photoInput').value = '';
+            document.getElementById('photoPreview').classList.remove('visible');
+            document.getElementById('photoUpload').classList.remove('has-photo');
+        }
+
+        // Form submission
+        function submitForm(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('matchForm');
+            const opponent = document.getElementById('opponent').value;
+            const location = document.getElementById('location').value;
+            const matchDate = document.getElementById('matchDate').value;
+            const matchTime = document.getElementById('matchTime').value;
+            const willBeFilmed = document.getElementById('willBeFilmed').checked;
+
+            // Validation
+            if (!opponent || !location || !matchDate || !matchTime) {
+                alert('Merci de remplir tous les champs obligatoires.');
+                return;
+            }
+
+            // Format date for display
+            const dateObj = new Date(matchDate);
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            const formattedDate = dateObj.toLocaleDateString('fr-FR', options);
+
+            // Update summary
+            document.getElementById('summaryOpponent').textContent = opponent;
+            document.getElementById('summaryDate').textContent = formattedDate;
+            document.getElementById('summaryTime').textContent = matchTime;
+            document.getElementById('summaryLocation').textContent = location;
+            document.getElementById('summaryLive').textContent = willBeFilmed ? '📹 Oui' : 'Non prévu';
+
+            // Show success
+            document.getElementById('successOverlay').classList.add('visible');
+        }
+
+        // No match this weekend
+        function noMatch() {
+            if (confirm('Confirmer que tu n\'as pas de match ce week-end ?')) {
+                alert('C\'est noté ! Bon week-end 🏐');
+                // Redirect to dashboard
+            }
+        }
+
+        // Go back
+        function goBack() {
+            document.getElementById('successOverlay').classList.remove('visible');
+            // In real app: redirect to dashboard
+        }
+    </script>
+
+</body>
+</html>
