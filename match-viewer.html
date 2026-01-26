@@ -59,6 +59,53 @@
             border: none;
         }
 
+        /* Correction rotation vidéos Facebook */
+        .video-background.fb-rotated {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-background.fb-rotated iframe {
+            transform: rotate(-90deg);
+            width: 100vh;
+            height: 100vw;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -50vh;
+            margin-top: -50vw;
+        }
+
+        /* Bouton de rotation */
+        .rotation-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(99, 102, 241, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .rotation-toggle:hover {
+            background: rgba(99, 102, 241, 1);
+            transform: scale(1.1);
+        }
+
+        .rotation-toggle.visible {
+            display: block;
+        }
+
         .score-overlay {
             position: fixed;
             top: 0;
@@ -975,6 +1022,9 @@
         </div>
     </div>
 
+    <!-- Bouton de rotation pour vidéos Facebook -->
+    <button class="rotation-toggle" id="rotationToggle" title="Corriger la rotation de la vidéo">🔄</button>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -1036,6 +1086,16 @@
             tag.src = "https://www.youtube.com/iframe_api";
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            // Gestionnaire du bouton de rotation pour vidéos Facebook
+            const rotationToggle = document.getElementById('rotationToggle');
+            if (rotationToggle) {
+                rotationToggle.addEventListener('click', () => {
+                    const container = document.getElementById('videoContainer');
+                    container.classList.toggle('fb-rotated');
+                    console.log('🔄 Rotation togglée:', container.classList.contains('fb-rotated'));
+                });
+            }
 
             initMatchListener();
         });
@@ -1451,15 +1511,25 @@
                     embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(cleanUrl)}&show_text=false&t=0`;
                 }
 
-                // Iframe Facebook
-                container.innerHTML = `<iframe src="${embedUrl}" 
-                    style="width:100%;height:100%;border:none;overflow:hidden;" 
-                    scrolling="no" 
-                    frameborder="0" 
-                    allowTransparency="true" 
-                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" 
+                // Iframe Facebook avec correction automatique de rotation
+                container.innerHTML = `<iframe src="${embedUrl}"
+                    style="width:100%;height:100%;border:none;overflow:hidden;"
+                    scrolling="no"
+                    frameborder="0"
+                    allowTransparency="true"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                     allowfullscreen="true">
                 </iframe>`;
+
+                // Activer automatiquement la rotation pour les vidéos Facebook
+                // (pour corriger les vidéos filmées en paysage qui apparaissent à 90°)
+                container.classList.add('fb-rotated');
+
+                // Afficher le bouton de toggle pour désactiver la rotation si nécessaire
+                const rotationToggle = document.getElementById('rotationToggle');
+                if (rotationToggle) {
+                    rotationToggle.classList.add('visible');
+                }
             } else {
                 // YouTube
                 container.innerHTML = '<div id="yt-player"></div>';
@@ -1485,6 +1555,13 @@
                             }
                         }
                     });
+                }
+
+                // Masquer le bouton de rotation pour YouTube et retirer la classe de rotation
+                container.classList.remove('fb-rotated');
+                const rotationToggle = document.getElementById('rotationToggle');
+                if (rotationToggle) {
+                    rotationToggle.classList.remove('visible');
                 }
             }
         }
