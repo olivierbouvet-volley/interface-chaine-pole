@@ -713,7 +713,7 @@
                 <div class="match-card" onclick="openMatch('${match.id}')">
                     <span class="match-status ${statusClass}">${statusText}</span>
 
-                    <div class="match-video ${videoEmbed && videoEmbed.type === 'facebook' ? 'fb-rotated' : ''}">
+                    <div class="match-video">
                         ${videoEmbed
                     ? videoEmbed.html
                     : `
@@ -797,10 +797,10 @@
 
             // Facebook
             if (url.includes('facebook') || url.includes('fb.watch')) {
-                const embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=560&height=315`;
+                const embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=9999&height=9999&appId`;
                 return {
                     type: 'facebook',
-                    html: `<iframe src="${embedUrl}" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`
+                    html: `<iframe src="${embedUrl}" style="border:none;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`
                 };
             }
 

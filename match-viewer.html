@@ -1507,12 +1507,13 @@
 
                 let embedUrl = cleanUrl;
                 if (!cleanUrl.includes('plugins/video.php')) {
-                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(cleanUrl)}&show_text=false&width=560&height=315`;
+                    // Paramètres pour afficher les contrôles : pas de autoplay, contrôles visibles
+                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(cleanUrl)}&width=9999&height=9999&show_text=false&appId`;
                 }
 
-                // Iframe Facebook avec correction automatique de rotation
+                // Iframe Facebook SANS rotation automatique
                 container.innerHTML = `<iframe src="${embedUrl}"
-                    style="width:100%;height:100%;border:none;overflow:hidden;"
+                    style="width:100%;height:100%;border:none;"
                     scrolling="no"
                     frameborder="0"
                     allowTransparency="true"
@@ -1520,11 +1521,11 @@
                     allowfullscreen="true">
                 </iframe>`;
 
-                // Activer automatiquement la rotation pour les vidéos Facebook
-                // (pour corriger les vidéos filmées en paysage qui apparaissent à 90°)
-                container.classList.add('fb-rotated');
+                // NE PAS activer automatiquement la rotation
+                // L'utilisateur peut utiliser le bouton 🔄 si nécessaire
+                container.classList.remove('fb-rotated');
 
-                // Afficher le bouton de toggle pour désactiver la rotation si nécessaire
+                // Afficher le bouton de toggle pour activer la rotation MANUELLEMENT si besoin
                 const rotationToggle = document.getElementById('rotationToggle');
                 if (rotationToggle) {
                     rotationToggle.classList.add('visible');
