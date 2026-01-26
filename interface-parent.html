@@ -818,16 +818,21 @@
 
         /* Correction rotation vidéos Facebook pour mini-player */
         .video-mini-content.fb-rotated {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .video-mini-content.fb-rotated iframe {
-            transform: rotate(-90deg);
-            width: 180px;
-            height: 320px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;  /* 16/9 * 180px */
+            height: 180px;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            transform-origin: center center;
         }
 
         .match-phase {
@@ -1306,7 +1311,7 @@
                 
                 if (currentMatch.videoSource === 'facebook') {
                     // Pour Facebook, utiliser l'embed player
-                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(currentMatch.youtubeUrl)}&show_text=false&autoplay=true&mute=false`;
+                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(currentMatch.youtubeUrl)}&show_text=false&autoplay=true&mute=false&width=320&height=180`;
                 } else {
                     // YouTube
                     const videoId = extractYouTubeId(currentMatch.youtubeUrl);

@@ -158,15 +158,21 @@
 
         /* Correction rotation vidéos Facebook */
         .match-video.fb-rotated {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: visible;
         }
 
         .match-video.fb-rotated iframe {
-            transform: rotate(-90deg);
-            width: calc(9 / 16 * 100%);
-            height: calc(16 / 9 * 100%);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 177.78%;  /* 16/9 ratio pour compenser la rotation */
+            height: 100%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            transform-origin: center center;
         }
 
         /* Masquage YouTube style multiplex */
@@ -791,7 +797,7 @@
 
             // Facebook
             if (url.includes('facebook') || url.includes('fb.watch')) {
-                const embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&t=0`;
+                const embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=560&height=315`;
                 return {
                     type: 'facebook',
                     html: `<iframe src="${embedUrl}" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`

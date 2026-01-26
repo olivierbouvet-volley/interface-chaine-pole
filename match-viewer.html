@@ -64,18 +64,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .video-background.fb-rotated iframe {
-            transform: rotate(-90deg);
-            width: 100vh;
-            height: 100vw;
             position: absolute;
             top: 50%;
             left: 50%;
-            margin-left: -50vh;
-            margin-top: -50vw;
+            width: 177.78vh;  /* 16/9 * 100vh pour compenser la rotation */
+            height: 100vh;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            transform-origin: center center;
         }
 
         /* Bouton de rotation */
@@ -1508,7 +1507,7 @@
 
                 let embedUrl = cleanUrl;
                 if (!cleanUrl.includes('plugins/video.php')) {
-                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(cleanUrl)}&show_text=false&t=0`;
+                    embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(cleanUrl)}&show_text=false&width=560&height=315`;
                 }
 
                 // Iframe Facebook avec correction automatique de rotation
