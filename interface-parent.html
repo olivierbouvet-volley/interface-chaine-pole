@@ -816,6 +816,20 @@
             border: none;
         }
 
+        /* Correction rotation vidéos Facebook pour mini-player */
+        .video-mini-content.fb-rotated {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-mini-content.fb-rotated iframe {
+            transform: rotate(-90deg);
+            width: 180px;
+            height: 320px;
+        }
+
         .match-phase {
             margin: 20px 0;
             padding: 16px;
@@ -1303,6 +1317,14 @@
 
                 if (embedUrl) {
                     content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen allow="autoplay"></iframe>`;
+
+                    // Ajouter la classe de rotation pour Facebook
+                    if (currentMatch.videoSource === 'facebook') {
+                        content.classList.add('fb-rotated');
+                    } else {
+                        content.classList.remove('fb-rotated');
+                    }
+
                     player.classList.add('show');
                     document.getElementById('miniPlayerToggle').textContent = '❌ Fermer Vidéo';
                 } else {
@@ -1312,6 +1334,7 @@
             } else {
                 player.classList.remove('show');
                 content.innerHTML = '';
+                content.classList.remove('fb-rotated');
                 document.getElementById('miniPlayerToggle').textContent = '📺 Mini Lecteur';
             }
         }

@@ -156,6 +156,19 @@
             /* Désactive les clics sur l'iframe pour éviter d'ouvrir YT */
         }
 
+        /* Correction rotation vidéos Facebook */
+        .match-video.fb-rotated {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .match-video.fb-rotated iframe {
+            transform: rotate(-90deg);
+            width: calc(9 / 16 * 100%);
+            height: calc(16 / 9 * 100%);
+        }
+
         /* Masquage YouTube style multiplex */
         .yt-mask-multiplex {
             position: absolute;
@@ -693,8 +706,8 @@
             return `
                 <div class="match-card" onclick="openMatch('${match.id}')">
                     <span class="match-status ${statusClass}">${statusText}</span>
-                    
-                    <div class="match-video">
+
+                    <div class="match-video ${videoEmbed && videoEmbed.type === 'facebook' ? 'fb-rotated' : ''}">
                         ${videoEmbed
                     ? videoEmbed.html
                     : `
