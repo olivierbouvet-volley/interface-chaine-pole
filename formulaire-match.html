@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déclarer un Match - Pôle Espoir Volleyball</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #F59E0B;
+            --success: #10B981;
+            --danger: #EF4444;
+            --dark: #1F2937;
+            --gray: #6B7280;
+            --light-gray: #F3F4F6;
+            --white: #FFFFFF;
+            --shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+            --shadow-lg: 0 20px 50px rgba(99, 102, 241, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: var(--danger);
+            margin-left: 4px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .photo-upload {
+            border: 3px dashed var(--light-gray);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-upload:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.02);
+        }
+
+        .photo-upload.has-file {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .photo-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .photo-upload-content {
+            pointer-events: none;
+        }
+
+        .upload-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .upload-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .photo-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 16px auto 0;
+            border-radius: 12px;
+            display: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-preview.show {
+            display: block;
+        }
+
+        .upload-text {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            right: 20px;
+            margin-top: -8px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(124, 58, 237, 0.08));
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .info-box p {
+            font-size: 0.95rem;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: var(--primary);
+        }
+
+        /* Aperçu circulaire et zoom */
+        .photo-crop-container {
+            display: none;
+            margin-top: 16px;
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            border: 2px dashed var(--primary);
+        }
+
+        .photo-crop-container.show {
+            display: block;
+        }
+
+        .crop-preview-wrapper {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .crop-canvas-container {
+            flex: 1;
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .crop-canvas {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            cursor: move;
+            user-select: none;
+        }
+
+        .crop-canvas img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+            pointer-events: none;
+        }
+
+        .crop-circle-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 180px;
+            height: 180px;
+            transform: translate(-50%, -50%);
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(99, 102, 241, 0.3);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .circle-preview-container {
+            text-align: center;
+        }
+
+        .circle-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--primary);
+        }
+
+        .circle-preview img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+        }
+
+        .circle-preview-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .zoom-controls {
+            margin-top: 16px;
+        }
+
+        .zoom-controls label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .zoom-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .zoom-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(99, 102, 241, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
+        .zoom-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
+        .zoom-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .crop-hint {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            text-align: center;
+        }
+
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: flex-start;
+            /* Changé de center à flex-start pour permettre le défilement */
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            /* Permet le défilement si le contenu est trop grand */
+        }
+
+        .success-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            /* Réduit de 50px à 30px */
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            animation: scaleIn 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-top: 40px;
+            /* Marge pour ne pas coller au haut en mode flex-start */
+            margin-bottom: 40px;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        .success-content h2 {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        .success-content p {
+            color: var(--gray);
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .qr-code {
+            margin: 28px 0;
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 16px;
+            display: inline-block;
+        }
+
+        .link-box {
+            background: var(--light-gray);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .btn-copy {
+            background: var(--primary);
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-card {
+                padding: 28px;
+            }
+
+            .success-content {
+                padding: 36px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏐 Déclarer un Match</h1>
+            <p>Pôle Espoir Volleyball - Sablé-sur-Sarthe</p>
+        </div>
+
+        <div class="form-card">
+            <div class="info-box">
+                <p><strong>📱 Pour les parents :</strong> Après avoir déclaré votre match, vous recevrez un lien unique
+                    pour gérer le score en direct et ajouter le lien YouTube Live.</p>
+            </div>
+
+            <form id="matchForm">
+                <!-- Section Type de Match -->
+                <div class="form-section">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">📋 Type de Match</h3>
+
+                    <div class="form-group">
+                        <label>Type de compétition <span class="required">*</span></label>
+                        <select id="matchType" required>
+                            <option value="">Sélectionnez...</option>
+                            <option value="championnat">Championnat (Best of 5)</option>
+                            <option value="coupe">Coupe de France Jeunes (Best of 3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Catégorie <span class="required">*</span></label>
+                        <select id="category" required>
+                            <option value="">Sélectionnez d'abord le type de compétition...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Section Équipe 1 -->
+                <div class="form-section"
+                    style="border-left: 4px solid var(--primary); padding-left: 20px; margin-top: 30px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">🏐 Équipe 1 (Domicile)
+                    </h3>
+
+                    <div class="form-group">
+                        <label>Nom de l'équipe <span class="required">*</span></label>
+                        <input type="text" id="team1Name" required placeholder="TOURCOING VOLLEY">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Couleur du maillot <span class="required">*</span></label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="color" id="team1Color" value="#1E3A8A" required
+                                style="width: 60px; height: 50px; border: none; border-radius: 8px; cursor: pointer;">
+                            <input type="text" id="team1ColorHex" value="#1E3A8A" placeholder="#1E3A8A" style="flex: 1;"
+                                readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prénom de la joueuse déclarante <span class="required">*</span></label>
+                        <input type="text" id="team1FirstName" required placeholder="Marie">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nom de la joueuse déclarante <span class="required">*</span></label>
+                        <input type="text" id="team1LastName" required placeholder="DUPONT">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Photo de la joueuse <span style="font-size: 0.85rem; opacity: 0.7;">(optionnel)</span></label>
+                        <div class="photo-upload" id="photoUpload1">
+                            <input type="file" id="photoInput1" accept="image/*">
+                            <div class="photo-upload-content">
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="upload-text">Cliquez pour ajouter une photo de la joueuse</div>
+                                <div class="upload-hint">JPG, PNG ou WEBP • Max 10 MB</div>
+                                <img class="photo-preview" id="photoPreview1" alt="Aperçu">
+                            </div>
+                        </div>
+
+                        <!-- Aperçu circulaire et zoom -->
+                        <div class="photo-crop-container" id="photoCropContainer">
+                            <div class="crop-preview-wrapper">
+                                <div class="crop-canvas-container">
+                                    <div class="crop-canvas" id="cropCanvas">
+                                        <img id="cropImage" src="" alt="">
+                                        <div class="crop-circle-overlay"></div>
+                                    </div>
+                                </div>
+                                <div class="circle-preview-container">
+                                    <div class="circle-preview" id="circlePreview">
+                                        <img id="circleImage" src="" alt="">
+                                    </div>
+                                    <div class="circle-preview-label">Aperçu Live</div>
+                                </div>
+                            </div>
+                            <div class="zoom-controls">
+                                <label>🔍 Ajuster le zoom</label>
+                                <div class="zoom-slider-wrapper">
+                                    <span style="opacity: 0.5;">−</span>
+                                    <input type="range" class="zoom-slider" id="zoomSlider" min="50" max="200" value="100" step="5">
+                                    <span style="opacity: 0.5;">+</span>
+                                    <span class="zoom-value" id="zoomValue">100%</span>
+                                </div>
+                            </div>
+                            <div class="crop-hint">
+                                💡 Glissez l'image pour la repositionner • Ajustez le zoom pour qu'elle rentre dans le cercle
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Équipe 2 -->
+                <div class="form-section"
+                    style="border-left: 4px solid var(--danger); padding-left: 20px; margin-top: 30px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--danger);">🏐 Équipe 2 (Extérieur)
+                    </h3>
+
+                    <div class="form-group">
+                        <label>Nom de l'équipe <span class="required">*</span></label>
+                        <input type="text" id="team2Name" required placeholder="CHAUMONT VB 52">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Couleur du maillot <span style="font-size: 0.85rem; opacity: 0.7;">(optionnel)</span></label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="color" id="team2Color" value="#DC2626"
+                                style="width: 60px; height: 50px; border: none; border-radius: 8px; cursor: pointer;">
+                            <input type="text" id="team2ColorHex" value="#DC2626" placeholder="#DC2626" style="flex: 1;"
+                                readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Informations du Match -->
+                <div class="form-section" style="margin-top: 30px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--dark);">📅 Informations du Match
+                    </h3>
+
+                    <div class="form-group">
+                        <label>Date du match <span class="required">*</span></label>
+                        <input type="date" id="matchDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Heure du match <span class="required">*</span></label>
+                        <input type="time" id="matchTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Affiche du match <span style="font-size: 0.85rem; opacity: 0.7;">(optionnel - affiche aléatoire de la Team Pôle par défaut)</span></label>
+                        <div class="photo-upload" id="photoUploadMatch">
+                            <input type="file" id="photoInputMatch" accept="image/*">
+                            <div class="photo-upload-content">
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="upload-text">Cliquez pour ajouter une affiche personnalisée</div>
+                                <div class="upload-hint">JPG, PNG ou WEBP • Max 10 MB</div>
+                                <img class="photo-preview" id="photoPreviewMatch" alt="Aperçu">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        ✨ Déclarer le match
+                    </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de succès -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+            <h2>Match déclaré !</h2>
+            <p>Votre match a été enregistré avec succès. Partagez ce lien avec le parent qui va filmer :</p>
+
+            <div class="link-box" id="parentLink"></div>
+
+            <div class="qr-code" id="qrcode"></div>
+
+            <button class="btn btn-copy" onclick="copyLink()">📋 Copier le lien</button>
+            <button class="btn btn-primary" onclick="location.reload()">Déclarer un autre match</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Services Firebase -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+    <script src="storage-service.js"></script>
+    <script src="form-categories.js"></script>
+
+    <script>
+        let selectedPlayerPhoto = null;
+        let selectedMatchPoster = null;
+        let currentMatchId = null;
+
+        // Variables pour le recadrage
+        let cropData = {
+            zoom: 100,
+            offsetX: 0,
+            offsetY: 0
+        };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let imageLoaded = false;
+
+        // Gestion de l'upload de photo de la joueuse (Équipe 1)
+        const photoInput1 = document.getElementById('photoInput1');
+        const photoUpload1 = document.getElementById('photoUpload1');
+        const photoPreview1 = document.getElementById('photoPreview1');
+        const photoCropContainer = document.getElementById('photoCropContainer');
+        const cropCanvas = document.getElementById('cropCanvas');
+        const cropImage = document.getElementById('cropImage');
+        const circleImage = document.getElementById('circleImage');
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomValue = document.getElementById('zoomValue');
+
+        if (photoInput1) {
+            photoInput1.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Validation
+                if (!storageService.validateFileType(file, ['image/jpeg', 'image/png', 'image/webp'])) {
+                    alert('❌ Format non supporté. Utilisez JPG, PNG ou WEBP.');
+                    return;
+                }
+
+                if (!storageService.validateFileSize(file, 10)) {
+                    alert('❌ Fichier trop volumineux. Maximum 10 MB.');
+                    return;
+                }
+
+                selectedPlayerPhoto = file;
+
+                // Afficher l'aperçu
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    photoPreview1.src = e.target.result;
+                    photoPreview1.classList.add('show');
+                    photoUpload1.classList.add('has-file');
+                    
+                    // Initialiser l'aperçu circulaire
+                    initCropPreview(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Initialiser l'aperçu de recadrage
+        function initCropPreview(imageSrc) {
+            cropImage.src = imageSrc;
+            circleImage.src = imageSrc;
+            photoCropContainer.classList.add('show');
+            
+            // Réinitialiser les paramètres
+            cropData = { zoom: 100, offsetX: 0, offsetY: 0 };
+            zoomSlider.value = 100;
+            zoomValue.textContent = '100%';
+            imageLoaded = false;
+
+            cropImage.onload = () => {
+                imageLoaded = true;
+                updateCropDisplay();
+            };
+        }
+
+        // Mettre à jour l'affichage du recadrage
+        function updateCropDisplay() {
+            if (!imageLoaded) return;
+
+            const scale = cropData.zoom / 100;
+            const transform = `translate(calc(-50% + ${cropData.offsetX}px), calc(-50% + ${cropData.offsetY}px)) scale(${scale})`;
+            
+            cropImage.style.transform = transform;
+            circleImage.style.transform = transform;
+        }
+
+        // Gestion du zoom
+        if (zoomSlider) {
+            zoomSlider.addEventListener('input', (e) => {
+                cropData.zoom = parseInt(e.target.value);
+                zoomValue.textContent = cropData.zoom + '%';
+                updateCropDisplay();
+            });
+        }
+
+        // Gestion du drag pour repositionner l'image
+        if (cropCanvas) {
+            cropCanvas.addEventListener('mousedown', (e) => {
+                if (!imageLoaded) return;
+                isDragging = true;
+                dragStart = {
+                    x: e.clientX - cropData.offsetX,
+                    y: e.clientY - cropData.offsetY
+                };
+                cropCanvas.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                cropData.offsetX = e.clientX - dragStart.x;
+                cropData.offsetY = e.clientY - dragStart.y;
+                updateCropDisplay();
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    cropCanvas.style.cursor = 'move';
+                }
+            });
+
+            // Support tactile
+            cropCanvas.addEventListener('touchstart', (e) => {
+                if (!imageLoaded) return;
+                isDragging = true;
+                const touch = e.touches[0];
+                dragStart = {
+                    x: touch.clientX - cropData.offsetX,
+                    y: touch.clientY - cropData.offsetY
+                };
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                cropData.offsetX = touch.clientX - dragStart.x;
+                cropData.offsetY = touch.clientY - dragStart.y;
+                updateCropDisplay();
+            });
+
+            window.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+        }
+
+        // Gestion de l'upload de l'affiche du match
+        const photoInputMatch = document.getElementById('photoInputMatch');
+        const photoUploadMatch = document.getElementById('photoUploadMatch');
+        const photoPreviewMatch = document.getElementById('photoPreviewMatch');
+
+        if (photoInputMatch) {
+            photoInputMatch.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Validation
+                if (!storageService.validateFileType(file, ['image/jpeg', 'image/png', 'image/webp'])) {
+                    alert('❌ Format non supporté. Utilisez JPG, PNG ou WEBP.');
+                    return;
+                }
+
+                if (!storageService.validateFileSize(file, 10)) {
+                    alert('❌ Fichier trop volumineux. Maximum 10 MB.');
+                    return;
+                }
+
+                selectedMatchPoster = file;
+
+                // Afficher l'aperçu
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    photoPreviewMatch.src = e.target.result;
+                    photoPreviewMatch.classList.add('show');
+                    photoUploadMatch.classList.add('has-file');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Soumission du formulaire
+        document.getElementById('matchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('btn-loading');
+            submitBtn.textContent = 'Création en cours...';
+
+            try {
+                // Récupérer les données du formulaire
+                const formData = {
+                    matchType: document.getElementById('matchType').value,
+                    category: document.getElementById('category').value,
+                    team1Name: document.getElementById('team1Name').value.trim(),
+                    team1Color: document.getElementById('team1Color').value,
+                    team1FirstName: document.getElementById('team1FirstName').value.trim(),
+                    team1LastName: document.getElementById('team1LastName').value.trim(),
+                    team2Name: document.getElementById('team2Name').value.trim(),
+                    team2Color: document.getElementById('team2Color').value,
+                    date: document.getElementById('matchDate').value,
+                    time: document.getElementById('matchTime').value
+                };
+
+                // Upload de la photo de la joueuse si présente
+                let playerPhotoUrl = '';
+                if (selectedPlayerPhoto) {
+                    const tempId = 'player_' + Date.now();
+                    playerPhotoUrl = await storageService.uploadPlayerPhoto(selectedPlayerPhoto, tempId);
+                    console.log('✅ Photo joueuse uploadée:', playerPhotoUrl);
+                }
+
+                // Upload de l'affiche du match si présente
+                let matchPosterUrl = '';
+                if (selectedMatchPoster) {
+                    const tempId = 'poster_' + Date.now();
+                    matchPosterUrl = await storageService.uploadPlayerPhoto(selectedMatchPoster, tempId);
+                    console.log('✅ Affiche match uploadée:', matchPosterUrl);
+                }
+
+                // Créer le match
+                const matchData = {
+                    matchType: formData.matchType,
+                    category: formData.category,
+                    team1: {
+                        name: formData.team1Name,
+                        color: formData.team1Color,
+                        declaringPlayer: `${formData.team1FirstName} ${formData.team1LastName}`,
+                        playerPhoto: playerPhotoUrl,
+                        photoCrop: playerPhotoUrl ? {
+                            zoom: cropData.zoom,
+                            offsetX: cropData.offsetX,
+                            offsetY: cropData.offsetY
+                        } : null
+                    },
+                    team2: {
+                        name: formData.team2Name,
+                        color: formData.team2Color
+                    },
+                    matchPoster: matchPosterUrl,
+                    date: formData.date,
+                    time: formData.time,
+                    createdAt: new Date().toISOString()
+                };
+
+                currentMatchId = await dbService.createMatch(matchData);
+                console.log('✅ Match créé:', currentMatchId);
+
+                // Afficher la modal de succès
+                showSuccessModal(currentMatchId);
+
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Une erreur est survenue. Veuillez réessayer.');
+
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.textContent = '✨ Déclarer le match';
+            }
+        });
+
+        function showSuccessModal(matchId) {
+            const modal = document.getElementById('successModal');
+            const linkBox = document.getElementById('parentLink');
+
+            // Générer le lien pour le parent
+            const baseUrl = window.location.origin + window.location.pathname.replace('formulaire-match.html', '');
+            const parentUrl = `${baseUrl}interface-parent.html?match=${matchId}`;
+
+            linkBox.textContent = parentUrl;
+
+            // Générer le QR code
+            document.getElementById('qrcode').innerHTML = '';
+            new QRCode(document.getElementById('qrcode'), {
+                text: parentUrl,
+                width: 200,
+                height: 200,
+                colorDark: '#6366F1',
+                colorLight: '#ffffff'
+            });
+
+            modal.classList.add('show');
+            document.body.classList.add('modal-open');
+        }
+
+        function copyLink() {
+            const linkBox = document.getElementById('parentLink');
+            const textArea = document.createElement('textarea');
+            textArea.value = linkBox.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            alert('✅ Lien copié dans le presse-papier !');
+        }
+
+        // Définir la date minimale à aujourd'hui
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('matchDate').min = today;
+    </script>
+</body>
+
+</html>

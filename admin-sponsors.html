@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Sponsors - Admin Pôle Espoir</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #e53e3e;
+            --success: #38a169;
+            --warning: #f6ad55;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #2d3a4f;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --gold: #f6ad55;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at top left, rgba(44, 82, 130, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(229, 62, 62, 0.1) 0%, transparent 50%);
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 2px solid var(--gold);
+        }
+
+        .header-title h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            color: var(--text-light);
+        }
+
+        .header-title .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .header-user .avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--bg-dark);
+            font-weight: 600;
+        }
+
+        .header-user .name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .header-user .role {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* MAIN LAYOUT */
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100vh - 77px);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: rgba(30, 41, 59, 0.5);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.75rem;
+            padding-left: 0.75rem;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            background: var(--bg-card);
+            color: var(--text-light);
+        }
+
+        .sidebar-link.active {
+            background: rgba(246, 173, 85, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(246, 173, 85, 0.3);
+        }
+
+        .sidebar-link .icon {
+            font-size: 1.1rem;
+        }
+
+        .sidebar-link .badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* CONTENT AREA */
+        .content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .content-header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #ffd700 100%);
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(246, 173, 85, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-light);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            background: rgba(246, 173, 85, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(229, 62, 62, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .btn-danger:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px 10px 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background: transparent;
+        }
+
+        .tab:hover {
+            color: var(--text-light);
+            background: var(--bg-card);
+        }
+
+        .tab.active {
+            color: var(--gold);
+            background: var(--bg-card);
+            border-color: var(--border);
+        }
+
+        /* SPONSORS GRID */
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .sponsor-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .sponsor-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .sponsor-card.principal {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(246, 173, 85, 0.15);
+        }
+
+        .sponsor-preview {
+            height: 140px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sponsor-preview img {
+            max-height: 100px;
+            max-width: 90%;
+            object-fit: contain;
+        }
+
+        .sponsor-preview video {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .sponsor-preview .placeholder {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .sponsor-preview .type-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .sponsor-preview .type-badge.image {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sponsor-preview .type-badge.video {
+            background: var(--accent);
+            color: white;
+        }
+
+        .sponsor-preview .principal-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--gold);
+            color: var(--bg-dark);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .sponsor-info {
+            padding: 1.25rem;
+        }
+
+        .sponsor-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .sponsor-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sponsor-tag {
+            background: var(--bg-input);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .sponsor-tag.all {
+            background: rgba(56, 161, 105, 0.15);
+            color: var(--success);
+        }
+
+        .sponsor-tag.player {
+            background: rgba(246, 173, 85, 0.15);
+            color: var(--gold);
+        }
+
+        .sponsor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label .required {
+            color: var(--accent);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.15);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .form-select option {
+            background: var(--bg-dark);
+        }
+
+        /* FILE UPLOAD */
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: var(--gold);
+            background: rgba(246, 173, 85, 0.05);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--gold);
+            background: rgba(246, 173, 85, 0.1);
+        }
+
+        .file-upload .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload .text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload .formats {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .file-preview.active {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-preview img,
+        .file-preview video {
+            max-height: 60px;
+            max-width: 100px;
+            border-radius: 6px;
+            object-fit: contain;
+            background: white;
+        }
+
+        .file-preview .file-info {
+            flex: 1;
+        }
+
+        .file-preview .file-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-preview .file-size {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .file-preview .remove-file {
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* RADIO GROUP */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .radio-option {
+            flex: 1;
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .radio-option:hover {
+            border-color: var(--text-muted);
+        }
+
+        .radio-option.selected {
+            border-color: var(--gold);
+            background: rgba(246, 173, 85, 0.1);
+        }
+
+        .radio-option input {
+            display: none;
+        }
+
+        .radio-option .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .radio-option .label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* CHECKBOX LIST */
+        .checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            background: var(--bg-card);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold);
+        }
+
+        .checkbox-item .player-name {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-item .player-club {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* TOGGLE */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: 10px;
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+        }
+
+        .toggle-label .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-card);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--gold);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+        }
+
+        .toggle.active::after {
+            left: 25px;
+        }
+
+        /* STATS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .sponsors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="header-logo">🏐</div>
+            <div class="header-title">
+                <h1>PÔLE ESPOIR SABLÉ</h1>
+                <div class="subtitle">Administration</div>
+            </div>
+        </div>
+        <div class="header-user">
+            <div class="avatar">JD</div>
+            <div>
+                <div class="name">Jean Dupont</div>
+                <div class="role">Chargé de communication</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Gestion</div>
+                <nav class="sidebar-nav">
+                    <a class="sidebar-link active">
+                        <span class="icon">🤝</span>
+                        <span>Partenaires</span>
+                        <span class="badge">4</span>
+                    </a>
+                    <a class="sidebar-link">
+                        <span class="icon">📅</span>
+                        <span>Matchs du week-end</span>
+                    </a>
+                    <a class="sidebar-link">
+                        <span class="icon">👥</span>
+                        <span>Joueuses</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Diffusion</div>
+                <nav class="sidebar-nav">
+                    <a class="sidebar-link">
+                        <span class="icon">📺</span>
+                        <span>Page Lives</span>
+                    </a>
+                    <a class="sidebar-link">
+                        <span class="icon">📊</span>
+                        <span>Statistiques</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Paramètres</div>
+                <nav class="sidebar-nav">
+                    <a class="sidebar-link">
+                        <span class="icon">⚙️</span>
+                        <span>Configuration</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content">
+            <div class="content-header">
+                <div>
+                    <h2>GESTION DES PARTENAIRES</h2>
+                    <div class="subtitle">Gérez les sponsors affichés pendant les lives</div>
+                </div>
+                <button class="btn btn-primary" onclick="openModal()">
+                    <span>➕</span>
+                    Ajouter un partenaire
+                </button>
+            </div>
+
+            <!-- STATS -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="value">4</div>
+                    <div class="label">Partenaires actifs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">1</div>
+                    <div class="label">Sponsor principal</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">3</div>
+                    <div class="label">Images</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">1</div>
+                    <div class="label">Vidéos</div>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab active" onclick="filterSponsors('all')">Tous les partenaires</button>
+                <button class="tab" onclick="filterSponsors('principal')">Principal</button>
+                <button class="tab" onclick="filterSponsors('secondary')">Secondaires</button>
+            </div>
+
+            <!-- SPONSORS GRID -->
+            <div class="sponsors-grid" id="sponsorsGrid">
+
+                <!-- Sponsor Principal -->
+                <div class="sponsor-card principal" data-type="principal">
+                    <div class="sponsor-preview">
+                        <span class="principal-badge">⭐ Principal</span>
+                        <span class="type-badge image">Image</span>
+                        <span class="placeholder">DÉCATHLON</span>
+                    </div>
+                    <div class="sponsor-info">
+                        <div class="sponsor-name">Décathlon Sablé</div>
+                        <div class="sponsor-meta">
+                            <span class="sponsor-tag all">✓ Tous les matchs</span>
+                        </div>
+                        <div class="sponsor-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editSponsor(1)">✏️ Modifier</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSponsor(1)">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sponsor Secondaire 1 -->
+                <div class="sponsor-card" data-type="secondary">
+                    <div class="sponsor-preview">
+                        <span class="type-badge image">Image</span>
+                        <span class="placeholder">BOULANGERIE MARTIN</span>
+                    </div>
+                    <div class="sponsor-info">
+                        <div class="sponsor-name">Boulangerie Martin</div>
+                        <div class="sponsor-meta">
+                            <span class="sponsor-tag all">✓ Tous les matchs</span>
+                        </div>
+                        <div class="sponsor-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editSponsor(2)">✏️ Modifier</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSponsor(2)">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sponsor Secondaire 2 - Vidéo -->
+                <div class="sponsor-card" data-type="secondary">
+                    <div class="sponsor-preview">
+                        <span class="type-badge video">Vidéo</span>
+                        <span class="placeholder">🎬 GARAGE DUBOIS</span>
+                    </div>
+                    <div class="sponsor-info">
+                        <div class="sponsor-name">Garage Dubois</div>
+                        <div class="sponsor-meta">
+                            <span class="sponsor-tag player">Emma D.</span>
+                            <span class="sponsor-tag player">Léa M.</span>
+                        </div>
+                        <div class="sponsor-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editSponsor(3)">✏️ Modifier</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSponsor(3)">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sponsor Secondaire 3 -->
+                <div class="sponsor-card" data-type="secondary">
+                    <div class="sponsor-preview">
+                        <span class="type-badge image">Image</span>
+                        <span class="placeholder">PHARMACIE CENTRALE</span>
+                    </div>
+                    <div class="sponsor-info">
+                        <div class="sponsor-name">Pharmacie Centrale</div>
+                        <div class="sponsor-meta">
+                            <span class="sponsor-tag all">✓ Tous les matchs</span>
+                        </div>
+                        <div class="sponsor-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="editSponsor(4)">✏️ Modifier</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSponsor(4)">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL AJOUT/MODIFICATION -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">➕ Ajouter un partenaire</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Nom du partenaire -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Nom du partenaire <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-input" id="sponsorName" placeholder="Ex: Décathlon Sablé">
+                </div>
+
+                <!-- Type de média -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Type de média <span class="required">*</span>
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-option selected" onclick="selectMediaType('image')">
+                            <input type="radio" name="mediaType" value="image" checked>
+                            <div class="icon">🖼️</div>
+                            <div class="label">Image fixe</div>
+                        </label>
+                        <label class="radio-option" onclick="selectMediaType('video')">
+                            <input type="radio" name="mediaType" value="video">
+                            <div class="icon">🎬</div>
+                            <div class="label">Vidéo / Média</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Upload fichier -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Fichier <span class="required">*</span>
+                    </label>
+                    <div class="file-upload" id="fileUpload" onclick="document.getElementById('fileInput').click()">
+                        <div class="icon">📁</div>
+                        <div class="text">Glissez-déposez ou cliquez pour sélectionner</div>
+                        <div class="formats" id="formatHint">PNG, JPG, SVG (max 5 Mo)</div>
+                        <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleFileSelect(event)">
+                    </div>
+                    <div class="file-preview" id="filePreview">
+                        <img id="previewImg" src="" alt="">
+                        <video id="previewVideo" src="" muted></video>
+                        <div class="file-info">
+                            <div class="file-name" id="fileName"></div>
+                            <div class="file-size" id="fileSize"></div>
+                        </div>
+                        <span class="remove-file" onclick="removeFile()">✕</span>
+                    </div>
+                </div>
+
+                <!-- Sponsor principal ? -->
+                <div class="form-group">
+                    <div class="toggle-container">
+                        <div class="toggle-label">
+                            Sponsor principal
+                            <span class="hint">Sera affiché en grand sur l'écran sponsors</span>
+                        </div>
+                        <div class="toggle" id="principalToggle" onclick="togglePrincipal()"></div>
+                    </div>
+                </div>
+
+                <!-- Attribution -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Afficher pour <span class="required">*</span>
+                    </label>
+                    <select class="form-select" id="attribution" onchange="togglePlayerList()">
+                        <option value="all">Tous les matchs</option>
+                        <option value="specific">Matchs spécifiques (par joueuse)</option>
+                    </select>
+                </div>
+
+                <!-- Liste des joueuses (conditionnel) -->
+                <div class="form-group" id="playerListGroup" style="display: none;">
+                    <label class="form-label">Sélectionner les joueuses</label>
+                    <div class="checkbox-list">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="players" value="emma">
+                            <span class="player-name">Emma Durand</span>
+                            <span class="player-club">SCO Volley</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="players" value="lea">
+                            <span class="player-name">Léa Martin</span>
+                            <span class="player-club">ASVB Pays de Loire</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="players" value="julie">
+                            <span class="player-name">Julie Petit</span>
+                            <span class="player-club">VBC Nantes</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="players" value="sarah">
+                            <span class="player-name">Sarah Bernard</span>
+                            <span class="player-club">Vendée Volley</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="players" value="marie">
+                            <span class="player-name">Marie Leroy</span>
+                            <span class="player-club">Tours VB</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="players" value="clara">
+                            <span class="player-name">Clara Moreau</span>
+                            <span class="player-club">Rennes Volley</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="saveSponsor()">💾 Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Services Firebase -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+    <script src="storage-service.js"></script>
+
+    <script>
+        // État du formulaire
+        let currentMediaType = 'image';
+        let isPrincipal = false;
+        let selectedFile = null;
+        let editingSponsorId = null;
+        let currentFilter = 'all';
+        let allSponsors = {};
+
+        // Initialisation
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSponsors();
+        });
+
+        // Charger les sponsors
+        function loadSponsors() {
+            dbService.getAllSponsors().then(sponsors => {
+                allSponsors = sponsors;
+                updateStats();
+                renderSponsors();
+            });
+        }
+
+        // Mettre à jour les statistiques
+        function updateStats() {
+            const list = Object.values(allSponsors);
+            const active = list.filter(s => s.active).length;
+            const principal = list.filter(s => s.isPrincipal).length;
+            const images = list.filter(s => s.type === 'image').length;
+            const videos = list.filter(s => s.type === 'video').length;
+
+            const cards = document.querySelectorAll('.stat-card .value');
+            if (cards.length >= 4) {
+                cards[0].textContent = active;
+                cards[1].textContent = principal;
+                cards[2].textContent = images;
+                cards[3].textContent = videos;
+            }
+        }
+
+        // Afficher les sponsors
+        function renderSponsors() {
+            const grid = document.getElementById('sponsorsGrid');
+            const list = Object.values(allSponsors);
+
+            // Trier: Principal d'abord, puis par date
+            list.sort((a, b) => {
+                if (a.isPrincipal && !b.isPrincipal) return -1;
+                if (!a.isPrincipal && b.isPrincipal) return 1;
+                return b.createdAt - a.createdAt;
+            });
+
+            if (list.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="icon">📂</div>
+                        <h3>Aucun partenaire</h3>
+                        <p>Commencez par ajouter un partenaire pour qu'il apparaisse ici.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const filteredList = list.filter(s => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'principal') return s.isPrincipal;
+                if (currentFilter === 'secondary') return !s.isPrincipal;
+                return true;
+            });
+
+            grid.innerHTML = filteredList.map(sponsor => `
+                <div class="sponsor-card ${sponsor.isPrincipal ? 'principal' : ''}" data-type="${sponsor.isPrincipal ? 'principal' : 'secondary'}">
+                    <div class="sponsor-preview">
+                        ${sponsor.isPrincipal ? '<span class="principal-badge">⭐ Principal</span>' : ''}
+                        <span class="type-badge ${sponsor.type}">${sponsor.type === 'image' ? 'Image' : 'Vidéo'}</span>
+                        
+                        ${sponsor.type === 'image'
+                    ? `<img src="${sponsor.mediaUrl}" alt="${sponsor.name}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`
+                    : `<video src="${sponsor.mediaUrl}" style="max-height: 100%; max-width: 100%; object-fit: contain;" muted loop autoplay></video>`
+                }
+                    </div>
+                    <div class="sponsor-info">
+                        <div class="sponsor-name">${sponsor.name}</div>
+                        <div class="sponsor-meta">
+                            ${sponsor.attribution === 'all'
+                    ? '<span class="sponsor-tag all">✓ Tous les matchs</span>'
+                    : (sponsor.players || []).map(p => `<span class="sponsor-tag player">${p}</span>`).join('')
+                }
+                        </div>
+                        <div class="sponsor-actions">
+                            <button class="btn ${sponsor.active ? 'btn-secondary' : 'btn-warning'} btn-sm" onclick="toggleActive('${sponsor.id}', ${!sponsor.active})">
+                                ${sponsor.active ? '👁️ Visible' : '🔒 Masqué'}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="editSponsor('${sponsor.id}')">✏️ Modifier</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSponsor('${sponsor.id}')">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Ouvrir/Fermer modal
+        function openModal(editId = null) {
+            document.getElementById('modalOverlay').style.display = 'flex';
+            const modalTitle = document.getElementById('modalTitle');
+
+            if (editId) {
+                modalTitle.textContent = '✏️ Modifier le partenaire';
+                editingSponsorId = editId;
+                loadSponsorToEdit(editId);
+            } else {
+                modalTitle.textContent = '➕ Ajouter un partenaire';
+                editingSponsorId = null;
+                resetForm();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        function resetForm() {
+            document.getElementById('sponsorName').value = '';
+            removeFile();
+            isPrincipal = false;
+            document.getElementById('principalToggle').classList.remove('active');
+            document.getElementById('attribution').value = 'all';
+
+            // Reset checkboxes
+            document.querySelectorAll('input[name="players"]').forEach(cb => cb.checked = false);
+
+            togglePlayerList();
+            selectMediaType('image');
+        }
+
+        function loadSponsorToEdit(id) {
+            const sponsor = allSponsors[id];
+            if (!sponsor) return;
+
+            document.getElementById('sponsorName').value = sponsor.name;
+
+            // Media Type
+            selectMediaType(sponsor.type);
+
+            // Existing File Preview
+            const preview = document.getElementById('filePreview');
+            const previewImg = document.getElementById('previewImg');
+            const previewVideo = document.getElementById('previewVideo');
+
+            document.getElementById('fileName').textContent = 'Fichier actuel conservé';
+            document.getElementById('fileSize').textContent = '';
+
+            if (sponsor.type === 'image') {
+                previewImg.src = sponsor.mediaUrl;
+                previewImg.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else {
+                previewVideo.src = sponsor.mediaUrl;
+                previewVideo.style.display = 'block';
+                previewImg.style.display = 'none';
+            }
+            preview.classList.add('active');
+
+            // Principal
+            isPrincipal = sponsor.isPrincipal;
+            document.getElementById('principalToggle').classList.toggle('active', isPrincipal);
+
+            // Attribution
+            document.getElementById('attribution').value = sponsor.attribution;
+            togglePlayerList();
+
+            // Players
+            if (sponsor.players) {
+                sponsor.players.forEach(p => {
+                    const cb = document.querySelector(`input[name="players"][value="${p}"]`); // Note: value needs to be careful if user inputs real names.
+                    // Pour le prototype on utilise des valeurs statiques de checkbox, 
+                    // mais idéalement il faudrait une liste dynamique de joueuses.
+                    // Ici on suppose que le user coche les valeurs correspondantes.
+                });
+            }
+        }
+
+        // Type de média
+        function selectMediaType(type) {
+            currentMediaType = type;
+            document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+
+            const selectedOpt = document.querySelector(`.radio-option input[value="${type}"]`).closest('.radio-option');
+            if (selectedOpt) selectedOpt.classList.add('selected');
+
+            const formatHint = document.getElementById('formatHint');
+            const fileInput = document.getElementById('fileInput');
+
+            if (type === 'image') {
+                formatHint.textContent = 'PNG, JPG, SVG (max 5 Mo)';
+                fileInput.accept = 'image/*';
+            } else {
+                formatHint.textContent = 'MP4, MOV, WebM (max 50 Mo, durée max 30 sec)';
+                fileInput.accept = 'video/*';
+            }
+        }
+
+        // Upload fichier
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedFile = file;
+            const preview = document.getElementById('filePreview');
+            const previewImg = document.getElementById('previewImg');
+            const previewVideo = document.getElementById('previewVideo');
+
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+
+            if (file.type.startsWith('image/')) {
+                previewImg.src = URL.createObjectURL(file);
+                previewImg.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else if (file.type.startsWith('video/')) {
+                previewVideo.src = URL.createObjectURL(file);
+                previewVideo.style.display = 'block';
+                previewImg.style.display = 'none';
+            }
+
+            preview.classList.add('active');
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            document.getElementById('filePreview').classList.remove('active');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewImg').src = '';
+            document.getElementById('previewVideo').src = '';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' octets';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' Ko';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
+        }
+
+        // Drag & Drop
+        const fileUpload = document.getElementById('fileUpload');
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                handleFileSelect({ target: { files: [file] } });
+            }
+        });
+
+        // Toggle principal
+        function togglePrincipal() {
+            isPrincipal = !isPrincipal;
+            document.getElementById('principalToggle').classList.toggle('active', isPrincipal);
+        }
+
+        // Toggle liste joueuses
+        function togglePlayerList() {
+            const attribution = document.getElementById('attribution').value;
+            const playerListGroup = document.getElementById('playerListGroup');
+            playerListGroup.style.display = attribution === 'specific' ? 'block' : 'none';
+        }
+
+        // Filtrer sponsors
+        function filterSponsors(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            renderSponsors();
+        }
+
+        // Sauvegarder sponsor
+        async function saveSponsor() {
+            const name = document.getElementById('sponsorName').value;
+            if (!name) {
+                alert('Veuillez entrer le nom du partenaire');
+                return;
+            }
+
+            const attribution = document.getElementById('attribution').value;
+            const selectedPlayers = [];
+            if (attribution === 'specific') {
+                document.querySelectorAll('input[name="players"]:checked').forEach(cb => {
+                    // Ici on prend le label texte comme nom de joueur pour simplifier
+                    // Idéalement il faudrait utiliser les IDs des joueurs chargées depuis DB
+                    const label = cb.closest('.checkbox-item').querySelector('.player-name').textContent;
+                    selectedPlayers.push(label);
+                });
+            }
+
+            const saveBtn = document.querySelector('.modal-footer .btn-primary');
+            const originalText = saveBtn.textContent;
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ Sauvegarde...';
+
+            try {
+                let mediaUrl;
+
+                // Mode création : fichier obligatoire
+                if (!editingSponsorId && !selectedFile) {
+                    throw new Error('Veuillez sélectionner un fichier');
+                }
+
+                if (selectedFile) {
+                    // Upload du nouveau fichier
+                    const sponsorId = editingSponsorId || dbService.generateSponsorId(); // Use helper or temp ID logic handled by createSponsor
+                    // Astuce: pour createSponsor, l'ID est généré dedans.
+                    // Si on upload d'abord, on a besoin d'un ID. 
+                    // Utilisons un ID temporaire ou passons null et laissons le service gérer (mais il demande un path)
+
+                    const tempId = editingSponsorId || 'temp_' + Date.now();
+                    mediaUrl = await storageService.uploadSponsorMedia(selectedFile, tempId);
+                } else if (editingSponsorId) {
+                    // Conservation de l'URL existante
+                    mediaUrl = allSponsors[editingSponsorId].mediaUrl;
+                }
+
+                const sponsorData = {
+                    name: name,
+                    type: currentMediaType,
+                    mediaUrl: mediaUrl,
+                    isPrincipal: isPrincipal,
+                    attribution: attribution,
+                    players: selectedPlayers
+                };
+
+                if (editingSponsorId) {
+                    await dbService.updateSponsor(editingSponsorId, sponsorData);
+                    alert('✅ Partenaire modifié avec succès !');
+                } else {
+                    await dbService.createSponsor(sponsorData);
+                    alert('✅ Partenaire créé avec succès !');
+                }
+
+                closeModal();
+                loadSponsors(); // Recharger la liste
+
+            } catch (error) {
+                console.error(error);
+                alert('❌ Erreur : ' + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        }
+
+        // Modifier sponsor
+        function editSponsor(id) {
+            openModal(id);
+        }
+
+        // Supprimer sponsor
+        async function deleteSponsor(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
+                try {
+                    // On pourrait aussi supprimer l'image du storage ici si on veut nettoyer
+                    await dbService.deleteSponsor(id);
+                    loadSponsors();
+                    // alert('Partenaire supprimé'); // Moins intrusif sans alert
+                } catch (error) {
+                    alert('Erreur lors de la suppression');
+                }
+            }
+        }
+
+        // Activer/Désactiver
+        async function toggleActive(id, isActive) {
+            try {
+                await dbService.toggleSponsorActive(id, isActive);
+                loadSponsors();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Fermer modal avec Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+
+</body>
+
+</html>

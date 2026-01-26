@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration des Interviews - Pôle Espoir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --bg-dark: #0f172a;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .add-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .form-group select option {
+            background-color: #1F2937;
+            color: white;
+        }
+
+        .interview-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .interview-row {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .interview-info h3 { margin: 0 0 5px 0; }
+        .interview-info p { margin: 0; opacity: 0.6; font-size: 0.9rem; }
+        .interview-info a { color: var(--primary); text-decoration: none; }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Gestion des Interviews</h1>
+        <div style="display:flex; gap:10px;">
+            <a href="index.html" class="btn btn-outline">🏠 Accueil</a>
+            <button class="btn btn-primary" onclick="location.reload()">🔄 Actualiser</button>
+        </div>
+    </div>
+
+    <div class="add-form">
+        <h3>Ajouter une interview</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Titre de la vidéo</label>
+                <input type="text" id="intTitle" placeholder="Ex: Interview avant-match Boulouris">
+            </div>
+            <div class="form-group">
+                <label>Lien YouTube</label>
+                <input type="text" id="intUrl" placeholder="https://youtu.be/...">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Catégorie</label>
+                <select id="intCategory">
+                    <option value="Avant-match">Avant-match</option>
+                    <option value="Après-match">Après-match</option>
+                    <option value="Interpole">Interpole</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Équipe concernée (optionnel)</label>
+                <input type="text" id="intTeam" placeholder="Ex: Bordeaux">
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="addInterview()">➕ Ajouter la vidéo</button>
+    </div>
+
+    <div id="interviewList" class="interview-grid">
+        <div class="loading">Chargement des interviews...</div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <!-- Services -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+
+    <script>
+        // Init Firebase est déjà fait dans firebase-config.js
+
+        async function loadInterviews() {
+            try {
+                const interviews = await dbService.getAllInterviews();
+                const container = document.getElementById('interviewList');
+                container.innerHTML = '';
+
+                const sortedIds = Object.keys(interviews).sort((a, b) => {
+                    return interviews[b].createdAt - interviews[a].createdAt;
+                });
+
+                if (sortedIds.length === 0) {
+                    container.innerHTML = '<div class="loading">Aucune interview trouvée.</div>';
+                    return;
+                }
+
+                sortedIds.forEach(id => {
+                    const int = interviews[id];
+                    const row = document.createElement('div');
+                    row.className = 'interview-row';
+
+                    row.innerHTML = `
+                        <div class="interview-info">
+                            <h3>${int.title} <span class="badge">${int.category}</span></h3>
+                            <p>
+                                <a href="${int.youtubeUrl}" target="_blank">${int.youtubeUrl}</a> 
+                                ${(int.team ? ' • ' + int.team : '')}
+                            </p>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-danger" onclick="deleteInterview('${id}')">🗑️ Supprimer</button>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Erreur chargement:", error);
+                document.getElementById('interviewList').innerHTML = '<div class="loading">Erreur de chargement.</div>';
+            }
+        }
+
+        async function addInterview() {
+            const title = document.getElementById('intTitle').value;
+            const url = document.getElementById('intUrl').value;
+            const category = document.getElementById('intCategory').value;
+            const team = document.getElementById('intTeam').value;
+
+            if (!title || !url) {
+                alert('Veuillez remplir le titre et le lien YouTube.');
+                return;
+            }
+
+            try {
+                await dbService.createInterview({
+                    title: title,
+                    youtubeUrl: url,
+                    category: category,
+                    team: team
+                });
+                
+                // Reset form
+                document.getElementById('intTitle').value = '';
+                document.getElementById('intUrl').value = '';
+                document.getElementById('intTeam').value = '';
+                
+                alert('✅ Interview ajoutée avec succès !');
+                loadInterviews(); // Refresh list
+            } catch (error) {
+                console.error("Erreur ajout:", error);
+                alert('❌ Erreur lors de l\'ajout.');
+            }
+        }
+
+        async function deleteInterview(id) {
+            if (!confirm('Voulez-vous vraiment supprimer cette interview ?')) return;
+            try {
+                await dbService.deleteInterview(id);
+                loadInterviews();
+            } catch (error) {
+                console.error("Erreur suppression:", error);
+                alert('❌ Erreur lors de la suppression.');
+            }
+        }
+
+        window.onload = loadInterviews;
+    </script>
+</body>
+</html>

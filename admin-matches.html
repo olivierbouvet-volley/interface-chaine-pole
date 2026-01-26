@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration des Matchs - Pôle Espoir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --bg-dark: #0f172a;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .match-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .match-row {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .match-info h3 {
+            margin: 0 0 5px 0;
+        }
+
+        .match-info p {
+            margin: 0;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .status-live {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .status-finished {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-upcoming {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            margin-left: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px;
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        /* Fonctions Avancées */
+        .advanced-panel {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--danger);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .advanced-panel.show {
+            display: block;
+        }
+
+        .advanced-panel h4 {
+            color: var(--danger);
+            margin: 0 0 16px 0;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 4px;
+            opacity: 0.6;
+            font-size: 0.85rem;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .btn-toggle {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Gestion des Matchs</h1>
+        <div style="display:flex; gap:10px;">
+            <a href="index.html" class="btn btn-outline">🏠 Accueil</a>
+            <button class="btn btn-primary" onclick="location.reload()">🔄 Actualiser</button>
+        </div>
+    </div>
+
+    <div id="matchList" class="match-grid">
+        <div class="loading">Chargement des matchs...</div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <!-- Services -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+
+    <script>
+        async function loadMatches() {
+            dbService.listenToAllMatches((matches) => {
+                const container = document.getElementById('matchList');
+                container.innerHTML = '';
+
+                // Trier par date décroissante
+                const sortedIds = Object.keys(matches).sort((a, b) => {
+                    return new Date(matches[b].date) - new Date(matches[a].date);
+                });
+
+                if (sortedIds.length === 0) {
+                    container.innerHTML = '<div class="loading">Aucun match trouvé.</div>';
+                    return;
+                }
+
+                sortedIds.forEach(id => {
+                    const match = matches[id];
+                    const row = document.createElement('div');
+                    row.className = 'match-row';
+
+                    const statusClass = `status-${match.status || 'upcoming'}`;
+                    const statusLabel = {
+                        'live': '🔴 En Direct',
+                        'finished': '✓ Terminé',
+                        'upcoming': '⏳ À venir'
+                    }[match.status] || 'Inconnu';
+
+                    const team1Name = match.team1?.name || match.clubName || 'Équipe 1';
+                    const team2Name = match.team2?.name || match.opponent || 'Équipe 2';
+                    const currentSets1 = match.score?.setsTeam1 || 0;
+                    const currentSets2 = match.score?.setsTeam2 || 0;
+                    const currentOffset = match.videoSync?.offsetSeconds || 0;
+
+                    row.innerHTML = `
+                        <div class="match-info">
+                            <h3>${team1Name} vs ${team2Name}</h3>
+                            <p>${match.playerName || match.team1?.declaringPlayer || 'N/A'} - ${match.date} ${match.time || ''}</p>
+                            <span class="status-badge ${statusClass}">${statusLabel}</span>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-outline" onclick="setStatus('${id}', 'upcoming')">⏳ Report</button>
+                            <button class="btn btn-outline" onclick="setStatus('${id}', 'live')">🔴 Direct</button>
+                            <button class="btn btn-outline" onclick="setStatus('${id}', 'finished')">✓ Finir</button>
+                            <button class="btn btn-toggle" onclick="toggleAdvanced('${id}')">⚙️ Avancé</button>
+                            <button class="btn btn-danger" onclick="deleteMatch('${id}')">🗑️ Supprimer</button>
+                        </div>
+
+                        <!-- Panneau Fonctions Avancées -->
+                        <div class="advanced-panel" id="advanced-${id}">
+                            <h4>⚠️ Fonctions Avancées - ${team1Name} vs ${team2Name}</h4>
+                            
+                            <!-- Diagnostics Flux Vidéo & Édition -->
+                            <div style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 12px; margin-bottom: 12px; background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 6px;">
+                                <strong>📹 Gestion du Flux Vidéo</strong>
+                                <p style="font-size: 0.85rem; margin: 5px 0; opacity: 0.8;">Ajoutez ou modifiez le lien du live (YouTube/Facebook) ici.</p>
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Lien Direct:</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" id="videoUrl-${id}" value="${match.youtubeUrl || ''}" placeholder="https://..." style="flex:1; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                                        <button class="btn btn-primary" onclick="updateMatchVideoUrl('${id}')" style="padding: 0 15px;">💾</button>
+                                    </div>
+                                </div>
+                                ${match.youtubeUrl ? `<a href="${match.youtubeUrl}" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; padding: 4px 10px; margin-top: 5px;">🔗 Tester le lien actuel</a>` : ''}
+                            </div>
+
+                            <!-- Correction des Sets -->
+                            <div style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 12px; margin-bottom: 12px;">
+                                <strong>🔧 Correction du Score des Sets</strong>
+                                <div class="form-group">
+                                    <label>Sets ${team1Name}:</label>
+                                    <input type="number" id="sets1-${id}" min="0" max="5" value="${currentSets1}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Sets ${team2Name}:</label>
+                                    <input type="number" id="sets2-${id}" min="0" max="5" value="${currentSets2}">
+                                </div>
+                                <button class="btn btn-warning btn-block" onclick="correctSets('${id}')">✅ Corriger les Sets</button>
+                            </div>
+
+                            <!-- Synchronisation Vidéo -->
+                            <div style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 12px; margin-bottom: 12px;">
+                                <strong>🔄 Synchronisation Vidéo/Score</strong>
+                                <div class="form-group">
+                                    <label>Décalage (secondes):</label>
+                                    <input type="number" id="offset-${id}" value="${currentOffset}" step="0.1">
+                                    <small>+ si le score est en retard (vidéo en avance), - si le score est en avance (vidéo en retard)</small>
+                                </div>
+                                <button class="btn btn-info btn-block" onclick="applySync('${id}')">🔄 Appliquer</button>
+                            </div>
+
+                            <!-- Gestion du Flux -->
+                            <div>
+                                <strong>🔌 Gestion du Flux</strong>
+                                <button class="btn btn-info btn-block" onclick="reconnect('${id}')">🔌 Reconnecter</button>
+                                <button class="btn btn-danger btn-block" onclick="clearSync('${id}')">🗑️ Réinitialiser Sync</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            });
+        }
+
+        async function setStatus(id, status) {
+            if (!confirm(`Changer le statut en "${status}" ?`)) return;
+            try {
+                await firebase.database().ref('matches/' + id).update({ status });
+                alert('✅ Statut mis à jour');
+            } catch (e) {
+                alert('❌ Erreur');
+            }
+        }
+
+        async function deleteMatch(id) {
+            if (!confirm('!!! ATTENTION !!! Supprimer définitivement ce match ainsi que son historique et ses scores ?')) return;
+            try {
+                await firebase.database().ref('matches/' + id).remove();
+                alert('✅ Match supprimé');
+            } catch (e) {
+                alert('❌ Erreur');
+            }
+        }
+
+        // ========== FONCTIONS AVANCÉES ==========
+
+        function toggleAdvanced(id) {
+            const panel = document.getElementById('advanced-' + id);
+            panel.classList.toggle('show');
+        }
+
+        async function correctSets(id) {
+            const sets1 = parseInt(document.getElementById('sets1-' + id).value) || 0;
+            const sets2 = parseInt(document.getElementById('sets2-' + id).value) || 0;
+
+            if (!confirm(`Corriger le score des sets à ${sets1} - ${sets2} ?\n\n⚠️ Cette action modifie directement la base de données.`)) {
+                return;
+            }
+
+            try {
+                const matchRef = firebase.database().ref('matches/' + id);
+                const snapshot = await matchRef.once('value');
+                const oldScore = snapshot.val()?.score || {};
+
+                await matchRef.child('score').update({
+                    setsTeam1: sets1,
+                    setsTeam2: sets2
+                });
+
+                await matchRef.child('corrections').push({
+                    type: 'sets_correction',
+                    oldSets: {
+                        team1: oldScore.setsTeam1 || 0,
+                        team2: oldScore.setsTeam2 || 0
+                    },
+                    newSets: {
+                        team1: sets1,
+                        team2: sets2
+                    },
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    correctedBy: 'admin_interface'
+                });
+
+                alert(`✅ Score des sets corrigé : ${sets1} - ${sets2}`);
+            } catch (error) {
+                console.error('Erreur correction:', error);
+                alert('❌ Erreur lors de la correction');
+            }
+        }
+
+        async function applySync(id) {
+            const offset = parseFloat(document.getElementById('offset-' + id).value) || 0;
+
+            try {
+                await firebase.database().ref('matches/' + id + '/videoSync').set({
+                    offsetSeconds: offset,
+                    appliedAt: firebase.database.ServerValue.TIMESTAMP,
+                    appliedBy: 'admin_interface'
+                });
+
+                alert(`✅ Synchronisation appliquée : ${offset > 0 ? '+' : ''}${offset}s`);
+            } catch (error) {
+                console.error('Erreur sync:', error);
+                alert('❌ Erreur lors de la synchronisation');
+            }
+        }
+
+        async function updateMatchVideoUrl(id) {
+            const urlInput = document.getElementById('videoUrl-' + id);
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                if (!confirm('Voulez-vous vraiment effacer le lien vidéo ?')) return;
+            }
+
+            // Détection simple de la source
+            let source = 'youtube';
+            if (url.includes('facebook') || url.includes('fb.watch')) {
+                source = 'facebook';
+            }
+
+            try {
+                const updates = {
+                    youtubeUrl: url,
+                    videoSource: source
+                };
+
+                await firebase.database().ref('matches/' + id).update(updates);
+                
+                // Si lien vidé, on supprime aussi le champs
+                if (!url) {
+                     await firebase.database().ref('matches/' + id + '/youtubeUrl').remove();
+                }
+
+                alert('✅ Lien vidéo mis à jour !');
+            } catch (error) {
+                console.error('Erreur mise à jour lien:', error);
+                alert('❌ Erreur lors de la mise à jour');
+            }
+        }
+
+        async function reconnect(id) {
+            if (!confirm('Reconnecter le flux vidéo ?\n\nCela va forcer la reconnexion de tous les viewers.')) {
+                return;
+            }
+
+            try {
+                const matchRef = firebase.database().ref('matches/' + id);
+                const snapshot = await matchRef.once('value');
+                const match = snapshot.val();
+                
+                if (!match.youtubeUrl) {
+                    alert('❌ Aucun lien YouTube défini pour ce match');
+                    return;
+                }
+
+                await matchRef.update({
+                    reconnectTimestamp: firebase.database.ServerValue.TIMESTAMP,
+                    youtubeUrl: match.youtubeUrl
+                });
+
+                alert('✅ Signal de reconnexion envoyé');
+            } catch (error) {
+                console.error('Erreur reconnexion:', error);
+                alert('❌ Erreur lors de la reconnexion');
+            }
+        }
+
+        async function clearSync(id) {
+            if (!confirm('Réinitialiser tous les paramètres de synchronisation ?')) {
+                return;
+            }
+
+            try {
+                await firebase.database().ref('matches/' + id + '/videoSync').remove();
+                document.getElementById('offset-' + id).value = 0;
+                
+                alert('✅ Synchronisation réinitialisée');
+            } catch (error) {
+                console.error('Erreur reset:', error);
+                alert('❌ Erreur lors de la réinitialisation');
+            }
+        }
+
+        window.onload = loadMatches;
+    </script>
+</body>
+
+</html>
