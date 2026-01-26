@@ -105,6 +105,37 @@
             display: block;
         }
 
+        /* Bouton "Ouvrir sur Facebook" */
+        .open-facebook-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: linear-gradient(135deg, #4267B2 0%, #3578E5 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .open-facebook-btn:hover {
+            background: linear-gradient(135deg, #3578E5 0%, #4267B2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .open-facebook-btn.visible {
+            display: flex;
+        }
+
         .score-overlay {
             position: fixed;
             top: 0;
@@ -1024,6 +1055,14 @@
     <!-- Bouton de rotation pour vidéos Facebook -->
     <button class="rotation-toggle" id="rotationToggle" title="Corriger la rotation de la vidéo">🔄</button>
 
+    <!-- Bouton pour ouvrir sur Facebook (contrôles complets) -->
+    <button class="open-facebook-btn" id="openFacebookBtn" title="Ouvrir sur Facebook avec tous les contrôles">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        Ouvrir sur Facebook
+    </button>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -1043,6 +1082,7 @@
         let syncInterval = null;
         let activeStartTimestamp = null;
         let activeUrl = null;
+        let currentFacebookUrl = null; // URL Facebook originale pour le bouton "Ouvrir sur Facebook"
 
         function getMatchIdFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1093,6 +1133,17 @@
                     const container = document.getElementById('videoContainer');
                     container.classList.toggle('fb-rotated');
                     console.log('🔄 Rotation togglée:', container.classList.contains('fb-rotated'));
+                });
+            }
+
+            // Gestionnaire du bouton "Ouvrir sur Facebook"
+            const openFacebookBtn = document.getElementById('openFacebookBtn');
+            if (openFacebookBtn) {
+                openFacebookBtn.addEventListener('click', () => {
+                    if (currentFacebookUrl) {
+                        window.open(currentFacebookUrl, '_blank');
+                        console.log('📱 Ouverture sur Facebook:', currentFacebookUrl);
+                    }
                 });
             }
 
@@ -1525,10 +1576,19 @@
                 // L'utilisateur peut utiliser le bouton 🔄 si nécessaire
                 container.classList.remove('fb-rotated');
 
+                // Stocker l'URL Facebook originale pour le bouton "Ouvrir sur Facebook"
+                currentFacebookUrl = cleanUrl;
+
                 // Afficher le bouton de toggle pour activer la rotation MANUELLEMENT si besoin
                 const rotationToggle = document.getElementById('rotationToggle');
                 if (rotationToggle) {
                     rotationToggle.classList.add('visible');
+                }
+
+                // Afficher le bouton "Ouvrir sur Facebook" pour accéder aux contrôles complets
+                const openFacebookBtn = document.getElementById('openFacebookBtn');
+                if (openFacebookBtn) {
+                    openFacebookBtn.classList.add('visible');
                 }
             } else {
                 // YouTube
@@ -1557,11 +1617,18 @@
                     });
                 }
 
-                // Masquer le bouton de rotation pour YouTube et retirer la classe de rotation
+                // Masquer les boutons Facebook pour YouTube et retirer la classe de rotation
                 container.classList.remove('fb-rotated');
+                currentFacebookUrl = null;
+
                 const rotationToggle = document.getElementById('rotationToggle');
                 if (rotationToggle) {
                     rotationToggle.classList.remove('visible');
+                }
+
+                const openFacebookBtn = document.getElementById('openFacebookBtn');
+                if (openFacebookBtn) {
+                    openFacebookBtn.classList.remove('visible');
                 }
             }
         }
