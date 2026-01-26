@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "interface-match-en-live"
+  },
+  "targets": {
+    "interface-match-en-live": {
+      "hosting": {
+        "interface-match-en-live": [
+          "interface-match-en-live"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

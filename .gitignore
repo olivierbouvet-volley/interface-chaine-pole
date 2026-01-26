@@ -7,7 +7,6 @@ npm-debug.log*
 .firebase/
 
 # Firebase configuration caches
-.firebaserc
 firebase-debug.log
 
 # Node modules
