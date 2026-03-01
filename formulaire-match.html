@@ -556,6 +556,126 @@
             }
         }
 
+        /* ---- Section Joueuses à suivre ---- */
+        .section-joueuses {
+            border-left: 4px solid var(--success);
+            padding-left: 20px;
+        }
+
+        .joueuse-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            background: var(--light-gray);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .joueuse-row .input-numero {
+            width: 70px;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+        }
+
+        .joueuse-row .input-nom {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .joueuse-row .select-equipe {
+            width: auto;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .joueuse-row .btn-supprimer {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-ajouter-joueuse {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 2px dashed var(--success);
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            width: 100%;
+            margin-top: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-ajouter-joueuse:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        /* ---- 2 QR codes côte à côte ---- */
+        .qr-codes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .qr-item {
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .qr-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .qr-item .qr-subtitle {
+            font-size: 0.78rem;
+            color: var(--gray);
+            margin-bottom: 12px;
+        }
+
+        .qr-item .btn-copy-small {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            margin-top: 10px;
+            width: 100%;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2rem;
@@ -568,6 +688,105 @@
             .success-content {
                 padding: 36px 24px;
             }
+
+            .qr-codes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .joueuse-row {
+                flex-wrap: wrap;
+            }
+
+            .joueuse-row .input-nom {
+                min-width: 120px;
+            }
+        }
+
+        /* ── Onglets Mode ── */
+        .mode-tabs {
+            display: flex;
+            gap: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e5e7eb;
+            margin-bottom: 28px;
+        }
+        .mode-tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .mode-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        .mode-tab:not(.active):hover {
+            background: #f3f4f6;
+        }
+
+        /* ── Formulaire Replay ── */
+        #replayForm { display: none; }
+        .replay-file-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            background: #f9fafb;
+        }
+        .replay-file-zone:hover,
+        .replay-file-zone.has-file {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.04);
+        }
+        .replay-file-name {
+            font-size: 0.85rem;
+            color: #10b981;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        .replay-success {
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+        }
+        .replay-success h3 {
+            color: #065f46;
+            margin-bottom: 10px;
+        }
+        .replay-success .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .progress-bar-wrap {
+            background: #e5e7eb;
+            border-radius: 99px;
+            height: 8px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.2s;
+            border-radius: 99px;
         }
     </style>
 </head>
@@ -580,9 +799,75 @@
         </div>
 
         <div class="form-card">
-            <div class="info-box">
+            <!-- Onglets Live / Replay -->
+            <div class="mode-tabs">
+                <button type="button" class="mode-tab active" id="tabLive" onclick="switchMode('live')">
+                    🔴 Match Live
+                </button>
+                <button type="button" class="mode-tab" id="tabReplay" onclick="switchMode('replay')">
+                    🎬 Match Replay (DVW)
+                </button>
+            </div>
+
+            <div class="info-box" id="liveInfoBox">
                 <p><strong>📱 Pour les parents :</strong> Après avoir déclaré votre match, vous recevrez un lien unique
                     pour gérer le score en direct et ajouter le lien YouTube Live.</p>
+            </div>
+
+            <!-- ══ Formulaire Replay ══ -->
+            <div id="replayForm">
+                <!-- Succès (affiché après création) -->
+                <div class="replay-success" id="replaySuccess">
+                    <h3>✅ Match replay créé !</h3>
+                    <p id="replaySuccessText"></p>
+                    <div class="action-btns">
+                        <a id="btnGoSync" href="#" class="btn btn-primary">🔧 Calibrer la synchro</a>
+                        <a id="btnGoViewer" href="#" class="btn btn-outline" style="color: var(--primary); border-color: var(--primary);">🎬 Voir le replay</a>
+                    </div>
+                </div>
+
+                <div id="replayFields">
+                    <!-- Étape 1 : Sélection DVW -->
+                    <div class="form-group">
+                        <label>Fichier DVW <span class="required">*</span></label>
+                        <div class="replay-file-zone" id="replayDvwZone" onclick="document.getElementById('replayDvwInput').click()">
+                            <div style="font-size:1.5rem; margin-bottom:8px;">📎</div>
+                            <div style="font-weight:600;">Cliquez pour sélectionner le fichier .dvw</div>
+                            <div style="font-size:0.8rem; opacity:0.6; margin-top:4px;">Les équipes et la date seront lues automatiquement</div>
+                            <div class="replay-file-name" id="replayDvwName"></div>
+                        </div>
+                        <input type="file" id="replayDvwInput" accept=".dvw" style="display:none;" onchange="onReplayDvwSelected()">
+                    </div>
+
+                    <!-- Étape 2 : Preview auto-remplie (cachée jusqu'à la sélection DVW) -->
+                    <div id="replayPreview" style="display:none;">
+                        <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:12px; padding:16px; margin-bottom:20px;">
+                            <div style="font-weight:700; color:#166534; margin-bottom:10px;">✅ Données lues depuis le DVW</div>
+                            <table style="width:100%; font-size:0.9rem; border-collapse:collapse;">
+                                <tr><td style="padding:4px 0; opacity:0.7; width:90px;">🏠 Domicile</td><td style="font-weight:600;" id="previewTeam1">—</td></tr>
+                                <tr><td style="padding:4px 0; opacity:0.7;">✈️ Visiteur</td><td style="font-weight:600;" id="previewTeam2">—</td></tr>
+                                <tr><td style="padding:4px 0; opacity:0.7;">📅 Date</td><td id="previewDate">—</td></tr>
+                                <tr><td style="padding:4px 0; opacity:0.7;">🏆 Compétition</td><td id="previewCompet">—</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lien YouTube <span style="font-weight:400; opacity:0.6;">(optionnel — peut être ajouté plus tard)</span></label>
+                            <input type="url" id="replayYoutube" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+
+                        <div class="progress-bar-wrap" id="replayDvwProgress">
+                            <div class="progress-bar-fill" id="replayDvwProgressFill"></div>
+                        </div>
+
+                        <div style="margin-top: 8px;">
+                            <button type="button" class="btn btn-primary" id="replaySubmitBtn" onclick="submitReplayMatch()" style="width:100%; padding:14px; font-size:1rem;">
+                                🎬 Créer le match replay
+                            </button>
+                            <p id="replaySubmitError" style="color:var(--danger); font-size:0.85rem; margin-top:8px; display:none;"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <form id="matchForm">
@@ -740,9 +1025,42 @@
                         </div>
                     </div>
 
+                </div>
+
+                <!-- Section Joueuses à suivre -->
+                <div class="form-section section-joueuses" style="margin-top: 30px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 8px; color: var(--success);">👩‍🏐 Joueuses à suivre</h3>
+                    <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 16px;">
+                        Optionnel — Les parents pourront saisir les stats de ces joueuses pendant le match (1 à 4 joueuses max)
+                    </p>
+
+                    <div id="liste-joueuses">
+                        <!-- Joueuse 1 — présente par défaut -->
+                        <div class="joueuse-row" data-index="0">
+                            <input type="number" placeholder="N°" class="input-numero" min="1" max="99">
+                            <input type="text" placeholder="Nom Prénom" class="input-nom">
+                            <select class="select-equipe">
+                                <option value="team1">Domicile</option>
+                                <option value="team2">Adverse</option>
+                            </select>
+                            <button type="button" class="btn-supprimer" style="display:none;" onclick="supprimerJoueuse(this)">✕</button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btn-ajouter-joueuse" class="btn-ajouter-joueuse" onclick="ajouterJoueuse()">
+                        + Ajouter une joueuse
+                    </button>
+                    <p style="font-size: 0.8rem; color: var(--gray); margin-top: 8px;">
+                        Si vide, les parents pourront saisir librement les numéros et noms en cours de match
+                    </p>
+                </div>
+
+                <!-- Bouton soumettre -->
+                <div style="margin-top: 30px;">
                     <button type="submit" class="btn btn-primary" id="submitBtn">
                         ✨ Déclarer le match
                     </button>
+                </div>
             </form>
         </div>
     </div>
@@ -756,13 +1074,26 @@
                 </svg>
             </div>
             <h2>Match déclaré !</h2>
-            <p>Votre match a été enregistré avec succès. Partagez ce lien avec le parent qui va filmer :</p>
+            <p>Partagez ces liens selon les rôles :</p>
 
-            <div class="link-box" id="parentLink"></div>
+            <!-- 2 QR codes côte à côte -->
+            <div class="qr-codes-grid">
+                <!-- QR Animateur -->
+                <div class="qr-item">
+                    <h4>🎬 ANIMATEUR</h4>
+                    <div class="qr-subtitle">Score + Stats</div>
+                    <div id="qrcode-animateur"></div>
+                    <button class="btn-copy-small" onclick="copyLinkAnimateur()">📋 Copier le lien</button>
+                </div>
+                <!-- QR Parents -->
+                <div class="qr-item">
+                    <h4>👪 PARENTS</h4>
+                    <div class="qr-subtitle">Stats joueuses uniquement</div>
+                    <div id="qrcode-parents"></div>
+                    <button class="btn-copy-small" onclick="copyLinkParents()">📋 Copier le lien</button>
+                </div>
+            </div>
 
-            <div class="qr-code" id="qrcode"></div>
-
-            <button class="btn btn-copy" onclick="copyLink()">📋 Copier le lien</button>
             <button class="btn btn-primary" onclick="location.reload()">Déclarer un autre match</button>
         </div>
     </div>
@@ -781,11 +1112,74 @@
     <script src="db-service.js"></script>
     <script src="storage-service.js"></script>
     <script src="form-categories.js"></script>
+    <script src="dvw-parser-lite.js"></script>
 
     <script>
         let selectedPlayerPhoto = null;
         let selectedMatchPoster = null;
         let currentMatchId = null;
+        let urlAnimateur = '';
+        let urlParents = '';
+
+        // ---- Gestion de la section Joueuses ----
+        const MAX_JOUEUSES = 4;
+
+        function ajouterJoueuse() {
+            const liste = document.getElementById('liste-joueuses');
+            const rows = liste.querySelectorAll('.joueuse-row');
+            if (rows.length >= MAX_JOUEUSES) return;
+
+            const index = rows.length;
+            const row = document.createElement('div');
+            row.className = 'joueuse-row';
+            row.dataset.index = index;
+            row.innerHTML = `
+                <input type="number" placeholder="N°" class="input-numero" min="1" max="99">
+                <input type="text" placeholder="Nom Prénom" class="input-nom">
+                <select class="select-equipe">
+                    <option value="team1">Domicile</option>
+                    <option value="team2">Adverse</option>
+                </select>
+                <button type="button" class="btn-supprimer" onclick="supprimerJoueuse(this)">✕</button>
+            `;
+            liste.appendChild(row);
+
+            // Afficher le bouton supprimer sur la première ligne aussi
+            liste.querySelectorAll('.btn-supprimer').forEach(btn => btn.style.display = 'flex');
+
+            // Masquer le bouton "Ajouter" si on atteint le max
+            if (liste.querySelectorAll('.joueuse-row').length >= MAX_JOUEUSES) {
+                document.getElementById('btn-ajouter-joueuse').style.display = 'none';
+            }
+        }
+
+        function supprimerJoueuse(btnEl) {
+            const liste = document.getElementById('liste-joueuses');
+            const row = btnEl.closest('.joueuse-row');
+            row.remove();
+
+            const rows = liste.querySelectorAll('.joueuse-row');
+            // Si une seule ligne restante, cacher le bouton supprimer
+            if (rows.length === 1) {
+                rows[0].querySelector('.btn-supprimer').style.display = 'none';
+            }
+            // Réafficher le bouton "Ajouter"
+            document.getElementById('btn-ajouter-joueuse').style.display = 'block';
+        }
+
+        function collecterJoueuses() {
+            const rows = document.querySelectorAll('.joueuse-row');
+            const joueuses = [];
+            rows.forEach(row => {
+                const numero = parseInt(row.querySelector('.input-numero').value);
+                const nom = row.querySelector('.input-nom').value.trim();
+                const equipe = row.querySelector('.select-equipe').value;
+                if (numero && nom) {
+                    joueuses.push({ numero, nom, equipe });
+                }
+            });
+            return joueuses;
+        }
 
         // Variables pour le recadrage
         let cropData = {
@@ -1031,6 +1425,12 @@
                 currentMatchId = await dbService.createMatch(matchData);
                 console.log('✅ Match créé:', currentMatchId);
 
+                // Sauvegarder les joueuses si au moins une saisie
+                const joueuses = collecterJoueuses();
+                if (joueuses.length > 0) {
+                    await dbService.saveJoueuses(currentMatchId, joueuses);
+                }
+
                 // Afficher la modal de succès
                 showSuccessModal(currentMatchId);
 
@@ -1046,21 +1446,29 @@
 
         function showSuccessModal(matchId) {
             const modal = document.getElementById('successModal');
-            const linkBox = document.getElementById('parentLink');
 
-            // Générer le lien pour le parent
+            // Générer les 2 URLs
             const baseUrl = window.location.origin + window.location.pathname.replace('formulaire-match.html', '');
-            const parentUrl = `${baseUrl}interface-parent.html?match=${matchId}`;
+            urlAnimateur = `${baseUrl}interface-parent.html?match=${matchId}&role=animateur`;
+            urlParents   = `${baseUrl}interface-parent.html?match=${matchId}&role=stats`;
 
-            linkBox.textContent = parentUrl;
-
-            // Générer le QR code
-            document.getElementById('qrcode').innerHTML = '';
-            new QRCode(document.getElementById('qrcode'), {
-                text: parentUrl,
-                width: 200,
-                height: 200,
+            // QR code Animateur
+            document.getElementById('qrcode-animateur').innerHTML = '';
+            new QRCode(document.getElementById('qrcode-animateur'), {
+                text: urlAnimateur,
+                width: 140,
+                height: 140,
                 colorDark: '#6366F1',
+                colorLight: '#ffffff'
+            });
+
+            // QR code Parents
+            document.getElementById('qrcode-parents').innerHTML = '';
+            new QRCode(document.getElementById('qrcode-parents'), {
+                text: urlParents,
+                width: 140,
+                height: 140,
+                colorDark: '#10B981',
                 colorLight: '#ffffff'
             });
 
@@ -1068,21 +1476,216 @@
             document.body.classList.add('modal-open');
         }
 
-        function copyLink() {
-            const linkBox = document.getElementById('parentLink');
-            const textArea = document.createElement('textarea');
-            textArea.value = linkBox.textContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
+        function copyLinkAnimateur() {
+            navigator.clipboard.writeText(urlAnimateur).then(() => {
+                alert('✅ Lien Animateur copié !');
+            }).catch(() => {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = urlAnimateur;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('✅ Lien Animateur copié !');
+            });
+        }
 
-            alert('✅ Lien copié dans le presse-papier !');
+        function copyLinkParents() {
+            navigator.clipboard.writeText(urlParents).then(() => {
+                alert('✅ Lien Parents copié !');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = urlParents;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('✅ Lien Parents copié !');
+            });
         }
 
         // Définir la date minimale à aujourd'hui
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('matchDate').min = today;
+
+        // ──────────────────────────────────────────
+        // MODE ONGLETS (Live / Replay)
+        // ──────────────────────────────────────────
+
+        function switchMode(mode) {
+            const isLive = mode === 'live';
+            document.getElementById('tabLive').classList.toggle('active', isLive);
+            document.getElementById('tabReplay').classList.toggle('active', !isLive);
+            document.getElementById('liveInfoBox').style.display = isLive ? 'block' : 'none';
+            document.getElementById('matchForm').style.display = isLive ? 'block' : 'none';
+            document.getElementById('replayForm').style.display = isLive ? 'none' : 'block';
+        }
+
+        // Auto-sélection depuis l'URL (?mode=replay)
+        if (new URLSearchParams(window.location.search).get('mode') === 'replay') {
+            switchMode('replay');
+        }
+
+        // ──────────────────────────────────────────
+        // FORMULAIRE REPLAY
+        // ──────────────────────────────────────────
+
+        let replayDvwFile = null;
+        let replayDvwParsed = null; // données extraites du DVW
+
+        // Lit le fichier DVW sélectionné et auto-remplit la preview
+        function onReplayDvwSelected() {
+            const input = document.getElementById('replayDvwInput');
+            const file = input.files[0];
+            if (!file) return;
+
+            replayDvwFile = file;
+            const zone = document.getElementById('replayDvwZone');
+            document.getElementById('replayDvwName').textContent = '✅ ' + file.name;
+            zone.classList.add('has-file');
+
+            // Lire le fichier et parser
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    const parsed = window.dvwParserLite.parseDvwLite(text);
+                    replayDvwParsed = parsed;
+
+                    // Extraire la date depuis [3MATCH] — format DD/MM/YYYY
+                    const matchLine = getDvwMatchLine(text);
+                    const dateStr = parseDvwDate(matchLine);
+                    const compet = parseDvwCompetition(matchLine);
+
+                    document.getElementById('previewTeam1').textContent = parsed.teams.home;
+                    document.getElementById('previewTeam2').textContent = parsed.teams.away;
+                    document.getElementById('previewDate').textContent = dateStr || '—';
+                    document.getElementById('previewCompet').textContent = compet || '—';
+
+                    // Stocker pour la soumission
+                    replayDvwParsed._date = dateStr;
+                    replayDvwParsed._compet = compet;
+
+                    // Afficher la preview + le reste du formulaire
+                    document.getElementById('replayPreview').style.display = 'block';
+                } catch (err) {
+                    console.error('Erreur parsing DVW:', err);
+                    alert('❌ Impossible de lire le fichier DVW : ' + err.message);
+                }
+            };
+            reader.readAsText(file, 'latin1'); // DVW encodé en latin1
+        }
+
+        // Extrait la première ligne de [3MATCH]
+        function getDvwMatchLine(text) {
+            const section = text.split(/\[3MATCH\]/i)[1] || '';
+            return section.split('\n').find(l => l.trim()) || '';
+        }
+
+        // Parse la date "DD/MM/YYYY" depuis la ligne [3MATCH] → "YYYY-MM-DD"
+        function parseDvwDate(line) {
+            const m = line.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+            if (!m) return null;
+            return m[3] + '-' + m[2] + '-' + m[1]; // YYYY-MM-DD pour l'affichage lisible
+        }
+
+        // Parse le nom de la compétition (champ 3, index 3 en splittant par ";")
+        function parseDvwCompetition(line) {
+            const fields = line.split(';');
+            return (fields[3] || '').trim() || null;
+        }
+
+        async function submitReplayMatch() {
+            const errorEl = document.getElementById('replaySubmitError');
+            errorEl.style.display = 'none';
+
+            if (!replayDvwFile) {
+                errorEl.textContent = '❌ Veuillez sélectionner un fichier .dvw.';
+                errorEl.style.display = 'block';
+                return;
+            }
+            if (!replayDvwParsed) {
+                errorEl.textContent = '❌ Le fichier DVW n\'a pas encore été analysé. Patientez un instant.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const youtubeUrl = (document.getElementById('replayYoutube').value || '').trim();
+            const btn = document.getElementById('replaySubmitBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Création en cours...';
+
+            try {
+                const t1 = replayDvwParsed.teams.home;
+                const t2 = replayDvwParsed.teams.away;
+
+                // Formater la date pour Firebase (YYYY-MM-DD déjà)
+                const dateVal = replayDvwParsed._date || today;
+                const compet = replayDvwParsed._compet || 'Replay';
+
+                // Construire l'historique des sets depuis les données DVW
+                const dvwSets = replayDvwParsed.setScores || [];
+                const setHistory = dvwSets.map(s => ({
+                    setNumber: s.setNumber,
+                    team1Points: s.homeScore,
+                    team2Points: s.awayScore,
+                    winner: s.winner === 'home' ? 'team1' : 'team2'
+                }));
+                const setsTeam1 = dvwSets.filter(s => s.winner === 'home').length;
+                const setsTeam2 = dvwSets.filter(s => s.winner === 'away').length;
+
+                // 1. Créer le match en base
+                const matchData = {
+                    matchType: 'replay',
+                    category: compet,
+                    team1: { name: t1, color: '#1E3A8A' },
+                    team2: { name: t2, color: '#DC2626' },
+                    date: dateVal,
+                    time: '',
+                    youtubeUrl: youtubeUrl,
+                    status: 'finished',
+                    setHistory: setHistory,
+                    score: {
+                        setsTeam1: setsTeam1,
+                        setsTeam2: setsTeam2,
+                        pointsTeam1: 0,
+                        pointsTeam2: 0
+                    }
+                };
+                const matchId = await dbService.createMatch(matchData);
+
+                // 2. Upload DVW vers Firebase Storage
+                const progressWrap = document.getElementById('replayDvwProgress');
+                const progressFill = document.getElementById('replayDvwProgressFill');
+                progressWrap.style.display = 'block';
+                btn.textContent = '⏳ Upload DVW...';
+
+                const dvwPath = 'matches/' + matchId + '/match.dvw';
+                const dvwUrl = await storageService.uploadFile(replayDvwFile, dvwPath, (pct) => {
+                    progressFill.style.width = pct + '%';
+                });
+
+                // 3. Sauvegarder l'URL DVW dans Firebase
+                await dbService.saveDvwData(matchId, dvwUrl);
+
+                // 4. Afficher succès
+                document.getElementById('replayFields').style.display = 'none';
+                const successDiv = document.getElementById('replaySuccess');
+                successDiv.style.display = 'block';
+                document.getElementById('replaySuccessText').textContent =
+                    t1 + ' vs ' + t2 + ' — ' + dateVal + ' — DVW chargé ✅';
+                document.getElementById('btnGoSync').href = 'replay-sync.html?id=' + matchId;
+                document.getElementById('btnGoViewer').href = 'match-viewer.html?id=' + matchId;
+
+            } catch (err) {
+                console.error('Erreur création replay:', err);
+                errorEl.textContent = '❌ Erreur : ' + err.message;
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = '🎬 Créer le match replay';
+            }
+        }
     </script>
 </body>
 

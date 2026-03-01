@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats Live — Pôle Espoir Volleyball</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #6366F1;
+            --success: #10B981;
+            --danger: #EF4444;
+            --secondary: #F59E0B;
+            --dark: #1F2937;
+            --gray: #6B7280;
+            --light: #F3F4F6;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: var(--white);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ---- Header ---- */
+        .stats-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .stats-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 12px;
+        }
+
+        .equipes-header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .equipe-nom {
+            font-size: 1.4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .equipe-nom.domicile { text-align: right; color: #818CF8; }
+        .equipe-nom.adversaire { text-align: left; color: #F87171; }
+
+        .vs-badge {
+            font-size: 1rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.4);
+            padding: 6px 12px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+        }
+
+        /* ---- Score par set ---- */
+        .score-sets-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .score-sets-label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
+        }
+
+        .sets-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 4px;
+        }
+
+        .sets-table td {
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .sets-table .col-equipe {
+            text-align: left;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.7);
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+
+        .sets-table .col-set {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.8);
+            min-width: 40px;
+        }
+
+        .sets-table .col-set-gagnant {
+            background: rgba(245, 158, 11, 0.2);
+            color: #FCD34D;
+            border: 2px solid #F59E0B;
+            font-size: 1.2rem;
+        }
+
+        .sets-table .col-set-encours {
+            background: rgba(99, 102, 241, 0.15);
+            color: #A5B4FC;
+            border: 2px dashed #6366F1;
+        }
+
+        /* ---- Stats lignes style L'Equipe ---- */
+        .stats-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .stats-card-titre {
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            padding: 12px 16px 8px;
+        }
+
+        .stat-ligne {
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            align-items: center;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-val-gauche {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #818CF8;
+            text-align: center;
+        }
+
+        .stat-val-droite {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #F87171;
+            text-align: center;
+        }
+
+        .stat-label {
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            padding: 0 8px;
+        }
+
+        /* Barre de progression */
+        .barre-progression {
+            grid-column: 1 / -1;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            margin: 4px 0 0;
+            overflow: hidden;
+        }
+
+        .barre-gauche {
+            height: 100%;
+            background: #818CF8;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        /* ---- Indicateur EN DIRECT ---- */
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #FCA5A5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            animation: pulseLive 1.5s infinite;
+        }
+
+        @keyframes pulseLive {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* ---- Rallies manquants ---- */
+        .note-enrichissement {
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 12px;
+        }
+
+        /* ---- Message d'attente ---- */
+        .attente-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 1rem;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 480px) {
+            .equipe-nom { font-size: 1rem; }
+            .stat-val-gauche, .stat-val-droite { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- HEADER avec badge EN DIRECT -->
+        <div class="stats-header">
+            <div class="live-badge" id="liveBadge" style="display:none;">
+                <div class="live-dot"></div> EN DIRECT
+            </div>
+            <div class="stats-title">⚡ Statistiques</div>
+            <div class="equipes-header">
+                <div class="equipe-nom domicile" id="nomEquipe1">—</div>
+                <div class="vs-badge">VS</div>
+                <div class="equipe-nom adversaire" id="nomEquipe2">—</div>
+            </div>
+        </div>
+
+        <!-- SCORE PAR SET -->
+        <div class="score-sets-card" id="scoreSetsCard" style="display:none;">
+            <div class="score-sets-label">Score par set</div>
+            <table class="sets-table" id="setsTable">
+                <tbody id="setsBody"></tbody>
+            </table>
+        </div>
+
+        <!-- STATS PRINCIPALES (alimentées par Level 1bis) -->
+        <div class="stats-card">
+            <div class="stats-card-titre">Stats du match</div>
+
+            <div class="stat-ligne">
+                <div class="stat-val-gauche" id="st-points1">0</div>
+                <div class="stat-label">POINTS</div>
+                <div class="stat-val-droite" id="st-points2">0</div>
+            </div>
+
+            <div class="stat-ligne">
+                <div class="stat-val-gauche" id="st-aces1">0</div>
+                <div class="stat-label">ACES</div>
+                <div class="stat-val-droite" id="st-aces2">0</div>
+            </div>
+
+            <div class="stat-ligne">
+                <div class="stat-val-gauche" id="st-kills1">0</div>
+                <div class="stat-label">ATTAQUES</div>
+                <div class="stat-val-droite" id="st-kills2">0</div>
+            </div>
+
+            <div class="stat-ligne">
+                <div class="stat-val-gauche" id="st-blocs1">0</div>
+                <div class="stat-label">BLOCS</div>
+                <div class="stat-val-droite" id="st-blocs2">0</div>
+            </div>
+
+            <div class="stat-ligne">
+                <div class="stat-val-gauche" id="st-fautes1">0</div>
+                <div class="stat-label">FAUTES</div>
+                <div class="stat-val-droite" id="st-fautes2">0</div>
+            </div>
+
+            <div class="stat-ligne">
+                <div class="stat-val-gauche" id="st-sideout1">—</div>
+                <div class="stat-label">SIDEOUT %</div>
+                <div class="stat-val-droite" id="st-sideout2">—</div>
+            </div>
+
+            <!-- Barre de progression points -->
+            <div style="padding: 0 16px 14px;">
+                <div class="barre-progression">
+                    <div class="barre-gauche" id="barre-points" style="width:50%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-enrichissement" id="noteEnrichi" style="display:none;">
+            ⚡ Les stats Aces / Attaques / Blocs s'alimentent via le bouton de score (Niveau 1bis)
+        </div>
+
+        <div class="attente-msg" id="attenteMsg">
+            🔄 En attente des données du match...
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get('match');
+
+        if (!matchId) {
+            document.getElementById('attenteMsg').textContent = '❌ Paramètre match manquant dans l\'URL (ex: ?match=match_XXXX)';
+        } else {
+            lancerStats(matchId);
+        }
+
+        function lancerStats(matchId) {
+            // Écouter le match (score, noms, status, setHistory)
+            firebase.database().ref('matches/' + matchId).on('value', (snap) => {
+                const match = snap.val();
+                if (!match) {
+                    document.getElementById('attenteMsg').textContent = '❌ Match non trouvé';
+                    return;
+                }
+                document.getElementById('attenteMsg').style.display = 'none';
+                afficherMatch(match);
+            });
+
+            // Écouter les rallies (stats Level 1bis)
+            firebase.database().ref('matches/' + matchId + '/rallies').on('value', (snap) => {
+                const rallies = snap.val();
+                calculerEtAfficherStats(rallies);
+            });
+        }
+
+        function afficherMatch(match) {
+            // Noms équipes
+            document.getElementById('nomEquipe1').textContent = (match.team1?.name || 'Équipe 1').substring(0, 16);
+            document.getElementById('nomEquipe2').textContent = (match.team2?.name || 'Équipe 2').substring(0, 16);
+
+            // Badge EN DIRECT
+            document.getElementById('liveBadge').style.display = match.status === 'live' ? 'inline-flex' : 'none';
+
+            // Score par set
+            afficherScoreParSet(match);
+
+            // Points actuels
+            const score = match.score || {};
+            document.getElementById('st-points1').textContent = score.pointsTeam1 || 0;
+            document.getElementById('st-points2').textContent = score.pointsTeam2 || 0;
+            mettreAJourBarre('barre-points', score.pointsTeam1 || 0, score.pointsTeam2 || 0);
+        }
+
+        function afficherScoreParSet(match) {
+            const setHistory = match.setHistory || [];
+            const score = match.score || {};
+            const enCours = (score.pointsTeam1 || 0) + (score.pointsTeam2 || 0) > 0;
+
+            if (setHistory.length === 0 && !enCours) return;
+
+            document.getElementById('scoreSetsCard').style.display = 'block';
+
+            const nom1 = (match.team1?.name || 'Équipe 1').substring(0, 12);
+            const nom2 = (match.team2?.name || 'Équipe 2').substring(0, 12);
+
+            let cols1 = '', cols2 = '';
+
+            setHistory.forEach(set => {
+                const g1 = set.winner === 'team1';
+                const g2 = set.winner === 'team2';
+                cols1 += `<td class="col-set ${g1 ? 'col-set-gagnant' : ''}">${set.team1Points}</td>`;
+                cols2 += `<td class="col-set ${g2 ? 'col-set-gagnant' : ''}">${set.team2Points}</td>`;
+            });
+
+            if (enCours) {
+                cols1 += `<td class="col-set col-set-encours">${score.pointsTeam1 || 0}</td>`;
+                cols2 += `<td class="col-set col-set-encours">${score.pointsTeam2 || 0}</td>`;
+            }
+
+            document.getElementById('setsBody').innerHTML = `
+                <tr>
+                    <td class="col-equipe">${nom1}</td>
+                    ${cols1}
+                </tr>
+                <tr>
+                    <td class="col-equipe">${nom2}</td>
+                    ${cols2}
+                </tr>
+            `;
+        }
+
+        function calculerEtAfficherStats(ralliesObj) {
+            const rallies = ralliesObj ? Object.values(ralliesObj) : [];
+
+            const stats = {
+                team1: { aces: 0, kills: 0, blocs: 0, fautes: 0, sideouts: 0, receptions: 0 },
+                team2: { aces: 0, kills: 0, blocs: 0, fautes: 0, sideouts: 0, receptions: 0 }
+            };
+
+            let aDesActions = false;
+
+            rallies.forEach(rally => {
+                // Stats from Level 1bis (actionFinale)
+                if (rally.actionFinale) {
+                    aDesActions = true;
+                    const { type, team, dvwQuality } = rally.actionFinale;
+                    if (!stats[team]) return;
+
+                    if (type === 'ace')   stats[team].aces++;
+                    if (type === 'kill')  stats[team].kills++;
+                    if (type === 'bloc')  stats[team].blocs++;
+                    if (dvwQuality === '=') {
+                        // La faute est de l'équipe adverse (celle qui a perdu le point)
+                        const adversaire = team === 'team1' ? 'team2' : 'team1';
+                        stats[adversaire].fautes++;
+                    }
+                }
+
+                // Calcul sideout
+                if (rally.phase && rally.pointTeam) {
+                    const receveur = rally.servingTeam === 'team1' ? 'team2' : 'team1';
+                    if (rally.phase === 'sideout') {
+                        stats[receveur].sideouts++;
+                    }
+                    // Toutes les receptions du receveur = 1
+                    if (rally.servingTeam) {
+                        stats[receveur].receptions++;
+                    }
+                }
+            });
+
+            // Mettre à jour l'UI
+            document.getElementById('st-aces1').textContent  = stats.team1.aces;
+            document.getElementById('st-aces2').textContent  = stats.team2.aces;
+            document.getElementById('st-kills1').textContent = stats.team1.kills;
+            document.getElementById('st-kills2').textContent = stats.team2.kills;
+            document.getElementById('st-blocs1').textContent = stats.team1.blocs;
+            document.getElementById('st-blocs2').textContent = stats.team2.blocs;
+            document.getElementById('st-fautes1').textContent = stats.team1.fautes;
+            document.getElementById('st-fautes2').textContent = stats.team2.fautes;
+
+            // Sideout %
+            const so1 = stats.team1.receptions > 0
+                ? Math.round((stats.team1.sideouts / stats.team1.receptions) * 100) + '%'
+                : '—';
+            const so2 = stats.team2.receptions > 0
+                ? Math.round((stats.team2.sideouts / stats.team2.receptions) * 100) + '%'
+                : '—';
+            document.getElementById('st-sideout1').textContent = so1;
+            document.getElementById('st-sideout2').textContent = so2;
+
+            // Note si pas encore d'actions Level 1bis
+            document.getElementById('noteEnrichi').style.display = aDesActions ? 'none' : 'block';
+        }
+
+        function mettreAJourBarre(id, val1, val2) {
+            const total = val1 + val2;
+            const pct = total > 0 ? Math.round((val1 / total) * 100) : 50;
+            const el = document.getElementById(id);
+            if (el) el.style.width = pct + '%';
+        }
+    </script>
+</body>
+
+</html>

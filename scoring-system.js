@@ -225,6 +225,11 @@ const scoringSystem = {
         } else {
             undoSetBtn.style.display = 'none';
         }
+
+        // Mettre à jour le tableau score par set (si la fonction est disponible)
+        if (typeof renderScoreParSet === 'function') {
+            renderScoreParSet(match);
+        }
     },
 
     /**

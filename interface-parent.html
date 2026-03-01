@@ -628,6 +628,501 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
+        /* ---- Boutons Service ---- */
+        .btn-service {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            font-size: 0.82rem;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            margin-bottom: 6px;
+        }
+
+        .btn-service:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-service.actif {
+            background: linear-gradient(135deg, #D97706, #B45309);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.4);
+        }
+
+        /* ---- Indicateur de service ---- */
+        #service-indicator {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin: 8px auto 16px;
+            background: rgba(245, 158, 11, 0.1);
+            color: #D97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            min-height: 28px;
+            max-width: 400px;
+        }
+
+        /* ---- Masquer les boutons animateur en mode stats ---- */
+        .role-stats .btns-animateur {
+            display: none !important;
+        }
+
+        .role-stats-banner {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--primary);
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        /* ---- Popup Level 1bis (slide-up depuis le bas) ---- */
+        .popup-1bis {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px 16px 28px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+            z-index: 5000;
+            display: none;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .popup-1bis.show {
+            display: block;
+            animation: slideUpPopup 0.3s ease;
+        }
+
+        @keyframes slideUpPopup {
+            from { transform: translateY(100%); }
+            to   { transform: translateY(0); }
+        }
+
+        .popup-1bis-header {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .popup-1bis-timer {
+            display: inline-block;
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-weight: 500;
+            margin-left: 6px;
+        }
+
+        .popup-1bis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn-action-1bis {
+            padding: 14px 8px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.15s;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .btn-action-1bis.positif {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .btn-action-1bis.negatif {
+            background: rgba(239, 68, 68, 0.08);
+            color: var(--danger);
+            border: 2px solid #fca5a5;
+        }
+
+        .btn-action-1bis:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-skip-1bis {
+            width: 100%;
+            padding: 12px;
+            background: var(--light-gray);
+            color: var(--gray);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ---- Score par set avec gagnant en jaune ---- */
+        .score-par-set-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 4px;
+            margin-top: 8px;
+        }
+
+        .score-par-set-table td {
+            text-align: center;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .score-par-set-table .col-equipe {
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            padding-right: 10px;
+        }
+
+        .score-par-set-table .col-set {
+            background: var(--light-gray);
+            color: var(--dark);
+            min-width: 36px;
+        }
+
+        .score-par-set-table .col-set-gagnant {
+            background: rgba(245, 158, 11, 0.15);
+            color: #B45309;
+            border: 2px solid #F59E0B;
+            font-size: 1.1rem;
+        }
+
+        /* =======================================
+           SPLIT SCREEN JOUEUSES (Étape 4)
+           ======================================= */
+
+        #zone-joueuses {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #zone-joueuses.split-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        #zone-joueuses.split-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        #zone-joueuses.split-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .carte-joueuse {
+            background: white;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            min-height: 220px;
+        }
+
+        .joueuse-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .joueuse-numero {
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .joueuse-nom {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--dark);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .joueuse-equipe-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .badge-team1 { background: rgba(99, 102, 241, 0.15); color: var(--primary); }
+        .badge-team2 { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .btn-changer-joueuse {
+            background: none;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 3px 7px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            color: var(--gray);
+            flex-shrink: 0;
+        }
+
+        /* Actions (grille de 3x2) */
+        .actions-skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .btn-skill {
+            padding: 10px 4px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            background: var(--light-gray);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--dark);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-skill:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        /* Pastilles BD */
+        .pastilles-container {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .pastilles-container.show {
+            display: flex;
+        }
+
+        .pastilles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .pastille-btn {
+            padding: 14px 6px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.15s;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .pastille-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Styles BD par qualité */
+        .pastille-kill {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            box-shadow: 0 4px 0 #047857;
+        }
+        .pastille-parfait {
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
+            color: white;
+            box-shadow: 0 4px 0 #3730A3;
+        }
+        .pastille-bon {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            box-shadow: 0 4px 0 #1D4ED8;
+        }
+        .pastille-enjeu {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            box-shadow: 0 4px 0 #B45309;
+        }
+        .pastille-faute {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            box-shadow: 0 4px 0 #B91C1C;
+        }
+        .pastille-bloque {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+            color: white;
+            box-shadow: 0 4px 0 #374151;
+        }
+
+        .btn-retour-skill {
+            background: var(--light-gray);
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--gray);
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+        }
+
+        /* Flash succès */
+        @keyframes flashSucces {
+            0%   { background: rgba(16, 185, 129, 0.3); }
+            100% { background: transparent; }
+        }
+
+        .flash-succes {
+            animation: flashSucces 0.6s ease;
+        }
+
+        /* Mini compteur stats */
+        .joueuse-mini-stats {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid var(--light-gray);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .mini-stat-ok  { color: var(--success); }
+        .mini-stat-err { color: var(--danger); }
+
+        /* Picker pour changer de joueuse */
+        .picker-joueuse {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 6000;
+            display: none;
+            align-items: flex-end;
+        }
+
+        .picker-joueuse.show {
+            display: flex;
+        }
+
+        .picker-content {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px 16px 30px;
+            width: 100%;
+        }
+
+        .picker-content h3 {
+            margin-bottom: 14px;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .picker-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .picker-form input {
+            padding: 10px 12px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .picker-form .inp-num { width: 70px; text-align: center; }
+        .picker-form .inp-nom { flex: 1; }
+
+        .picker-form select {
+            padding: 10px 8px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .picker-form .btn-valider-picker {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        .picker-suggestions {
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .picker-sugg-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin: 0 0 4px;
+            font-weight: 600;
+        }
+        .picker-sugg-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--light-gray);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            border-left: 4px solid transparent;
+            text-align: left;
+            width: 100%;
+        }
+
         @media (max-width: 768px) {
             .score-display {
                 font-size: 3rem;
@@ -644,12 +1139,430 @@
             .modal-content {
                 padding: 24px;
             }
+
+            .popup-1bis-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            /* En split-4, cartes en 2x2 */
+            #zone-joueuses.split-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ================================================
+           STATS MODE — Joueuses full-screen (role=stats)
+           Les parents voient SEULEMENT leurs propres cartes
+           ================================================ */
+        /* Bannière score toujours cachée par défaut */
+        #stats-mode-banner { display: none; }
+        /* Bannière visible en stats-mode */
+        body.stats-mode #stats-mode-banner {
+            display: flex;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            align-items: center; justify-content: space-between;
+            background: rgba(15,15,35,0.92);
+            backdrop-filter: blur(8px);
+            padding: 0 16px;
+            height: 44px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+        .smb-score {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #fbbf24;
+        }
+        .smb-sep { color: rgba(255,255,255,0.5); }
+        .smb-action {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.75);
+            font-weight: 600;
+        }
+
+        body.stats-mode {
+            padding: 0;
+            overflow: hidden;
+            height: 100dvh;
+            background: #f1f5f9;
+        }
+        body.stats-mode .container {
+            max-width: 100%;
+            height: 100dvh;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
+        }
+        body.stats-mode .header { display: none !important; }
+        body.stats-mode .card { display: none !important; }
+        body.stats-mode #zone-haute-match { display: none !important; }
+        body.stats-mode #section-joueuses {
+            display: flex !important;
+            flex-direction: column;
+            flex: 1; height: 100dvh;
+            overflow: hidden;
+            padding: 6px;
+            padding-top: 50px; /* espace pour la bannière fixe */
+        }
+        body.stats-mode #section-joueuses > h2 { display: none; }
+        body.stats-mode #zone-joueuses,
+        body.stats-mode #zone-joueuses.split-2,
+        body.stats-mode #zone-joueuses.split-3,
+        body.stats-mode #zone-joueuses.split-4 {
+            display: flex !important;
+            flex-direction: column;
+            gap: 4px; flex: 1; min-height: 0;
+        }
+        body.stats-mode #zone-joueuses .carte-joueuse {
+            flex: 1; min-height: 0; overflow: hidden; border-radius: 10px;
+        }
+        body.stats-mode .btn-ajouter-joueuse { display: block !important; }
+
+        /* En stats-mode, masquer le bouton Fin (reservé à l'animateur) */
+        body.stats-mode .zh-btn-fin { display: none; }
+
+        /* Match terminé : bloquer les boutons de score */
+        body.match-finished .zh-etat { display: none !important; }
+        body.match-finished #zh-termine {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 6px 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #f87171;
+            letter-spacing: 0.08em;
+        }
+
+        /* ================================================
+           MATCH MODE — Zone haute 25% / Zone basse 75%
+           ================================================ */
+        #zone-haute-match { display: none; }
+
+        body.match-mode {
+            padding: 0;
+            overflow: hidden;
+            height: 100dvh;
+        }
+        body.match-mode .container {
+            max-width: 100%;
+            height: 100dvh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        body.match-mode .header { display: none !important; }
+        body.match-mode .card { display: none !important; }
+
+        body.match-mode #zone-haute-match {
+            display: flex !important;
+            flex-direction: column;
+            flex-shrink: 0;
+            height: 25dvh;
+            min-height: 130px;
+            background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 8px 12px 6px;
+            overflow: hidden;
+        }
+        body.match-mode #section-joueuses {
+            display: flex !important;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            padding: 6px;
+            background: #f1f5f9;
+            margin-bottom: 0;
+        }
+        body.match-mode #section-joueuses > h2 { display: none; }
+        body.match-mode #zone-joueuses,
+        body.match-mode #zone-joueuses.split-2,
+        body.match-mode #zone-joueuses.split-3,
+        body.match-mode #zone-joueuses.split-4 {
+            display: flex !important;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-height: 0;
+        }
+        body.match-mode #zone-joueuses .carte-joueuse {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        /* Zone haute — ligne 1 noms */
+        .zh-names-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-shrink: 0;
+            padding-top: 2px;
+            position: relative; /* Pour positionner Fin en absolu */
+        }
+        .zh-nom {
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: white;
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .zh-sep {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+            min-width: 38px;
+            white-space: nowrap;
+        }
+        /* Zone haute — ligne 2 score + jerseys (occupe tout l'espace restant) */
+        .zh-score-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .zh-pts {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #fbbf24;
+            min-width: 44px;
+            text-align: center;
+        }
+        .zh-dash {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.3);
+            font-weight: 300;
+        }
+        .zh-jersey {
+            width: 34px;
+            height: 36px;
+            flex-shrink: 0;
+            clip-path: polygon(
+                18% 0%, 38% 0%, 42% 16%, 58% 16%, 62% 0%, 82% 0%,
+                100% 24%, 80% 38%, 80% 100%, 20% 100%, 20% 38%, 0% 24%
+            );
+        }
+        /* Barre inférieure : sets + Stats */
+        .zh-bottom-bar {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 2px 2px 3px;
+            min-height: 26px;
+        }
+        .zh-sets-table {
+            font-size: 0.6rem;
+            font-family: monospace;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.3;
+        }
+        .zh-btn-stats {
+            background: rgba(99,102,241,0.2);
+            border: 1px solid rgba(99,102,241,0.5);
+            color: #a5b4fc;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .zh-btn-stats.diffusion-active {
+            background: rgba(239,68,68,0.3);
+            border-color: #f87171;
+            color: #f87171;
+            animation: pulse-stat 0.8s infinite;
+        }
+        @keyframes pulse-stat {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .zh-btn-fin {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(239,68,68,0.2);
+            color: #f87171;
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 6px;
+            padding: 3px 7px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+        /* .zh-sets-bar → remplacé par .zh-sets-table dans .zh-bottom-bar */
+        .zh-cdown {
+            display: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #f87171;
+            background: rgba(239,68,68,0.2);
+            padding: 2px 8px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        /* États zone haute */
+        .zh-etat {
+            display: none;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 2px 0;
+        }
+        .zh-etat.actif { display: flex; }
+
+        /* Boutons zone haute */
+        .zh-btn-service {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white; border: none; border-radius: 8px;
+            padding: 6px 10px; font-size: 0.78rem; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            flex-shrink: 0; white-space: nowrap;
+        }
+        .zh-btn-point {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border: none; border-radius: 8px;
+            padding: 8px 16px; font-size: 1.3rem; font-weight: 900;
+            cursor: pointer; font-family: 'Inter', sans-serif; flex-shrink: 0;
+        }
+        .zh-btn-undo {
+            background: rgba(255,255,255,0.15);
+            color: white; border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px; padding: 6px 10px; font-size: 1.1rem;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+        }
+        .zh-rally-label {
+            font-size: 0.8rem; color: #fbbf24; font-weight: 700;
+            text-align: center;
+        }
+        .zh-rally-btns { display: flex; align-items: center; gap: 8px; }
+        .zh-btn-skip {
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+            padding: 5px 8px; font-size: 0.75rem; cursor: pointer;
+            font-family: 'Inter', sans-serif; flex-shrink: 0;
+        }
+
+        /* Actions Level 1bis en zone haute */
+        .zh-actions-grid {
+            display: flex; flex-wrap: wrap; gap: 4px;
+            justify-content: center; align-content: center;
+            flex: 1; overflow: hidden;
+        }
+        .zh-btn-action {
+            padding: 5px 7px; border-radius: 8px;
+            font-size: 0.7rem; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; border: 2px solid;
+            text-align: center; white-space: nowrap; line-height: 1.2;
+        }
+        .zh-btn-action.positif {
+            background: rgba(16,185,129,0.15); color: #10b981; border-color: #10b981;
+        }
+        .zh-btn-action.negatif {
+            background: rgba(239,68,68,0.1); color: #ef4444; border-color: #fca5a5;
+        }
+
+        /* Bouton + Joueuse (affiché en match-mode) */
+        .btn-ajouter-joueuse {
+            display: none;
+            width: 100%; padding: 8px;
+            background: rgba(99,102,241,0.08);
+            color: var(--primary);
+            border: 2px dashed var(--primary);
+            border-radius: 8px; font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            flex-shrink: 0;
+        }
+
+        /* Bouton retirer joueuse */
+        .btn-retirer-joueuse {
+            background: none; border: 1px solid #fca5a5;
+            border-radius: 5px; padding: 2px 5px;
+            font-size: 0.68rem; cursor: pointer; color: #ef4444;
+            flex-shrink: 0;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+
+        <!-- BANNIÈRE SCORE pour role=stats — visible uniquement via body.stats-mode -->
+        <div id="stats-mode-banner">
+            <div class="smb-score">
+                <span id="smb-score1">0</span>
+                <span class="smb-sep">—</span>
+                <span id="smb-score2">0</span>
+            </div>
+            <div id="smb-last-action" class="smb-action">—</div>
+        </div>
+
+        <!-- ZONE HAUTE MATCH-MODE (25dvh) — cachée par défaut, visible via body.match-mode -->
+        <div id="zone-haute-match">
+            <!-- Ligne 1 : Noms équipes + numéro set + bouton Fin -->
+            <div class="zh-names-bar">
+                <span class="zh-nom" id="zh-nom1">Éq.1</span>
+                <span class="zh-sep">—<span id="zh-set-num">S1</span>—</span>
+                <span class="zh-nom" id="zh-nom2">Éq.2</span>
+                <button class="zh-btn-fin" onclick="endMatch()">⏹</button>
+            </div>
+            <!-- Ligne 2 : Jerseys + Score (flex:1 pour prendre l'espace disponible) -->
+            <div class="zh-score-bar">
+                <div class="zh-jersey" id="zh-jersey1"></div>
+                <span class="zh-pts" id="zh-score1">0</span>
+                <span class="zh-dash">—</span>
+                <span class="zh-pts" id="zh-score2">0</span>
+                <div class="zh-jersey" id="zh-jersey2"></div>
+            </div>
+            <!-- Ligne 3 : Boutons (3 états, pas de flex:1) -->
+            <div id="zone-h-attente" class="zh-etat actif">
+                <button class="zh-btn-service" onclick="marquerService('team1')">🏐 Service</button>
+                <button class="zh-btn-point" onclick="marquerPoint('team1')">+1</button>
+                <button class="zh-btn-undo" onclick="scoringSystem.undoLastPoint()">↺</button>
+                <button class="zh-btn-point" onclick="marquerPoint('team2')">+1</button>
+                <button class="zh-btn-service" onclick="marquerService('team2')">Service 🏐</button>
+            </div>
+            <div id="zone-h-rally" class="zh-etat">
+                <span class="zh-rally-label" id="zh-rally-label">🏐 Service en cours</span>
+                <div class="zh-rally-btns">
+                    <button class="zh-btn-point" onclick="marquerPoint('team1')">+1 <span id="zh-rpt1-nom">Éq.1</span></button>
+                    <button class="zh-btn-undo" onclick="scoringSystem.undoLastPoint()">↺</button>
+                    <button class="zh-btn-point" onclick="marquerPoint('team2')"><span id="zh-rpt2-nom">Éq.2</span> +1</button>
+                </div>
+            </div>
+            <div id="zone-h-action" class="zh-etat">
+                <div class="zh-actions-grid" id="zh-actions-grid"></div>
+                <span class="zh-cdown" id="zh-countdown"></span>
+                <button class="zh-btn-skip" onclick="fermerPopup1bis()">SKIP →</button>
+            </div>
+            <!-- Message match terminé (remplace les boutons) -->
+            <div id="zh-termine" style="display:none">✅ MATCH TERMINÉ</div>
+            <!-- Barre inférieure : tableau sets (gauche) + bouton Stats (droite) -->
+            <div class="zh-bottom-bar">
+                <div id="zh-sets-bar" class="zh-sets-table"></div>
+                <button class="zh-btn-stats" id="zh-btn-stats" onclick="diffuserStats()">📊 Stats</button>
+            </div>
+        </div>
+
         <div class="header">
             <h1>⚡ Interface Parent</h1>
             <p id="headerMatchInfo" style="margin-top: 8px; font-size: 1rem; opacity: 0.8;">Gestion du Match en Direct</p>
@@ -696,15 +1609,23 @@
         <div class="card">
             <h2>⚡ Étape 3 : Contrôle du Score</h2>
 
+            <!-- Bannière rôle stats (visible uniquement pour role=stats) -->
+            <div class="role-stats-banner" id="roleBanner">
+                👁 Mode consultation — Vous voyez le score en temps réel
+            </div>
+
             <!-- Indicateur Balle de Set/Match -->
             <div id="balleDeIndicator" style="display: none; text-align: center; padding: 16px; border-radius: 8px; margin-bottom: 20px; font-weight: 900; font-size: 1.3rem; animation: pulse 1.5s infinite;">
                 ⚠️ BALLE DE SET ⚠️
             </div>
 
             <!-- Set actuel -->
-            <div style="text-align: center; margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 12px;">
                 <span id="currentSetNumber" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">Set 1</span>
             </div>
+
+            <!-- Indicateur de service -->
+            <div id="service-indicator">🏐 Appuyez sur « Service » pour démarrer un rally</div>
 
             <div class="score-board">
                 <!-- Équipe 1 -->
@@ -712,8 +1633,12 @@
                     <div class="team-name" id="team1NameDisplay">Équipe 1</div>
                     <div class="score-display" id="scoreTeam1">0</div>
                     <div class="sets-display">Sets: <span id="setsTeam1">0</span></div>
-                    <div class="score-controls">
-                        <button class="btn btn-success score-btn" onclick="scoringSystem.addPoint('team1')" style="font-size: 2rem; padding: 20px 40px;">
+                    <!-- Boutons animateur uniquement -->
+                    <div class="btns-animateur" style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                        <button class="btn-service" id="btn-service-team1" onclick="marquerService('team1')">
+                            🏐 Service
+                        </button>
+                        <button class="btn btn-success score-btn" onclick="marquerPoint('team1')" style="font-size: 2rem; padding: 20px 40px;">
                             +1
                         </button>
                     </div>
@@ -727,32 +1652,63 @@
                     <div class="team-name" id="team2NameDisplay">Équipe 2</div>
                     <div class="score-display" id="scoreTeam2">0</div>
                     <div class="sets-display">Sets: <span id="setsTeam2">0</span></div>
-                    <div class="score-controls">
-                        <button class="btn btn-success score-btn" onclick="scoringSystem.addPoint('team2')" style="font-size: 2rem; padding: 20px 40px;">
+                    <!-- Boutons animateur uniquement -->
+                    <div class="btns-animateur" style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                        <button class="btn-service" id="btn-service-team2" onclick="marquerService('team2')">
+                            🏐 Service
+                        </button>
+                        <button class="btn btn-success score-btn" onclick="marquerPoint('team2')" style="font-size: 2rem; padding: 20px 40px;">
                             +1
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Bouton Annuler Point -->
-            <div style="text-align: center; margin-top: 20px;">
+            <!-- Bouton Annuler Point (animateur uniquement) -->
+            <div class="btns-animateur" style="text-align: center; margin-top: 20px;">
                 <button class="btn btn-secondary" onclick="scoringSystem.undoLastPoint()" style="min-width: 200px;">
                     ↶ Annuler le dernier point
                 </button>
             </div>
 
-            <!-- Historique des Sets -->
+            <!-- Historique des Sets (score par set avec gagnant en jaune) -->
             <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--light-gray);">
-                <h3 style="font-size: 1.1rem; margin-bottom: 16px;">📊 Historique des Sets</h3>
-                <div id="setHistoryList">
-                    <p style="color: var(--gray); font-style: italic;">Aucun set terminé</p>
-                </div>
-                
-                <!-- Bouton Annuler Dernier Set -->
-                <button id="undoSetBtn" class="btn btn-danger" onclick="scoringSystem.undoLastSet()" style="margin-top: 16px; display: none; width: 100%;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 12px;">📊 Score par set</h3>
+                <div id="scorePaSetContainer" style="overflow-x: auto;"></div>
+                <div id="setHistoryList" style="display:none;"></div>
+
+                <!-- Bouton Annuler Dernier Set (animateur uniquement) -->
+                <button id="undoSetBtn" class="btn btn-danger btns-animateur" onclick="scoringSystem.undoLastSet()" style="margin-top: 16px; display: none; width: 100%;">
                     ⚠️ Annuler la validation du dernier set
                 </button>
+            </div>
+        </div>
+
+        <!-- ZONE JOUEUSES — Split screen (visible si joueuses définies) -->
+        <div id="section-joueuses" style="display:none; margin-bottom: 20px;">
+            <h2 style="color:white; font-size:1.1rem; margin-bottom: 10px; font-weight:700;">
+                👩‍🏐 Stats joueuses
+                <span id="joueuses-equipes-label" style="font-size:0.8rem; opacity:0.7; font-weight:400; margin-left: 8px;"></span>
+            </h2>
+            <div id="zone-joueuses"></div>
+            <button class="btn-ajouter-joueuse" id="btn-ajouter-joueuse" onclick="ouvrirPickerAjout()">+ Ajouter une joueuse</button>
+        </div>
+
+        <!-- PICKER joueuse (slide-up) -->
+        <div class="picker-joueuse" id="pickerJoueuse" onclick="fermerPicker(event)">
+            <div class="picker-content">
+                <h3 id="picker-titre">Modifier la joueuse suivie</h3>
+                <div id="picker-suggestions" class="picker-suggestions" style="display:none"></div>
+                <div class="picker-form">
+                    <input type="number" class="inp-num" id="picker-numero" placeholder="N°" min="1" max="99">
+                    <input type="text" class="inp-nom" id="picker-nom" placeholder="Nom Prénom">
+                    <select id="picker-equipe">
+                        <option value="team1">Domicile</option>
+                        <option value="team2">Adverse</option>
+                    </select>
+                    <button class="btn-valider-picker" onclick="validerPicker()">✓</button>
+                </div>
+                <button style="width:100%; padding:10px; background:var(--light-gray); border:none; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif; color:var(--gray);" onclick="fermerPicker()">Annuler</button>
             </div>
         </div>
 
@@ -832,6 +1788,18 @@
         </div>
     </div>
 
+    <!-- Popup Level 1bis — Action finale après un point -->
+    <div class="popup-1bis" id="popup1bis">
+        <div class="popup-1bis-header">
+            <span id="popup1bis-titre">Point !</span>
+            <span class="popup-1bis-timer" id="popup1bis-timer">⏱ 5s</span>
+        </div>
+        <div class="popup-1bis-grid" id="popup1bis-actions">
+            <!-- Rempli dynamiquement selon l'équipe qui a marqué -->
+        </div>
+        <button class="btn-skip-1bis" onclick="fermerPopup1bis()">↷ SKIP — Passer au rally suivant</button>
+    </div>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -850,6 +1818,396 @@
         let selectedVideoSource = 'youtube';
         let miniPlayerActive = false;
         let matchStarted = false;
+
+        // ================================================================
+        // GESTION DU RÔLE (animateur vs stats)
+        // ================================================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const role = urlParams.get('role') || 'animateur';
+
+        function appliquerRole() {
+            if (role === 'stats') {
+                // Mode parent : joueuses uniquement, plein écran, indépendant de l'animateur
+                document.body.classList.add('role-stats', 'stats-mode');
+                // Afficher immédiatement la section joueuses (vide — le parent ajoute les siennes)
+                const section = document.getElementById('section-joueuses');
+                if (section) section.style.display = 'block';
+                mettreAJourBtnAjouter();
+
+                // Listener sur la dernière action de l'animateur
+                if (currentMatchId) {
+                    const labelsAction = {
+                        'ace': '⚡ ACE', 'kill': '💥 KILL', 'bloc': '🛡 BLOC',
+                        'ft_serv': '❌ Faute service', 'ft_recep': '❌ Faute récep',
+                        'ft_attq': '❌ Faute attaque', 'ft_bloc': '❌ Faute bloc', 'ft_filet': '❌ Faute filet'
+                    };
+                    firebase.database().ref(`matches/${currentMatchId}/lastAction`).on('value', snap => {
+                        const la = snap.val();
+                        const el = document.getElementById('smb-last-action');
+                        if (el) el.textContent = la ? (labelsAction[la.label] || la.label) : '—';
+                    });
+                }
+            }
+        }
+
+        // ================================================================
+        // SERVICE & RALLY
+        // ================================================================
+        let servingTeam = null;
+        let dernierRallyId = null;
+
+        async function marquerService(team) {
+            if (!currentMatchId) return;
+            servingTeam = team;
+
+            // Mettre à jour visuellement les boutons de service
+            document.getElementById('btn-service-team1').classList.toggle('actif', team === 'team1');
+            document.getElementById('btn-service-team2').classList.toggle('actif', team === 'team2');
+
+            // Mettre à jour l'indicateur
+            const nomEquipe = team === 'team1'
+                ? (currentMatch?.team1?.name || 'Équipe 1')
+                : (currentMatch?.team2?.name || 'Équipe 2');
+            document.getElementById('service-indicator').textContent = '🏐 Service : ' + nomEquipe;
+
+            try {
+                dernierRallyId = await dbService.startRally(currentMatchId, team);
+            } catch(e) {
+                console.error('❌ Erreur startRally:', e);
+            }
+
+            // En match-mode : passer à l'état rally (zone haute)
+            if (document.body.classList.contains('match-mode')) {
+                const zhLabel = document.getElementById('zh-rally-label');
+                if (zhLabel) zhLabel.textContent = '🏐 Service : ' + nomEquipe + ' — EN COURS';
+                setZoneHauteEtat('rally');
+            }
+        }
+
+        async function marquerPoint(team) {
+            if (!currentMatchId) return;
+
+            try {
+                // Terminer le rally dans Firebase (timestamp point + phase)
+                dernierRallyId = await dbService.endRally(currentMatchId, team);
+            } catch(e) {
+                console.error('❌ Erreur endRally:', e);
+            }
+
+            // Appeler le système de scoring existant
+            await scoringSystem.addPoint(team);
+
+            // Réinitialiser les boutons de service
+            document.getElementById('btn-service-team1').classList.remove('actif');
+            document.getElementById('btn-service-team2').classList.remove('actif');
+            document.getElementById('service-indicator').textContent = '🏐 Appuyez sur « Service » pour démarrer un rally';
+            servingTeam = null;
+
+            // Afficher le popup Level 1bis si on est animateur
+            if (role === 'animateur' && dernierRallyId) {
+                afficherPopup1bis(team, dernierRallyId);
+            } else if (document.body.classList.contains('match-mode')) {
+                // Pas de rally enregistré : retour direct à l'état attente
+                setZoneHauteEtat('attente');
+            }
+        }
+
+        // ================================================================
+        // POPUP LEVEL 1BIS
+        // ================================================================
+        const ACTIONS_1BIS = {
+            team1: [
+                { id: 'ace',      label: '⚡ ACE',             classe: 'positif', dvwSkill: 'S', dvwQuality: '#', teamAction: 'team1' },
+                { id: 'kill',     label: '💥 KILL (Attaque)',   classe: 'positif', dvwSkill: 'A', dvwQuality: '#', teamAction: 'team1' },
+                { id: 'bloc',     label: '🛡 BLOC',             classe: 'positif', dvwSkill: 'B', dvwQuality: '#', teamAction: 'team1' },
+                { id: 'ft_serv',  label: '❌ Faute Service',    classe: 'negatif', dvwSkill: 'S', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ft_recep', label: '❌ Faute Réception',  classe: 'negatif', dvwSkill: 'R', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ft_attq',  label: '❌ Faute Attaque',    classe: 'negatif', dvwSkill: 'A', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ft_bloc',  label: '❌ Faute Bloc',       classe: 'negatif', dvwSkill: 'B', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ft_filet', label: '❌ Faute Filet',      classe: 'negatif', dvwSkill: 'F', dvwQuality: '=', teamAction: 'team2' },
+            ],
+            team2: [
+                { id: 'ace',      label: '⚡ ACE',             classe: 'positif', dvwSkill: 'S', dvwQuality: '#', teamAction: 'team2' },
+                { id: 'kill',     label: '💥 KILL (Attaque)',   classe: 'positif', dvwSkill: 'A', dvwQuality: '#', teamAction: 'team2' },
+                { id: 'bloc',     label: '🛡 BLOC',             classe: 'positif', dvwSkill: 'B', dvwQuality: '#', teamAction: 'team2' },
+                { id: 'ft_serv',  label: '❌ Faute Service',    classe: 'negatif', dvwSkill: 'S', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ft_recep', label: '❌ Faute Réception',  classe: 'negatif', dvwSkill: 'R', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ft_attq',  label: '❌ Faute Attaque',    classe: 'negatif', dvwSkill: 'A', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ft_bloc',  label: '❌ Faute Bloc',       classe: 'negatif', dvwSkill: 'B', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ft_filet', label: '❌ Faute Filet',      classe: 'negatif', dvwSkill: 'F', dvwQuality: '=', teamAction: 'team1' },
+            ]
+        };
+
+        let popup1bisTimer = null;
+        let popup1bisRallyId = null;
+        let popup1bisCountdown = 5;
+
+        function afficherPopup1bis(pointTeam, rallyId) {
+            popup1bisRallyId = rallyId;
+            popup1bisCountdown = 5;
+
+            const nomEquipe = pointTeam === 'team1'
+                ? (currentMatch?.team1?.name || 'Équipe 1')
+                : (currentMatch?.team2?.name || 'Équipe 2');
+
+            const actions = ACTIONS_1BIS[pointTeam] || [];
+            const isMatchMode = document.body.classList.contains('match-mode');
+
+            if (isMatchMode) {
+                // En match-mode : afficher dans la zone haute (état action)
+                const zhGrid = document.getElementById('zh-actions-grid');
+                if (zhGrid) {
+                    zhGrid.innerHTML = actions.map(a => `
+                        <button class="zh-btn-action ${a.classe}" onclick="selectionnerAction1bis('${a.id}','${a.teamAction}','${a.dvwSkill}','${a.dvwQuality}')">
+                            ${a.label}
+                        </button>
+                    `).join('');
+                }
+                const cdown = document.getElementById('zh-countdown');
+                if (cdown) { cdown.style.display = 'inline-block'; cdown.textContent = '⏱ 5s'; }
+                setZoneHauteEtat('action');
+            } else {
+                // Mode normal : popup slide-up depuis le bas
+                document.getElementById('popup1bis-titre').textContent = '🏆 Point ' + nomEquipe + ' — Action finale ?';
+                document.getElementById('popup1bis-timer').textContent = '⏱ 5s';
+                const gridEl = document.getElementById('popup1bis-actions');
+                gridEl.innerHTML = actions.map(a => `
+                    <button class="btn-action-1bis ${a.classe}" onclick="selectionnerAction1bis('${a.id}', '${a.teamAction}', '${a.dvwSkill}', '${a.dvwQuality}')">
+                        ${a.label}
+                    </button>
+                `).join('');
+                document.getElementById('popup1bis').classList.add('show');
+            }
+
+            // Timer 5 secondes (commun aux deux modes)
+            popup1bisTimer = setInterval(() => {
+                popup1bisCountdown--;
+                const txt = '⏱ ' + popup1bisCountdown + 's';
+                document.getElementById('popup1bis-timer').textContent = txt;
+                if (isMatchMode) {
+                    const cdown = document.getElementById('zh-countdown');
+                    if (cdown) cdown.textContent = txt;
+                }
+                if (popup1bisCountdown <= 0) fermerPopup1bis();
+            }, 1000);
+        }
+
+        async function selectionnerAction1bis(type, team, dvwSkill, dvwQuality) {
+            const rallyId = popup1bisRallyId; // Capturer AVANT fermerPopup1bis() qui remet à null
+            fermerPopup1bis();
+            if (!currentMatchId || !rallyId) {
+                console.warn('⚠️ selectionnerAction1bis : rallyId manquant');
+                return;
+            }
+
+            try {
+                await dbService.enrichRallyActionFinale(currentMatchId, rallyId, {
+                    type: type,
+                    team: team,
+                    dvwSkill: dvwSkill,
+                    dvwQuality: dvwQuality
+                });
+                console.log('✅ Action finale enregistrée:', type, rallyId);
+            } catch(e) {
+                console.error('❌ Erreur enrichRallyActionFinale:', e);
+            }
+
+            // Écrire dans lastAction pour la bannière stats-mode (non bloquant)
+            try {
+                firebase.database().ref(`matches/${currentMatchId}/lastAction`).set({
+                    label: type,
+                    team: team,
+                    timestamp: Date.now()
+                });
+            } catch(e) { /* non bloquant */ }
+        }
+
+        function fermerPopup1bis() {
+            if (popup1bisTimer) { clearInterval(popup1bisTimer); popup1bisTimer = null; }
+            document.getElementById('popup1bis').classList.remove('show');
+            // En match-mode : revenir à l'état attente + cacher le countdown
+            if (document.body.classList.contains('match-mode')) {
+                const cdown = document.getElementById('zh-countdown');
+                if (cdown) { cdown.style.display = 'none'; cdown.textContent = ''; }
+                setZoneHauteEtat('attente');
+            }
+            popup1bisRallyId = null;
+        }
+
+        // ================================================================
+        // ZONE HAUTE MATCH-MODE — Gestion des 3 états
+        // ================================================================
+        function setZoneHauteEtat(etat) {
+            ['attente', 'rally', 'action'].forEach(e => {
+                const el = document.getElementById('zone-h-' + e);
+                if (el) el.classList.toggle('actif', e === etat);
+            });
+        }
+
+        function mettreAJourZoneHauteScore(match) {
+            if (!document.body.classList.contains('match-mode')) return;
+            const score = match.score || {};
+            const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+
+            setEl('zh-score1', score.pointsTeam1 || 0);
+            setEl('zh-score2', score.pointsTeam2 || 0);
+            const setNum = (score.setsTeam1 || 0) + (score.setsTeam2 || 0) + 1;
+            setEl('zh-set-num', 'S' + setNum);
+
+            const nom1 = match.team1?.name || 'Éq.1';
+            const nom2 = match.team2?.name || 'Éq.2';
+            setEl('zh-nom1', nom1); setEl('zh-rpt1-nom', nom1);
+            setEl('zh-nom2', nom2); setEl('zh-rpt2-nom', nom2);
+
+            // Couleurs jerseys
+            const c1 = match.team1?.color || '#6366f1';
+            const c2 = match.team2?.color || '#3b82f6';
+            const j1 = document.getElementById('zh-jersey1');
+            const j2 = document.getElementById('zh-jersey2');
+            if (j1) j1.style.background = c1;
+            if (j2) j2.style.background = c2;
+
+            // Tableau des sets (en bas à gauche)
+            const setsEl = document.getElementById('zh-sets-bar');
+            const setHistory = match.setHistory;
+            if (setsEl && setHistory) {
+                const setsArr = Array.isArray(setHistory) ? setHistory : Object.values(setHistory);
+                if (setsArr.length > 0) {
+                    const n1 = nom1.substring(0, 5).toUpperCase();
+                    const n2 = nom2.substring(0, 5).toUpperCase();
+                    const cols1 = setsArr.map(s => {
+                        const win = s.winner === 'team1';
+                        return `<td style="padding:0 3px;color:${win?'#fbbf24':'rgba(255,255,255,0.45)'};font-weight:${win?'bold':'normal'}">${win?'['+s.team1Points+']':s.team1Points}</td>`;
+                    }).join('');
+                    const cols2 = setsArr.map(s => {
+                        const win = s.winner === 'team2';
+                        return `<td style="padding:0 3px;color:${win?'#fbbf24':'rgba(255,255,255,0.45)'};font-weight:${win?'bold':'normal'}">${win?'['+s.team2Points+']':s.team2Points}</td>`;
+                    }).join('');
+                    setsEl.innerHTML = `<table style="border-collapse:collapse"><tr><td style="padding-right:4px;color:rgba(255,255,255,0.6)">${n1}</td>${cols1}</tr><tr><td style="padding-right:4px;color:rgba(255,255,255,0.6)">${n2}</td>${cols2}</tr></table>`;
+                } else {
+                    setsEl.innerHTML = '';
+                }
+            } else if (setsEl) {
+                setsEl.innerHTML = '';
+            }
+        }
+
+        // Diffuser les stats live sur le viewer
+        let statsBroadcastTimer = null;
+        async function diffuserStats() {
+            if (!currentMatchId || !currentMatch) return;
+            const btn = document.getElementById('zh-btn-stats');
+            const score = currentMatch.score || {};
+            const currentSet = currentMatch.currentSet || 1;
+            const pointsEnCours = (score.pointsTeam1 || 0) + (score.pointsTeam2 || 0);
+            const isFinished = currentMatch.status === 'finished';
+
+            // Si 0 points dans le set courant = entre deux sets → montrer le set précédent
+            const setAMontrer = pointsEnCours > 0 ? currentSet : Math.max(1, currentSet - 1);
+
+            try {
+                await firebase.database().ref(`matches/${currentMatchId}/liveStats`).set({
+                    active: true,
+                    timestamp: Date.now(),
+                    setAMontrer: setAMontrer,
+                    matchFinished: isFinished
+                });
+                if (btn) { btn.classList.add('diffusion-active'); btn.textContent = '🔴 Stats Live'; }
+                if (statsBroadcastTimer) clearTimeout(statsBroadcastTimer);
+                // Timer animateur : 21s en cours de match, 45s fin de match (viewer a 40s)
+                const duree = isFinished ? 45000 : 21000;
+                statsBroadcastTimer = setTimeout(async () => {
+                    await firebase.database().ref(`matches/${currentMatchId}/liveStats`).set({
+                        active: false, timestamp: Date.now()
+                    });
+                    if (btn) { btn.classList.remove('diffusion-active'); btn.textContent = '📊 Stats'; }
+                }, duree);
+            } catch(e) { console.error('❌ Erreur diffuserStats:', e); }
+        }
+
+        // ================================================================
+        // GESTION JOUEUSES — Ajouter / Retirer / Ré-render
+        // ================================================================
+        function renderZoneJoueuses() {
+            const n = joueusesEnCours.length;
+            const zone = document.getElementById('zone-joueuses');
+            zone.className = n <= 1 ? '' : `split-${Math.min(n, 4)}`;
+            zone.innerHTML = joueusesEnCours.map((j, i) => renderCarte(j, i)).join('');
+            mettreAJourBtnAjouter();
+        }
+
+        function mettreAJourBtnAjouter() {
+            const btn = document.getElementById('btn-ajouter-joueuse');
+            if (btn) btn.style.display = joueusesEnCours.length < 4 ? 'block' : 'none';
+        }
+
+        function retirerJoueuse(index) {
+            if (!confirm('Retirer cette joueuse ? Ses stats sont sauvegardées et récupérables si elle revient.')) return;
+            sauvegarderStats(index); // Sauvegarder avant de retirer
+            joueusesEnCours.splice(index, 1);
+            compteurs.splice(index, 1);
+            renderZoneJoueuses();
+        }
+
+        function ouvrirPickerAjout() {
+            pickerMode = 'ajouter';
+            pickerCarteIndex = null;
+            document.getElementById('picker-titre').textContent = 'Ajouter une joueuse';
+            document.getElementById('picker-numero').value = '';
+            document.getElementById('picker-nom').value = '';
+            document.getElementById('picker-equipe').value = 'team1';
+            remplirPickerSuggestions();
+            document.getElementById('pickerJoueuse').classList.add('show');
+        }
+
+        // ================================================================
+        // AFFICHAGE SCORE PAR SET (avec set gagnant en jaune)
+        // ================================================================
+        function renderScoreParSet(match) {
+            const container = document.getElementById('scorePaSetContainer');
+            if (!container) return;
+
+            const setHistory = match.setHistory || [];
+            // Ajouter le set en cours s'il y a un score actif
+            const score = match.score || {};
+            const enCours = (score.pointsTeam1 || 0) + (score.pointsTeam2 || 0) > 0;
+
+            if (setHistory.length === 0 && !enCours) {
+                container.innerHTML = '<p style="color:var(--gray); font-style:italic; font-size:0.9rem;">Aucun set commencé</p>';
+                return;
+            }
+
+            const nom1 = match.team1?.name || 'Équipe 1';
+            const nom2 = match.team2?.name || 'Équipe 2';
+
+            // Construire les colonnes (sets terminés + set en cours éventuel)
+            let cols1 = '', cols2 = '';
+            setHistory.forEach(set => {
+                const gagnant1 = set.winner === 'team1';
+                const gagnant2 = set.winner === 'team2';
+                cols1 += `<td class="col-set ${gagnant1 ? 'col-set-gagnant' : ''}">${set.team1Points}</td>`;
+                cols2 += `<td class="col-set ${gagnant2 ? 'col-set-gagnant' : ''}">${set.team2Points}</td>`;
+            });
+
+            // Set en cours
+            if (enCours) {
+                cols1 += `<td class="col-set" style="color:var(--primary); border: 2px dashed var(--primary);">${score.pointsTeam1 || 0}</td>`;
+                cols2 += `<td class="col-set" style="color:var(--primary); border: 2px dashed var(--primary);">${score.pointsTeam2 || 0}</td>`;
+            }
+
+            container.innerHTML = `
+                <table class="score-par-set-table">
+                    <tr>
+                        <td class="col-equipe">${nom1.substring(0, 12)}</td>
+                        ${cols1}
+                    </tr>
+                    <tr>
+                        <td class="col-equipe">${nom2.substring(0, 12)}</td>
+                        ${cols2}
+                    </tr>
+                </table>
+            `;
+        }
 
         // Sélectionner la source vidéo
         function selectVideoSource(source) {
@@ -1109,15 +2467,27 @@
                 return;
             }
 
-            console.log('🏐 Chargement du match:', currentMatchId);
+            console.log('🏐 Chargement du match:', currentMatchId, '— Rôle:', role);
             document.getElementById('headerMatchInfo').textContent = `Match: ${currentMatchId}`;
-            
+
+            // Appliquer les restrictions de rôle
+            appliquerRole();
+
             // Initialiser le système de scoring professionnel
             if (window.scoringSystem) {
                 scoringSystem.init(currentMatchId);
                 console.log('✅ Système de scoring professionnel initialisé');
             }
-            
+
+            // Écouter le currentRally (pour Parent B en mode stats)
+            if (role === 'stats') {
+                dbService.listenToCurrentRally(currentMatchId, (rally) => {
+                    if (rally) {
+                        dernierRallyId = rally.rallyId || null;
+                    }
+                });
+            }
+
             loadMatchData();
         });
 
@@ -1142,6 +2512,31 @@
                 displayMatchInfo(match);
                 updateScoreDisplay(match.score);
                 updateStatus(match.status);
+
+                // Mettre à jour le score dans la bannière stats-mode
+                const sc = match.score || {};
+                const s1 = document.getElementById('smb-score1');
+                const s2 = document.getElementById('smb-score2');
+                if (s1) s1.textContent = sc.pointsTeam1 ?? 0;
+                if (s2) s2.textContent = sc.pointsTeam2 ?? 0;
+
+                // Afficher le score par set avec gagnant en jaune
+                renderScoreParSet(match);
+
+                // Mettre à jour la zone haute en match-mode
+                mettreAJourZoneHauteScore(match);
+
+                // Bloquer l'interface si le match est terminé
+                if (match.status === 'finished') {
+                    document.body.classList.add('match-finished');
+                } else {
+                    document.body.classList.remove('match-finished');
+                }
+
+                // Initialiser les cartes joueuses (une seule fois)
+                if (match.joueuses && joueusesEnCours.length === 0) {
+                    initJoueuses(match);
+                }
 
                 // Pré-remplir le lien YouTube si présent
                 if (match.youtubeUrl) {
@@ -1254,7 +2649,13 @@
 
             try {
                 await dbService.updateMatchStatus(currentMatchId, 'live');
-                alert('✅ Match démarré ! Gérez maintenant le score ci-dessous.');
+
+                // Activer le layout match-mode (25/75)
+                document.body.classList.add('match-mode');
+                if (currentMatch) mettreAJourZoneHauteScore(currentMatch);
+                setZoneHauteEtat('attente');
+                mettreAJourBtnAjouter();
+
             } catch (error) {
                 console.error('❌ Erreur:', error);
                 alert('❌ Erreur lors du démarrage');
@@ -1265,12 +2666,15 @@
         async function endMatch() {
             const source = currentMatch?.videoSource || 'youtube';
             const sourceName = source === 'facebook' ? 'Facebook' : 'YouTube';
-            
+
             if (!confirm(`🏁 Terminer le match ?\n\n⚠️ N'oubliez pas d'éteindre votre live ${sourceName} après !`)) return;
 
             try {
                 await dbService.updateMatchStatus(currentMatchId, 'finished');
-                
+
+                // Désactiver le layout match-mode
+                document.body.classList.remove('match-mode');
+
                 // Rappel
                 setTimeout(() => {
                     if (confirm(`✅ Match terminé !\n\n📱 RAPPEL : Éteignez maintenant votre live ${sourceName}\n\nOuvrir l'application ?`)) {
@@ -1317,6 +2721,319 @@
             await dbService.triggerSponsorOverlay(currentMatchId);
 
             alert('🎬 Écran sponsors activé ! (2 minutes)\nLes scores des points ont été remis à 0.');
+        }
+
+        // ================================================================
+        // SPLIT SCREEN JOUEUSES + PASTILLES BD (Étape 4)
+        // ================================================================
+
+        // Données des joueuses en cours
+        let joueusesEnCours = [];
+        // Compteurs par carte (index → { ok, err })
+        let compteurs = [];
+        // Index de la carte en cours de modification (pour le picker)
+        let pickerCarteIndex = null;
+        let pickerMode = 'changer'; // 'changer' | 'ajouter'
+
+        // Historique des stats par joueuse (persistant pendant la session)
+        // Clé : "NOM_NUMERO_EQUIPE" — permet de retrouver les stats si la joueuse revient
+        let joueusesHistorique = {};
+
+        function cleHistorique(joueuse) {
+            return `${joueuse.nom || ''}_${joueuse.numero || 0}_${joueuse.equipe || ''}`;
+        }
+
+        function sauvegarderStats(index) {
+            if (!joueusesEnCours[index] || !compteurs[index]) return;
+            const j = joueusesEnCours[index];
+            joueusesHistorique[cleHistorique(j)] = {
+                stats: { ...compteurs[index] },
+                joueuse: { ...j }
+            };
+        }
+
+        function restaurerStats(joueuse) {
+            const entry = joueusesHistorique[cleHistorique(joueuse)];
+            return entry ? (entry.stats || entry) : { ok: 0, err: 0 };
+        }
+
+        function remplirPickerSuggestions() {
+            const el = document.getElementById('picker-suggestions');
+            if (!el) return;
+            const enCoursCles = joueusesEnCours.map(j => cleHistorique(j));
+            const suggestions = Object.values(joueusesHistorique)
+                .filter(entry => entry.joueuse && !enCoursCles.includes(cleHistorique(entry.joueuse)));
+            if (suggestions.length === 0) { el.style.display = 'none'; return; }
+            const c1 = currentMatch?.team1?.color || '#6366f1';
+            const c2 = currentMatch?.team2?.color || '#3b82f6';
+            el.style.display = 'flex';
+            el.innerHTML = '<p class="picker-sugg-label">Joueuses récentes :</p>' +
+                suggestions.map(entry => {
+                    const j = entry.joueuse;
+                    const color = j.equipe === 'team1' ? c1 : c2;
+                    const teamLabel = j.equipe === 'team1' ? 'Domicile' : 'Adverse';
+                    return `<button class="picker-sugg-btn" style="border-left-color:${color}"
+                        onclick="selectionnerSuggestion(${j.numero || 0},'${(j.nom || '').replace(/'/g,"\\'")}','${j.equipe || 'team1'}')">
+                        <strong>#${j.numero || '?'}</strong>&nbsp;${j.nom || ''}
+                        <small style="color:var(--gray);margin-left:auto">${teamLabel}</small>
+                    </button>`;
+                }).join('');
+        }
+
+        function selectionnerSuggestion(numero, nom, equipe) {
+            document.getElementById('picker-numero').value = numero;
+            document.getElementById('picker-nom').value = nom;
+            document.getElementById('picker-equipe').value = equipe;
+        }
+
+        // Pastilles BD par compétence (label, classe CSS, qualité DVW)
+        const PASTILLES = {
+            service:   [
+                { label: '⚡ ACE',      classe: 'pastille-kill',   quality: '#', dvwLabel: 'ACE!' },
+                { label: '🔄 En Jeu',   classe: 'pastille-enjeu',  quality: '!', dvwLabel: 'En jeu' },
+                { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
+            reception: [
+                { label: '⭐ Parfaite', classe: 'pastille-parfait', quality: '#', dvwLabel: 'Parfaite!' },
+                { label: '✅ Bonne',    classe: 'pastille-bon',    quality: '+', dvwLabel: 'Bonne' },
+                { label: '⚠️ OK',       classe: 'pastille-enjeu',  quality: '!', dvwLabel: 'OK' },
+                { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
+            attaque:   [
+                { label: '💥 POINT',    classe: 'pastille-kill',   quality: '#', dvwLabel: 'Point!' },
+                { label: '🔄 En Jeu',   classe: 'pastille-enjeu',  quality: '!', dvwLabel: 'En jeu' },
+                { label: '🛡 Bloquée',  classe: 'pastille-bloque', quality: '/', dvwLabel: 'Bloquée' },
+                { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
+            passe:     [
+                { label: '✅ OK',       classe: 'pastille-bon',    quality: '+', dvwLabel: 'OK' },
+                { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
+            contre:    [
+                { label: '🛡 POINT',    classe: 'pastille-kill',   quality: '#', dvwLabel: 'Bloc point!' },
+                { label: '🔄 En Jeu',   classe: 'pastille-bon',    quality: '+', dvwLabel: 'En jeu' },
+                { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
+            defense:   [
+                { label: '⭐ Parfaite', classe: 'pastille-parfait', quality: '#', dvwLabel: 'Parfaite!' },
+                { label: '🔄 En Jeu',   classe: 'pastille-bon',    quality: '+', dvwLabel: 'En jeu' },
+                { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
+        };
+
+        const SKILLS_INFO = [
+            { id: 'service',   label: '🏐 Service' },
+            { id: 'reception', label: '📩 Récep' },
+            { id: 'attaque',   label: '⚡ Attaque' },
+            { id: 'passe',     label: '🤲 Passe' },
+            { id: 'contre',    label: '🛡 Contre' },
+            { id: 'defense',   label: '🧤 Défen' },
+        ];
+
+        // Initialiser la zone joueuses depuis Firebase (animateur seulement)
+        async function initJoueuses(match) {
+            // En mode stats, chaque parent gère ses propres joueuses indépendamment
+            if (role === 'stats') return;
+            const joueuses = match.joueuses;
+            if (!joueuses || joueuses.length === 0) return;
+
+            joueusesEnCours = Array.isArray(joueuses) ? joueuses : Object.values(joueuses);
+            compteurs = joueusesEnCours.map(() => ({ ok: 0, err: 0 }));
+
+            const section = document.getElementById('section-joueuses');
+            section.style.display = 'block';
+
+            const zone = document.getElementById('zone-joueuses');
+            const n = joueusesEnCours.length;
+            zone.className = n === 1 ? '' : `split-${Math.min(n, 4)}`;
+
+            zone.innerHTML = joueusesEnCours.map((j, i) => renderCarte(j, i)).join('');
+
+            // Label équipes
+            const nom1 = match.team1?.name || 'Équipe 1';
+            const nom2 = match.team2?.name || 'Équipe 2';
+            document.getElementById('joueuses-equipes-label').textContent = `${nom1} vs ${nom2}`;
+
+            mettreAJourBtnAjouter();
+        }
+
+        function renderCarte(joueuse, index) {
+            const badgeClass = joueuse.equipe === 'team1' ? 'badge-team1' : 'badge-team2';
+            const compteur = compteurs[index] || { ok: 0, err: 0 };
+
+            const skillsHtml = SKILLS_INFO.map(s =>
+                `<button class="btn-skill" onclick="selectionnerSkill(${index}, '${s.id}')">${s.label}</button>`
+            ).join('');
+
+            return `
+            <div class="carte-joueuse" id="carte-${index}">
+                <div class="joueuse-header">
+                    <div class="joueuse-numero" style="background:${joueuse.equipe === 'team1' ? (currentMatch?.team1?.color || 'var(--primary)') : (currentMatch?.team2?.color || '#3b82f6')}">${joueuse.numero || '?'}</div>
+                    <span class="joueuse-nom">${joueuse.nom || 'Joueuse'}</span>
+                    <span class="joueuse-equipe-badge ${badgeClass}">${joueuse.equipe === 'team1' ? 'DOM' : 'ADV'}</span>
+                    <button class="btn-changer-joueuse" onclick="ouvrirPicker(${index})">↕</button>
+                    <button class="btn-retirer-joueuse" onclick="retirerJoueuse(${index})" title="Retirer">✕</button>
+                </div>
+                <div class="actions-skills-grid" id="skills-${index}">
+                    ${skillsHtml}
+                </div>
+                <div class="pastilles-container" id="pastilles-${index}">
+                    <!-- Rempli dynamiquement -->
+                </div>
+                <div class="joueuse-mini-stats">
+                    <span class="mini-stat-ok" id="cpt-ok-${index}">✅ ${compteur.ok}</span>
+                    <span class="mini-stat-err" id="cpt-err-${index}">❌ ${compteur.err}</span>
+                </div>
+            </div>`;
+        }
+
+        function selectionnerSkill(carteIndex, skill) {
+            const pastilles = PASTILLES[skill];
+            if (!pastilles) return;
+
+            const pastillesEl = document.getElementById(`pastilles-${carteIndex}`);
+            const skillsEl    = document.getElementById(`skills-${carteIndex}`);
+
+            const pastillesHtml = pastilles.map(p =>
+                `<button class="pastille-btn ${p.classe}" onclick="enregistrerAction(${carteIndex}, '${skill}', '${p.quality}', '${p.dvwLabel}')">${p.label}</button>`
+            ).join('');
+
+            pastillesEl.innerHTML = `
+                <div class="pastilles-grid">${pastillesHtml}</div>
+                <button class="btn-retour-skill" onclick="retourSkills(${carteIndex})">← Retour</button>
+            `;
+
+            skillsEl.style.display = 'none';
+            pastillesEl.classList.add('show');
+        }
+
+        function retourSkills(carteIndex) {
+            document.getElementById(`skills-${carteIndex}`).style.display = 'grid';
+            document.getElementById(`pastilles-${carteIndex}`).classList.remove('show');
+        }
+
+        // Am. 5 — Score automatique depuis une carte joueuse (animateur en match-mode)
+        async function marquerPointDepuisCarte(equipeJoueuse, skill, quality) {
+            if (!currentMatchId) return;
+            // Qui marque le point ?
+            const pointTeam = quality === '=' ? (equipeJoueuse === 'team1' ? 'team2' : 'team1') : equipeJoueuse;
+            // Mapper vers type d'action Level 1bis
+            const typeMap = { 'service_#': 'ace', 'attaque_#': 'kill', 'contre_#': 'bloc' };
+            const typeAction = quality === '=' ? ('ft_' + skill) : (typeMap[skill + '_' + quality] || null);
+            const teamAction = quality === '=' ? equipeJoueuse : pointTeam;
+            try {
+                const rallyId = await dbService.endRally(currentMatchId, pointTeam);
+                dernierRallyId = rallyId;
+                await scoringSystem.addPoint(pointTeam);
+                servingTeam = null;
+                if (document.body.classList.contains('match-mode')) setZoneHauteEtat('attente');
+                if (rallyId && typeAction) {
+                    const dvwSkillMap = { 'service':'S','attaque':'A','contre':'B',
+                        'ft_service':'S','ft_reception':'R','ft_attaque':'A','ft_contre':'B','ft_passe':'P','ft_defense':'D','ft_filet':'F' };
+                    const dvwSkill = dvwSkillMap[typeAction] || dvwSkillMap[skill] || 'A';
+                    await dbService.enrichRallyActionFinale(currentMatchId, rallyId, {
+                        type: typeAction, team: teamAction, dvwSkill, dvwQuality: quality === '=' ? '=' : '#'
+                    });
+                    try {
+                        firebase.database().ref(`matches/${currentMatchId}/lastAction`).set(
+                            { label: typeAction, team: teamAction, timestamp: Date.now() }
+                        );
+                    } catch(e) { /* non bloquant */ }
+                }
+            } catch(e) { console.error('❌ Erreur marquerPointDepuisCarte:', e); }
+        }
+
+        async function enregistrerAction(carteIndex, skill, quality, label) {
+            const joueuse = joueusesEnCours[carteIndex];
+            if (!joueuse || !currentMatchId) return;
+
+            // Am. 5 — Auto-score pour animateur en match-mode sur actions décisives
+            const estDecisive = quality === '=' ||
+                (skill === 'service' && quality === '#') ||
+                (skill === 'attaque' && quality === '#') ||
+                (skill === 'contre' && quality === '#');
+
+            if (role === 'animateur' && document.body.classList.contains('match-mode') && estDecisive) {
+                await marquerPointDepuisCarte(joueuse.equipe, skill, quality);
+                // dernierRallyId est maintenant à jour
+            }
+
+            // Enregistrer l'action joueuse dans playerActions (rallyId mis à jour si auto-score)
+            const rallyId = dernierRallyId || null;
+
+            try {
+                await dbService.savePlayerAction(currentMatchId, rallyId, joueuse, skill, quality, label, role);
+            } catch(e) {
+                console.error('❌ Erreur savePlayerAction:', e);
+            }
+
+            // Mettre à jour le compteur
+            if (!compteurs[carteIndex]) compteurs[carteIndex] = { ok: 0, err: 0 };
+            if (quality === '=' || quality === '/') {
+                compteurs[carteIndex].err++;
+            } else {
+                compteurs[carteIndex].ok++;
+            }
+
+            document.getElementById(`cpt-ok-${carteIndex}`).textContent = `✅ ${compteurs[carteIndex].ok}`;
+            document.getElementById(`cpt-err-${carteIndex}`).textContent = `❌ ${compteurs[carteIndex].err}`;
+
+            // Flash de succès sur la carte + retour aux boutons skill
+            const carte = document.getElementById(`carte-${carteIndex}`);
+            carte.classList.add('flash-succes');
+            setTimeout(() => carte.classList.remove('flash-succes'), 600);
+            retourSkills(carteIndex);
+        }
+
+        // ---- Picker changement de joueuse ----
+        function ouvrirPicker(carteIndex) {
+            pickerMode = 'changer';
+            pickerCarteIndex = carteIndex;
+            const joueuse = joueusesEnCours[carteIndex];
+            document.getElementById('picker-titre').textContent = 'Modifier la joueuse suivie';
+            document.getElementById('picker-numero').value = joueuse?.numero || '';
+            document.getElementById('picker-nom').value = joueuse?.nom || '';
+            document.getElementById('picker-equipe').value = joueuse?.equipe || 'team1';
+            remplirPickerSuggestions();
+            document.getElementById('pickerJoueuse').classList.add('show');
+        }
+
+        function fermerPicker(event) {
+            // Fermer uniquement si on clique sur l'overlay (pas sur le contenu)
+            if (!event || event.target === document.getElementById('pickerJoueuse')) {
+                document.getElementById('pickerJoueuse').classList.remove('show');
+                pickerCarteIndex = null;
+            }
+        }
+
+        function validerPicker() {
+            const numero = parseInt(document.getElementById('picker-numero').value);
+            const nom = document.getElementById('picker-nom').value.trim();
+            const equipe = document.getElementById('picker-equipe').value;
+
+            if (!nom) { alert('Entrez le nom de la joueuse'); return; }
+
+            const nouvelleJoueuse = { numero: numero || 0, nom, equipe };
+
+            if (pickerMode === 'ajouter') {
+                joueusesEnCours.push(nouvelleJoueuse);
+                // Restaurer ses stats précédentes si elle a déjà été suivie
+                compteurs.push(restaurerStats(nouvelleJoueuse));
+                // Afficher la section si elle était cachée
+                document.getElementById('section-joueuses').style.display = 'block';
+                renderZoneJoueuses();
+            } else if (pickerCarteIndex !== null) {
+                // Sauvegarder les stats de l'ancienne joueuse avant de la remplacer
+                sauvegarderStats(pickerCarteIndex);
+                joueusesEnCours[pickerCarteIndex] = nouvelleJoueuse;
+                // Restaurer les stats de la nouvelle joueuse si elle a déjà été suivie
+                compteurs[pickerCarteIndex] = restaurerStats(nouvelleJoueuse);
+                renderZoneJoueuses();
+            }
+
+            document.getElementById('pickerJoueuse').classList.remove('show');
+            pickerCarteIndex = null;
+            pickerMode = 'changer';
         }
 
         // Formater la date

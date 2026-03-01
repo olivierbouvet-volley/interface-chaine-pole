@@ -626,8 +626,10 @@
             const filteredMatches = matchesArray.filter(match => {
                 if (currentFilter === 'all') return true;
                 if (currentFilter === 'replay') {
-                    // Un match est en replay s'il est terminé ET qu'il a des segments vidéo
-                    return match.status === 'finished' && match.videoSegments && Object.keys(match.videoSegments).length > 0;
+                    // Un match est en replay s'il est terminé ET qu'il a des segments vidéo OU un fichier DVW OU marqué hasReplay
+                    if (match.status !== 'finished') return false;
+                    const hasSegments = match.videoSegments && Object.keys(match.videoSegments).length > 0;
+                    return hasSegments || match.dvwStorageUrl || match.hasReplay;
                 }
                 return match.status === currentFilter;
             });
@@ -749,6 +751,11 @@
                         </div>
                         
                         ${setsHistoryHtml}
+
+                        ${match.dvwStorageUrl ? `
+                        <div style="margin-top:8px; display:inline-flex; align-items:center; gap:5px; padding:4px 10px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.4); border-radius:20px; font-size:0.72rem; color:#a5b4fc;">
+                            📋 Actions DVW disponibles
+                        </div>` : ''}
 
                         <div class="match-date">
                             ${formatMatchDate(match.date, match.time)}

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibration Synchro DVW — Pôle Espoir</title>
+    <link rel="icon" type="image/png" href="logo-pole-official.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366F1;
+            --bg-dark: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: rgba(99,102,241,0.1);
+            border-bottom: 1px solid rgba(99,102,241,0.3);
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #a5b4fc;
+        }
+        .header-sub {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+
+        /* Layout principal */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            gap: 0;
+        }
+
+        /* Colonne vidéo (gauche) */
+        .video-col {
+            flex: 1;
+            background: black;
+            position: relative;
+        }
+        .video-col iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        .no-video {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            opacity: 0.4;
+            font-size: 1.2rem;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Colonne calibration (droite) */
+        .calib-col {
+            width: 360px;
+            background: rgba(255,255,255,0.03);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .calib-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .calib-section h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #a5b4fc;
+            margin-bottom: 12px;
+        }
+        .offset-display {
+            text-align: center;
+            padding: 16px;
+            background: rgba(99,102,241,0.1);
+            border-radius: 10px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(99,102,241,0.3);
+        }
+        .offset-value {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .offset-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+        .offset-explain {
+            font-size: 0.78rem;
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            color: #fcd34d;
+        }
+        .offset-btn-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .offset-btn {
+            padding: 10px 4px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-align: center;
+        }
+        .offset-btn:hover {
+            background: rgba(99,102,241,0.3);
+            border-color: var(--primary);
+        }
+        .offset-btn.minus { color: #f87171; }
+        .offset-btn.plus { color: #86efac; }
+        .manual-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .manual-input {
+            flex: 1;
+            padding: 9px 12px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+        .manual-input:focus { outline: none; border-color: var(--primary); }
+        .seek-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(16,185,129,0.15);
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .seek-btn:hover { background: rgba(16,185,129,0.3); }
+        .current-time-display {
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 8px;
+            font-family: monospace;
+        }
+        .save-section {
+            padding: 20px;
+            margin-top: auto;
+        }
+        .save-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--success);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .save-btn:hover { opacity: 0.9; }
+        .save-status {
+            text-align: center;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+        .help-text {
+            font-size: 0.75rem;
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🔧 Calibration Synchro DVW</h1>
+            <div class="header-sub" id="matchTitle">Chargement du match...</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="admin-matches.html" class="btn btn-outline">← Retour Admin</a>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- Vidéo YouTube -->
+        <div class="video-col" id="videoCol">
+            <div class="no-video" id="noVideoMsg">
+                <span>🎬</span>
+                <span>Ajoutez un lien YouTube dans l'admin</span>
+            </div>
+        </div>
+
+        <!-- Panneau calibration -->
+        <div class="calib-col">
+            <div class="calib-section">
+                <h3>⏱ Offset de synchronisation</h3>
+                <div class="offset-explain">
+                    L'<strong>offset</strong> est le temps vidéo (en secondes) correspondant au moment où le fichier DVW démarre (premier service du match).
+                    <br><br>
+                    Exemple : si le match commence à <strong>2:45</strong> dans la vidéo, entrez <strong>165</strong>s.
+                </div>
+                <div class="offset-display">
+                    <div class="offset-value" id="offsetDisplay">0.0 s</div>
+                    <div class="offset-subtitle" id="offsetFormatted">→ Vidéo : 0:00</div>
+                </div>
+                <!-- Boutons ajustement fin -->
+                <div class="offset-btn-grid">
+                    <button class="offset-btn minus" onclick="adjustOffset(-10)">−10s</button>
+                    <button class="offset-btn minus" onclick="adjustOffset(-1)">−1s</button>
+                    <button class="offset-btn minus" onclick="adjustOffset(-0.1)">−0.1s</button>
+                    <button class="offset-btn plus" onclick="adjustOffset(+0.1)">+0.1s</button>
+                    <button class="offset-btn plus" onclick="adjustOffset(+1)">+1s</button>
+                    <button class="offset-btn plus" onclick="adjustOffset(+10)">+10s</button>
+                </div>
+                <!-- Input manuel MM:SS ou secondes -->
+                <div class="manual-input-row">
+                    <input type="text" class="manual-input" id="manualOffset" placeholder="Ex: 2:45 ou 165">
+                    <button class="btn btn-primary" onclick="applyManualOffset()">Appliquer</button>
+                </div>
+                <!-- Bouton "Jouer depuis DVW t=0" -->
+                <button class="seek-btn" onclick="seekToDvwStart()">
+                    ▶ Jouer depuis le début du DVW (offset actuel)
+                </button>
+                <div class="current-time-display" id="currentTimeDisplay">Position vidéo actuelle : —</div>
+            </div>
+
+            <div class="calib-section">
+                <h3>💡 Astuce calibration</h3>
+                <ol style="font-size:0.78rem; opacity:0.7; padding-left:18px; line-height:1.8;">
+                    <li>Mettez la vidéo en pause sur le <strong>premier service</strong> du match</li>
+                    <li>Notez la position vidéo affichée ci-dessus</li>
+                    <li>Entrez cette valeur comme offset (en secondes ou MM:SS)</li>
+                    <li>Cliquez <em>"Jouer depuis le début du DVW"</em> pour vérifier</li>
+                    <li>Ajustez avec les boutons ±0.1s si besoin</li>
+                    <li>Sauvegardez</li>
+                </ol>
+            </div>
+
+            <div class="save-section">
+                <button class="save-btn" onclick="saveAndGoToReplay()">
+                    💾 Sauvegarder & Accéder au Replay
+                </button>
+                <div class="save-status" id="saveStatus"></div>
+                <div class="help-text">L'offset sera sauvegardé dans Firebase et utilisé pour synchroniser les actions DVW avec la vidéo.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <!-- Services -->
+    <script src="firebase-config.js"></script>
+    <script src="db-service.js"></script>
+
+    <script>
+        let currentMatchId = null;
+        let ytPlayer = null;
+        let currentOffset = 0; // en secondes (décimales)
+        let currentVideoTime = 0;
+        let timeUpdateInterval = null;
+
+        function getMatchIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id') || params.get('match');
+        }
+
+        // ──────────────────────────────────────────
+        // Init
+        // ──────────────────────────────────────────
+
+        window.addEventListener('DOMContentLoaded', () => {
+            currentMatchId = getMatchIdFromUrl();
+            if (!currentMatchId) {
+                alert('Aucun match spécifié. Retour à l\'admin.');
+                window.location.href = 'admin-matches.html';
+                return;
+            }
+
+            // Charger l'API YouTube
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+
+            loadMatchData();
+        });
+
+        async function loadMatchData() {
+            const match = await dbService.getMatch(currentMatchId);
+            if (!match) {
+                alert('Match introuvable.');
+                window.location.href = 'admin-matches.html';
+                return;
+            }
+
+            const t1 = match.team1?.name || 'Équipe 1';
+            const t2 = match.team2?.name || 'Équipe 2';
+            document.getElementById('matchTitle').textContent = t1 + ' vs ' + t2 + ' — ' + (match.date || '');
+
+            // Charger l'offset existant
+            currentOffset = match.replaySync?.offsetSeconds || 0;
+            updateOffsetDisplay();
+
+            // Charger la vidéo YouTube
+            if (match.youtubeUrl) {
+                initYouTubePlayer(match.youtubeUrl);
+            } else {
+                document.getElementById('noVideoMsg').style.display = 'flex';
+            }
+        }
+
+        // ──────────────────────────────────────────
+        // YouTube Player
+        // ──────────────────────────────────────────
+
+        function extractYouTubeId(url) {
+            const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|live\/|shorts\/))([^?&/]+)/);
+            return m ? m[1] : null;
+        }
+
+        function initYouTubePlayer(url) {
+            const videoId = extractYouTubeId(url);
+            if (!videoId) return;
+
+            const videoCol = document.getElementById('videoCol');
+            document.getElementById('noVideoMsg').style.display = 'none';
+
+            // Crée le div cible pour l'API YouTube
+            const playerDiv = document.createElement('div');
+            playerDiv.id = 'yt-calib-player';
+            videoCol.appendChild(playerDiv);
+
+            ytPlayer = new YT.Player('yt-calib-player', {
+                videoId: videoId,
+                width: '100%',
+                height: '100%',
+                playerVars: { controls: 1, rel: 0, modestbranding: 1 },
+                events: {
+                    onReady: () => {
+                        startTimeUpdate();
+                    }
+                }
+            });
+        }
+
+        function onYouTubeIframeAPIReady() {
+            // Sera appelé automatiquement, loadMatchData aura déjà
+            // lancé initYouTubePlayer si la vidéo est dispo
+        }
+
+        function startTimeUpdate() {
+            timeUpdateInterval = setInterval(() => {
+                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                    currentVideoTime = ytPlayer.getCurrentTime() || 0;
+                    document.getElementById('currentTimeDisplay').textContent =
+                        'Position vidéo actuelle : ' + formatSeconds(currentVideoTime);
+                }
+            }, 500);
+        }
+
+        // ──────────────────────────────────────────
+        // Gestion offset
+        // ──────────────────────────────────────────
+
+        function adjustOffset(delta) {
+            currentOffset = Math.round((currentOffset + delta) * 10) / 10;
+            if (currentOffset < 0) currentOffset = 0;
+            updateOffsetDisplay();
+        }
+
+        function applyManualOffset() {
+            const raw = document.getElementById('manualOffset').value.trim();
+            if (!raw) return;
+            let seconds = 0;
+            if (raw.includes(':')) {
+                // Format MM:SS ou HH:MM:SS
+                const parts = raw.split(':').map(Number);
+                if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
+                else if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+            } else {
+                seconds = parseFloat(raw);
+            }
+            if (isNaN(seconds) || seconds < 0) {
+                alert('Format invalide. Entrez un nombre de secondes (ex: 165) ou MM:SS (ex: 2:45)');
+                return;
+            }
+            currentOffset = Math.round(seconds * 10) / 10;
+            document.getElementById('manualOffset').value = '';
+            updateOffsetDisplay();
+        }
+
+        function updateOffsetDisplay() {
+            document.getElementById('offsetDisplay').textContent = currentOffset.toFixed(1) + ' s';
+            document.getElementById('offsetFormatted').textContent = '→ Vidéo : ' + formatSeconds(currentOffset);
+        }
+
+        function seekToDvwStart() {
+            if (!ytPlayer || typeof ytPlayer.seekTo !== 'function') {
+                alert('Le lecteur vidéo n\'est pas prêt. Assurez-vous que la vidéo est chargée.');
+                return;
+            }
+            ytPlayer.seekTo(currentOffset, true);
+            ytPlayer.playVideo();
+        }
+
+        // ──────────────────────────────────────────
+        // Sauvegarde
+        // ──────────────────────────────────────────
+
+        async function saveAndGoToReplay() {
+            const statusEl = document.getElementById('saveStatus');
+            statusEl.textContent = '⏳ Sauvegarde en cours...';
+            statusEl.style.color = '#fcd34d';
+
+            try {
+                await dbService.saveReplayOffset(currentMatchId, currentOffset);
+                statusEl.textContent = '✅ Sauvegardé ! Redirection...';
+                statusEl.style.color = '#86efac';
+                setTimeout(() => {
+                    window.location.href = 'match-viewer.html?id=' + currentMatchId;
+                }, 1200);
+            } catch (err) {
+                console.error('Erreur sauvegarde offset:', err);
+                statusEl.textContent = '❌ Erreur : ' + err.message;
+                statusEl.style.color = '#f87171';
+            }
+        }
+
+        // ──────────────────────────────────────────
+        // Utilitaire
+        // ──────────────────────────────────────────
+
+        function formatSeconds(secs) {
+            const h = Math.floor(secs / 3600);
+            const m = Math.floor((secs % 3600) / 60);
+            const s = Math.floor(secs % 60);
+            if (h > 0) return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            return m + ':' + String(s).padStart(2, '0');
+        }
+    </script>
+</body>
+</html>

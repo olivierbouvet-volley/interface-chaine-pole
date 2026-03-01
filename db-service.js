@@ -725,6 +725,228 @@ const dbService = {
      */
     async deleteInterview(interviewId) {
         await firebase.database().ref('interviews/' + interviewId).remove();
+    },
+
+    // ==========================================
+    // RALLIES & SAISIE STATS PARENTS
+    // ==========================================
+
+    /**
+     * Démarre un rally — enregistre qui sert et le timestamp de service
+     * @param {string} matchId - ID du match
+     * @param {string} servingTeam - 'team1' ou 'team2'
+     * @returns {Promise<string>} ID du rally créé
+     */
+    async startRally(matchId, servingTeam) {
+        const match = await this.getMatch(matchId);
+        if (!match) throw new Error('Match non trouvé');
+
+        const rallyId = 'rally_' + Date.now();
+        const currentRally = {
+            rallyId: rallyId,
+            status: 'en_cours',
+            servingTeam: servingTeam,
+            timestampServe: Date.now(),
+            set: match.currentSet || 1,
+            score: {
+                pointsTeam1: match.score?.pointsTeam1 || 0,
+                pointsTeam2: match.score?.pointsTeam2 || 0
+            }
+        };
+
+        await firebase.database().ref('matches/' + matchId + '/currentRally').set(currentRally);
+        console.log('🏐 Rally démarré:', rallyId, '— Serveur:', servingTeam);
+        return rallyId;
+    },
+
+    /**
+     * Termine un rally — calcule phase et durée, sauvegarde dans rallies/
+     * @param {string} matchId - ID du match
+     * @param {string} pointTeam - 'team1' ou 'team2' (qui a marqué le point)
+     * @returns {Promise<string>} ID du rally sauvegardé
+     */
+    async endRally(matchId, pointTeam) {
+        const match = await this.getMatch(matchId);
+        if (!match) throw new Error('Match non trouvé');
+
+        const currentRally = match.currentRally;
+        const timestampPoint = Date.now();
+
+        // Si pas de rally en cours, on crée un rally minimal (le service n'a pas été cliqué)
+        if (!currentRally || currentRally.status !== 'en_cours') {
+            const rallyId = 'rally_' + Date.now();
+            const rallySansTiming = {
+                rallyId: rallyId,
+                index: await this._getRallyCount(matchId),
+                set: match.currentSet || 1,
+                servingTeam: null,
+                pointTeam: pointTeam,
+                phase: null,
+                scoreApres: {
+                    pointsTeam1: match.score?.pointsTeam1 || 0,
+                    pointsTeam2: match.score?.pointsTeam2 || 0
+                },
+                timestampPoint: timestampPoint,
+                timestampServe: null,
+                duration: null
+            };
+            await firebase.database().ref('matches/' + matchId + '/rallies/' + rallyId).set(rallySansTiming);
+            await firebase.database().ref('matches/' + matchId + '/currentRally').update({ status: 'point_marque', rallyId });
+            return rallyId;
+        }
+
+        const rallyId = currentRally.rallyId;
+
+        // Calcul de la phase (sideout = le receveur marque, breakpoint = le serveur marque)
+        const phase = currentRally.servingTeam === pointTeam ? 'breakpoint' : 'sideout';
+
+        // Durée en secondes
+        const duration = (timestampPoint - currentRally.timestampServe) / 1000;
+
+        const rallyData = {
+            rallyId: rallyId,
+            index: await this._getRallyCount(matchId),
+            set: currentRally.set,
+            servingTeam: currentRally.servingTeam,
+            pointTeam: pointTeam,
+            phase: phase,
+            scoreAvant: currentRally.score,
+            scoreApres: {
+                pointsTeam1: match.score?.pointsTeam1 || 0,
+                pointsTeam2: match.score?.pointsTeam2 || 0
+            },
+            timestampServe: currentRally.timestampServe,
+            timestampPoint: timestampPoint,
+            duration: Math.round(duration * 10) / 10
+        };
+
+        await firebase.database().ref('matches/' + matchId + '/rallies/' + rallyId).set(rallyData);
+        await firebase.database().ref('matches/' + matchId + '/currentRally').update({
+            status: 'point_marque',
+            rallyId: rallyId
+        });
+
+        console.log('✅ Rally terminé:', rallyId, '— Phase:', phase, '— Durée:', rallyData.duration + 's');
+        return rallyId;
+    },
+
+    /**
+     * Compte le nombre de rallies existants pour indexation
+     * @private
+     */
+    async _getRallyCount(matchId) {
+        const snapshot = await firebase.database().ref('matches/' + matchId + '/rallies').once('value');
+        return snapshot.numChildren();
+    },
+
+    /**
+     * Enrichit un rally avec l'action finale (Niveau 1bis)
+     * @param {string} matchId - ID du match
+     * @param {string} rallyId - ID du rally
+     * @param {Object} actionFinale - { type, team, dvwSkill, dvwQuality }
+     *   type: 'ace'|'kill'|'bloc'|'faute_service'|'faute_reception'|'faute_attaque'|'faute_bloc'|'faute_filet'
+     *   team: 'team1'|'team2' (équipe qui a FAIT l'action)
+     *   dvwSkill: 'S'|'A'|'B'|'R'|'F'
+     *   dvwQuality: '#'|'='
+     */
+    async enrichRallyActionFinale(matchId, rallyId, actionFinale) {
+        await firebase.database()
+            .ref('matches/' + matchId + '/rallies/' + rallyId + '/actionFinale')
+            .set(actionFinale);
+        console.log('📝 Action finale enregistrée:', rallyId, actionFinale.type);
+    },
+
+    /**
+     * Enregistre une action individuelle d'une joueuse (Niveau 2)
+     * @param {string} matchId - ID du match
+     * @param {string|null} rallyId - ID du rally en cours (peut être null)
+     * @param {Object} joueuse - { numero, nom, equipe }
+     * @param {string} skill - 'service'|'reception'|'attaque'|'passe'|'contre'|'defense'
+     * @param {string} quality - Code DVW: '#'|'+'|'!'|'-'|'/'|'='
+     * @param {string} label - Label lisible: 'ACE!', 'Parfaite', 'Point!', etc.
+     * @param {string} [parentRole='stats'] - Rôle du parent qui saisit
+     * @returns {Promise<string>} ID de l'action créée
+     */
+    async savePlayerAction(matchId, rallyId, joueuse, skill, quality, label, parentRole = 'stats') {
+        const match = await this.getMatch(matchId);
+        if (!match) throw new Error('Match non trouvé');
+
+        const actionId = 'action_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        const action = {
+            actionId: actionId,
+            rallyId: rallyId || null,
+            timestamp: Date.now(),
+            joueuse: {
+                numero: joueuse.numero,
+                nom: joueuse.nom,
+                equipe: joueuse.equipe
+            },
+            skill: skill,
+            quality: quality,
+            label: label,
+            set: match.currentSet || 1,
+            score: {
+                pointsTeam1: match.score?.pointsTeam1 || 0,
+                pointsTeam2: match.score?.pointsTeam2 || 0
+            },
+            parentRole: parentRole
+        };
+
+        await firebase.database().ref('matches/' + matchId + '/playerActions/' + actionId).set(action);
+        console.log('✅ Action joueuse enregistrée:', joueuse.nom, skill, quality);
+        return actionId;
+    },
+
+    /**
+     * Écoute le currentRally en temps réel (pour Parent B — lecture seule)
+     * @param {string} matchId - ID du match
+     * @param {Function} callback - Appelée avec les données du currentRally
+     * @returns {Function} Fonction pour stopper l'écoute
+     */
+    listenToCurrentRally(matchId, callback) {
+        const ref = firebase.database().ref('matches/' + matchId + '/currentRally');
+        ref.on('value', (snapshot) => {
+            callback(snapshot.val());
+        });
+        // Retourne une fonction de nettoyage
+        return () => ref.off('value');
+    },
+
+    /**
+     * Sauvegarde les joueuses à suivre pour ce match
+     * @param {string} matchId - ID du match
+     * @param {Array} joueuses - [{ numero, nom, equipe }]
+     */
+    async saveJoueuses(matchId, joueuses) {
+        await firebase.database().ref('matches/' + matchId + '/joueuses').set(joueuses);
+        console.log('✅ Joueuses enregistrées:', joueuses.length, 'joueuse(s)');
+    },
+
+    // ==========================================
+    // DVW REPLAY
+    // ==========================================
+
+    /**
+     * Sauvegarde l'URL Firebase Storage du fichier DVW associé au match
+     * @param {string} matchId - ID du match
+     * @param {string} dvwStorageUrl - URL de téléchargement Firebase Storage
+     */
+    async saveDvwData(matchId, dvwStorageUrl) {
+        await firebase.database().ref('matches/' + matchId + '/dvwStorageUrl').set(dvwStorageUrl);
+        console.log('✅ Fichier DVW associé au match:', matchId);
+    },
+
+    /**
+     * Sauvegarde l'offset de synchronisation vidéo/DVW
+     * @param {string} matchId - ID du match
+     * @param {number} offsetSeconds - Décalage en secondes (DVW t=0 → YouTube t=offsetSeconds)
+     */
+    async saveReplayOffset(matchId, offsetSeconds) {
+        await firebase.database().ref('matches/' + matchId + '/replaySync').set({
+            offsetSeconds: offsetSeconds,
+            calibratedAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        console.log('✅ Offset synchro sauvegardé:', offsetSeconds + 's', 'pour', matchId);
     }
 };
 

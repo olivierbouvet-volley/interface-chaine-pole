@@ -210,9 +210,11 @@
 <body>
     <div class="header">
         <h1>Gestion des Matchs</h1>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <a href="index.html" class="btn btn-outline">🏠 Accueil</a>
-            <button class="btn btn-primary" onclick="location.reload()">🔄 Actualiser</button>
+            <a href="formulaire-match.html" class="btn btn-outline">➕ Nouveau Match Live</a>
+            <a href="formulaire-match.html?mode=replay" class="btn btn-primary" style="background:#10b981;">🎬 Nouveau Match Replay</a>
+            <button class="btn btn-outline" onclick="location.reload()">🔄 Actualiser</button>
         </div>
     </div>
 
@@ -228,6 +230,7 @@
     <!-- Services -->
     <script src="firebase-config.js"></script>
     <script src="db-service.js"></script>
+    <script src="storage-service.js"></script>
 
     <script>
         async function loadMatches() {
@@ -321,10 +324,36 @@
                             </div>
 
                             <!-- Gestion du Flux -->
-                            <div>
+                            <div style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 12px; margin-bottom: 12px;">
                                 <strong>🔌 Gestion du Flux</strong>
                                 <button class="btn btn-info btn-block" onclick="reconnect('${id}')">🔌 Reconnecter</button>
                                 <button class="btn btn-danger btn-block" onclick="clearSync('${id}')">🗑️ Réinitialiser Sync</button>
+                            </div>
+
+                            <!-- DVW & Replay -->
+                            <div style="background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 12px;">
+                                <strong style="color: #10b981;">🎬 DVW & Replay</strong>
+                                <p style="font-size:0.85rem; margin:6px 0 10px 0; opacity:0.8;">Associez un fichier DataVolley (.dvw) pour l'analyse vidéo en replay.</p>
+                                <div style="margin-bottom:10px; font-size:0.85rem;" id="dvw-status-${id}">
+                                    ${match.dvwStorageUrl
+                                        ? `<span style="color:#10b981;">✅ Fichier DVW chargé</span>`
+                                        : `<span style="opacity:0.6;">⚫ Aucun fichier DVW</span>`}
+                                </div>
+                                <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+                                    <input type="file" id="dvw-file-${id}" accept=".dvw" style="display:none;" onchange="uploadDvw('${id}')">
+                                    <button class="btn btn-outline" onclick="document.getElementById('dvw-file-${id}').click()" style="font-size:0.85rem; padding:6px 12px;">📎 Charger DVW</button>
+                                    <span id="dvw-progress-${id}" style="font-size:0.8rem; opacity:0.7;"></span>
+                                </div>
+                                <div id="dvw-actions-${id}">
+                                    ${match.dvwStorageUrl && match.youtubeUrl
+                                        ? `<div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                            <a href="replay-sync.html?id=${id}" class="btn btn-info" style="font-size:0.85rem; padding:6px 14px;">🔧 Calibrer la synchro</a>
+                                            <a href="match-viewer.html?id=${id}" class="btn btn-primary" style="font-size:0.85rem; padding:6px 14px;">🎬 Voir le replay</a>
+                                           </div>`
+                                        : match.dvwStorageUrl && !match.youtubeUrl
+                                            ? `<p style="font-size:0.8rem; color:#f59e0b; margin:0;">⚠️ Ajoutez un lien YouTube pour accéder au replay</p>`
+                                            : `<p style="font-size:0.8rem; opacity:0.6; margin:0;">💡 Chargez un fichier DVW pour activer l'analyse replay</p>`}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -485,11 +514,58 @@
             try {
                 await firebase.database().ref('matches/' + id + '/videoSync').remove();
                 document.getElementById('offset-' + id).value = 0;
-                
+
                 alert('✅ Synchronisation réinitialisée');
             } catch (error) {
                 console.error('Erreur reset:', error);
                 alert('❌ Erreur lors de la réinitialisation');
+            }
+        }
+
+        async function uploadDvw(id) {
+            const fileInput = document.getElementById('dvw-file-' + id);
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (!file.name.endsWith('.dvw')) {
+                alert('❌ Veuillez sélectionner un fichier .dvw');
+                return;
+            }
+
+            const progressEl = document.getElementById('dvw-progress-' + id);
+            const statusEl = document.getElementById('dvw-status-' + id);
+            const actionsEl = document.getElementById('dvw-actions-' + id);
+
+            progressEl.textContent = '⏳ Upload en cours...';
+
+            try {
+                const path = 'matches/' + id + '/match.dvw';
+                const downloadUrl = await storageService.uploadFile(file, path, (progress) => {
+                    progressEl.textContent = '⏳ ' + Math.round(progress) + '%';
+                });
+
+                await dbService.saveDvwData(id, downloadUrl);
+
+                progressEl.textContent = '';
+                statusEl.innerHTML = '<span style="color:#10b981;">✅ Fichier DVW chargé</span>';
+
+                // Récupérer le match pour savoir si on peut afficher les boutons
+                const match = await dbService.getMatch(id);
+                if (match && match.youtubeUrl) {
+                    actionsEl.innerHTML = `
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <a href="replay-sync.html?id=${id}" class="btn btn-info" style="font-size:0.85rem; padding:6px 14px;">🔧 Calibrer la synchro</a>
+                            <a href="match-viewer.html?id=${id}" class="btn btn-primary" style="font-size:0.85rem; padding:6px 14px;">🎬 Voir le replay</a>
+                        </div>`;
+                } else {
+                    actionsEl.innerHTML = '<p style="font-size:0.8rem; color:#f59e0b; margin:0;">⚠️ Ajoutez un lien YouTube pour accéder au replay</p>';
+                }
+
+                alert('✅ Fichier DVW chargé avec succès !');
+            } catch (error) {
+                console.error('Erreur upload DVW:', error);
+                progressEl.textContent = '';
+                alert('❌ Erreur lors du chargement du fichier DVW');
             }
         }
 

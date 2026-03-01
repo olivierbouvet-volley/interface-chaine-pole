@@ -445,7 +445,7 @@
 
         .balle-indicator {
             position: fixed;
-            top: 80px;
+            top: 102px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #EF4444, #DC2626);
@@ -877,6 +877,470 @@
                 margin-top: 5px;
              }
         }
+
+        /* ===== SCORE PAR SET — Bandeau sous la barre ===== */
+        .score-sets-strip {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9;
+            display: flex;
+            gap: 6px;
+            padding: 3px 12px 5px;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px);
+            border-radius: 0 0 8px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+        }
+
+        .score-sets-strip:empty { display: none; }
+
+        .set-pill {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .set-pill .set-num {
+            font-size: 0.55rem;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.6;
+            margin-right: 3px;
+        }
+
+        .set-pill .score-set-t1,
+        .set-pill .score-set-t2 {
+            font-size: 0.9rem;
+        }
+
+        .set-pill .score-set-winner {
+            color: #fbbf24;
+            font-size: 1rem;
+            font-weight: 900;
+            text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
+        }
+
+        .set-pill .score-sep {
+            opacity: 0.35;
+            margin: 0 1px;
+        }
+
+        .set-pill.set-en-cours {
+            border: 1px dashed rgba(255, 255, 255, 0.35);
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        @media (max-width: 600px) {
+            .score-sets-strip { padding: 3px 8px 4px; gap: 4px; }
+            .set-pill { padding: 1px 5px; font-size: 0.8rem; }
+            .set-pill .set-num { font-size: 0.5rem; }
+        }
+
+        /* ===== BADGE STAT LIVE ===== */
+        #stat-live-badge {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 16px;
+            z-index: 9999;
+            background: rgba(220, 38, 38, 0.9);
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.08em;
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,100,100,0.5);
+            backdrop-filter: blur(4px);
+            animation: pulse-badge 0.8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        #stat-live-badge.visible { display: block; }
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.97); }
+        }
+
+        /* ===== OVERLAY STATS EN TEMPS RÉEL ===== */
+        #statsViewerOverlay {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9500;
+            min-width: 420px;
+            max-width: 96vw;
+            width: 700px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 28px 90px rgba(0,0,0,0.85);
+            font-family: 'Bebas Neue', sans-serif;
+        }
+        #statsViewerOverlay.show { display: block; }
+
+        /* Titre STATISTIQUES */
+        .sv-title {
+            background: #1e3a6e;
+            color: white;
+            text-align: center;
+            padding: 14px 24px 12px;
+            font-size: 1.5rem;
+            letter-spacing: 0.35em;
+        }
+
+        /* Onglets par set */
+        .sv-tabs {
+            display: flex;
+            gap: 5px;
+            padding: 8px 16px 6px;
+            background: #162460;
+            flex-wrap: wrap;
+        }
+        .sv-tab {
+            padding: 4px 14px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            border-radius: 20px;
+            color: rgba(255,255,255,0.6);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .sv-tab.actif {
+            background: rgba(255,255,255,0.35);
+            color: white;
+        }
+
+        /* Barre équipes + sets */
+        .sv-teams-bar {
+            background: rgba(255,255,255,0.97);
+            color: #0d1b3e;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 22px;
+        }
+        .sv-team-side {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .sv-team-side.sv-right { justify-content: flex-end; }
+        .sv-jersey-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            background: #6366f1;
+        }
+        .sv-team-name {
+            font-size: 1.3rem;
+            font-weight: 900;
+            font-style: italic;
+            letter-spacing: 0.05em;
+            color: #0d1b3e;
+        }
+        .sv-sets-score {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #0d1b3e;
+            padding: 0 18px;
+            flex-shrink: 0;
+        }
+
+        /* Grille stats */
+        .sv-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            background: linear-gradient(160deg, #0d1b3e 0%, #162460 100%);
+            padding: 10px 18px 18px;
+            gap: 4px 8px;
+        }
+        .sv-val {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-align: center;
+            color: white;
+            background: rgba(255,255,255,0.13);
+            border-radius: 9px;
+            margin: 3px;
+            padding: 8px 12px;
+        }
+        .sv-val.team2 { color: white; }
+        .sv-label {
+            font-size: 0.95rem;
+            text-align: center;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.8);
+            padding: 3px 4px;
+        }
+        .sv-sep { height: 1px; background: rgba(255,255,255,0.1); grid-column: 1 / -1; margin: 3px 0; }
+
+        /* Vue totale : masquer la ligne SCORE (déjà visible dans la barre équipes) */
+        #statsViewerOverlay.sv-total-mode .sv-score-row { display: none; }
+
+        /* Ancien .sv-header conservé pour compat */
+        .sv-header { display: none; }
+
+        /* Bouton Stats */
+        .btn-stats-viewer {
+            background: rgba(99,102,241,0.2) !important;
+            border: 1px solid rgba(99,102,241,0.5) !important;
+            color: #a5b4fc !important;
+        }
+        .btn-stats-viewer.actif {
+            background: rgba(99,102,241,0.5) !important;
+            color: white !important;
+        }
+
+        /* ── Transitions pour l'ouverture/fermeture du panel DVW ── */
+        .video-background    { transition: width 0.3s ease; }
+        .score-overlay       { transition: right 0.3s ease; }
+        .score-sets-strip    { transition: left 0.3s ease; }
+        .balle-indicator     { transition: left 0.3s ease; }
+        #stat-live-badge     { transition: right 0.3s ease; }
+
+        /* Quand le panel DVW est ouvert : tout se décale à gauche de 360px */
+        body.dvw-open .video-background {
+            width: calc(100% - 360px);
+        }
+        body.dvw-open .score-overlay {
+            right: 360px;
+        }
+        /* score-sets-strip et balle-indicator sont centrés sur left:50%
+           → on recalcule le centre de la zone vidéo réduite */
+        body.dvw-open .score-sets-strip,
+        body.dvw-open .balle-indicator {
+            left: calc(50% - 180px);
+        }
+        body.dvw-open #stat-live-badge {
+            right: 376px; /* 360px panel + 16px marge habituelle */
+        }
+
+        /* ── Panneau DVW ── */
+        #dvwPanel {
+            position: fixed;
+            top: 0;
+            right: -380px;
+            width: 360px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.97);
+            border-left: 2px solid rgba(99, 102, 241, 0.5);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        #dvwPanel.open {
+            right: 0;
+        }
+        .dvw-header {
+            padding: 14px 16px;
+            background: rgba(99, 102, 241, 0.15);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .dvw-header h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            letter-spacing: 0.5px;
+        }
+        .dvw-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        .dvw-close:hover { opacity: 1; }
+        .dvw-filters {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+        .dvw-filter-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .dvw-filter-row label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            white-space: nowrap;
+            min-width: 60px;
+        }
+        .dvw-select {
+            flex: 1;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: white;
+            padding: 5px 8px;
+            font-size: 0.8rem;
+        }
+        .dvw-btn-filter {
+            width: 100%;
+            padding: 7px;
+            background: #6366f1;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .dvw-btn-filter:hover { background: #4f46e5; }
+        .dvw-btn-moneytime { background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: #000 !important; font-weight: 700; }
+        .dvw-btn-moneytime:hover { background: linear-gradient(135deg, #fbbf24, #f59e0b) !important; }
+        .dvw-actions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 14px;
+        }
+        .dvw-action-chip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 0.78rem;
+            line-height: 1.4;
+        }
+        .dvw-action-chip:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+        .dvw-action-chip.no-timestamp {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .dvw-action-chip.playing {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+        }
+        .dvw-chip-left {
+            flex: 1;
+        }
+        .dvw-chip-context {
+            font-size: 0.72rem;
+            opacity: 0.6;
+            margin-bottom: 2px;
+        }
+        .dvw-chip-main {
+            font-weight: 600;
+            color: white;
+        }
+        .dvw-chip-quality {
+            font-size: 1rem;
+            margin-left: 8px;
+            font-weight: 900;
+        }
+        .dvw-footer {
+            padding: 12px 14px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+        .dvw-btn-autoplay {
+            width: 100%;
+            padding: 8px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .dvw-btn-autoplay.active {
+            background: #10b981;
+            color: white;
+        }
+        .dvw-nav-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+        .dvw-nav-btn {
+            padding: 7px 2px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .dvw-nav-btn:hover {
+            background: rgba(99,102,241,0.25);
+            border-color: rgba(99,102,241,0.5);
+        }
+        .dvw-nav-hint {
+            font-size: 0.66rem;
+            opacity: 0.35;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+        .dvw-ai-placeholder {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            text-align: center;
+        }
+        .dvw-loading {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.6;
+            font-size: 0.85rem;
+        }
+        .dvw-empty {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.5;
+            font-size: 0.82rem;
+        }
+        #btnDvwActions {
+            display: none;
+        }
     </style>
 </head>
 
@@ -895,6 +1359,9 @@
         <div class="youtube-overlay-mask" id="youtubeMask">
             <img src="logo-pole-official.png?v=1" class="pole-logo-overlay" id="poleLogo">
         </div>
+
+        <!-- Score par set (bandeau sous barre) -->
+        <div class="score-sets-strip" id="scoreSetsViewer"></div>
 
         <!-- Indicateur Balle de Set/Match -->
         <div class="balle-indicator" id="balleIndicator">⚠️ BALLE DE SET ⚠️</div>
@@ -957,10 +1424,17 @@
                     <button class="scoreboard-btn" onclick="window.location.href='lives-weekend.html'">
                         <i class="fas fa-arrow-left"></i> <span>Retour</span>
                     </button>
+                    <button class="scoreboard-btn btn-stats-viewer" id="btnStatsViewer" onclick="toggleStatsViewer()" title="Afficher/masquer les stats en temps réel">
+                        <i class="fas fa-chart-bar"></i> <span>Stats</span>
+                    </button>
+                    <button class="scoreboard-btn" id="btnDvwActions" onclick="toggleDvwPanel()" title="Actions DVW">
+                        📋 <span>Actions DVW</span>
+                    </button>
                     <button class="scoreboard-btn" onclick="toggleFullScreen()">
                         <i class="fas fa-expand"></i> <span>Plein écran</span>
                     </button>
                 </div>
+                <div id="exportDvwStatut" style="display:none;"></div>
             </div>
         </div>
 
@@ -973,6 +1447,122 @@
                 <!-- Contenu chargé via db-service -->
             </div>
         </div>
+
+        <!-- Badge STAT LIVE (déclenché par l'animateur via Firebase) -->
+        <div id="stat-live-badge">🔴 STAT LIVE</div>
+
+        <!-- Overlay Stats en temps réel -->
+        <div id="statsViewerOverlay">
+            <div class="sv-title">STATISTIQUES</div>
+            <!-- Onglets par set (générés dynamiquement) -->
+            <div class="sv-tabs" id="sv-tabs"></div>
+            <!-- Barre noms équipes + sets gagnés -->
+            <div class="sv-teams-bar">
+                <div class="sv-team-side">
+                    <div class="sv-jersey-dot" id="sv-jersey1"></div>
+                    <span class="sv-team-name" id="sv-nom1">Éq.1</span>
+                </div>
+                <span class="sv-sets-score"><span id="sv-sets1">0</span> — <span id="sv-sets2">0</span></span>
+                <div class="sv-team-side sv-right">
+                    <span class="sv-team-name" id="sv-nom2">Éq.2</span>
+                    <div class="sv-jersey-dot" id="sv-jersey2"></div>
+                </div>
+            </div>
+            <div class="sv-grid">
+                <div class="sv-val sv-score-row" id="sv-score1">0</div>
+                <div class="sv-label sv-score-row" id="sv-score-label">SCORE</div>
+                <div class="sv-val team2 sv-score-row" id="sv-score2">0</div>
+                <div class="sv-sep sv-score-row"></div>
+                <div class="sv-val" id="sv-aces1">0</div>
+                <div class="sv-label">ACES</div>
+                <div class="sv-val team2" id="sv-aces2">0</div>
+                <div class="sv-sep"></div>
+                <div class="sv-val" id="sv-kills1">0</div>
+                <div class="sv-label">ATTAQUES</div>
+                <div class="sv-val team2" id="sv-kills2">0</div>
+                <div class="sv-sep"></div>
+                <div class="sv-val" id="sv-blocs1">0</div>
+                <div class="sv-label">BLOCKS</div>
+                <div class="sv-val team2" id="sv-blocs2">0</div>
+                <div class="sv-sep"></div>
+                <div class="sv-val" id="sv-fautes1">0</div>
+                <div class="sv-label">FAUTES</div>
+                <div class="sv-val team2" id="sv-fautes2">0</div>
+            </div>
+        </div>
+        <!-- Panneau DVW -->
+        <div id="dvwPanel">
+            <div class="dvw-header">
+                <h3>📋 Actions DVW</h3>
+                <button class="dvw-close" onclick="toggleDvwPanel()">✕</button>
+            </div>
+            <div class="dvw-filters">
+                <div class="dvw-filter-row">
+                    <label>👤 Joueur</label>
+                    <select class="dvw-select" id="dvwFilterPlayer">
+                        <option value="">Tous</option>
+                    </select>
+                </div>
+                <div class="dvw-filter-row">
+                    <label>🏐 Action</label>
+                    <select class="dvw-select" id="dvwFilterSkill">
+                        <option value="">Toutes</option>
+                        <option value="A">Attaque</option>
+                        <option value="S">Service</option>
+                        <option value="R">Réception</option>
+                        <option value="B">Bloc</option>
+                        <option value="D">Défense</option>
+                        <option value="E">Passe</option>
+                        <option value="F">Balle libre</option>
+                    </select>
+                </div>
+                <div class="dvw-filter-row">
+                    <label>⚡ Qualité</label>
+                    <select class="dvw-select" id="dvwFilterQuality">
+                        <option value="">Toutes</option>
+                        <option value="#"># Kill / Ace</option>
+                        <option value="+">+ Positif</option>
+                        <option value="!">! Neutre</option>
+                        <option value="-">- Négatif</option>
+                        <option value="/"># Bloqué</option>
+                        <option value="="># Faute</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                    <button class="dvw-btn-filter" style="flex:1" onclick="applyDvwFilters()">🔍 Filtrer</button>
+                    <button class="dvw-btn-filter dvw-btn-moneytime" style="flex:1" onclick="applyMoneyTimeFilter()" title="Affiche uniquement les moments décisifs de fin de set">⚡ Money Time</button>
+                </div>
+            </div>
+            <div id="dvwNoTimestampBanner" style="display:none; background:#7c3aed22; border:1px solid #7c3aed; border-radius:8px; padding:10px 12px; margin:8px 0; font-size:0.8rem; color:#c4b5fd; line-height:1.5;">
+                ⏱️ Ce fichier DVW ne contient pas de timestamps vidéo.<br>
+                Les actions sont listées mais le seek automatique est désactivé.<br>
+                <span style="opacity:0.8">Pour activer le seek, le fichier doit avoir été créé avec la synchro vidéo DataVolley.</span>
+            </div>
+            <div class="dvw-actions-list" id="dvwActionsList">
+                <div class="dvw-loading">Chargement du fichier DVW...</div>
+            </div>
+            <div class="dvw-footer">
+                <div class="dvw-nav-bar">
+                    <button class="dvw-nav-btn" onclick="seekVideoBy(-5)" title="Reculer 5s">⏮ -5s</button>
+                    <button class="dvw-nav-btn" onclick="seekVideoBy(-1)" title="Reculer 1s">← -1s</button>
+                    <button class="dvw-nav-btn" onclick="seekVideoBy(1)" title="Avancer 1s">+1s →</button>
+                    <button class="dvw-nav-btn" onclick="seekVideoBy(5)" title="Avancer 5s">+5s ⏭</button>
+                </div>
+                <div class="dvw-nav-hint">↑↓ action préc/suiv &nbsp;|&nbsp; ←→ ±5s &nbsp;|&nbsp; ⇧←⇧→ ±1s</div>
+                <button class="dvw-btn-autoplay" id="btnDvwAutoplay" onclick="toggleDvwAutoplay()">▶ Lecture auto</button>
+                <button id="btnEnregistrerReplay" onclick="enregistrerCommeReplay()"
+                   style="display:block; width:100%; margin-top:6px; padding:7px 12px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.5); border-radius:6px; color:#a5b4fc; font-size:0.78rem; cursor:pointer; text-align:center; box-sizing:border-box;">
+                   📌 Enregistrer dans les Replays
+                </button>
+                <a id="btnDvwRecalibrer" href="#" target="_blank"
+                   style="display:inline-block; margin-top:6px; padding:6px 12px; background:#1e293b; border:1px solid #334155; border-radius:6px; color:#94a3b8; font-size:0.78rem; text-decoration:none; text-align:center; width:100%; box-sizing:border-box;">
+                   🔧 Fine-tuner la synchro (optionnel)
+                </a>
+                <div class="dvw-ai-placeholder">
+                    🤖 « Je veux voir... » — Bientôt disponible
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
@@ -983,6 +1573,8 @@
     <!-- Services -->
     <script src="firebase-config.js"></script>
     <script src="db-service.js"></script>
+    <script src="export-dvw.js"></script>
+    <script src="dvw-parser-lite.js"></script>
 
     <script>
         let currentMatchId = null;
@@ -994,6 +1586,58 @@
         let syncInterval = null;
         let activeStartTimestamp = null;
         let activeUrl = null;
+
+        // ── DVW Replay ──
+        let dvwData = null;          // { players, actions, teams }
+        let dvwOffsetSeconds = 0;    // offset de synchro calibré
+        let dvwLoaded = false;       // true quand le fichier est parsé
+        let dvwFilteredActions = []; // actions après filtrage
+        let dvwAutoplayActive = false;
+        let dvwAutoplayTimer = null;
+        let dvwAutoplayIndex = 0;
+        let dvwCurrentIndex = -1;    // index de l'action actuellement sélectionnée
+        let dvwScoreActive = false;  // true dès que le score DVW est chargé → bloque l'écrasement Firebase
+        let dvwVideoSyncInterval = null; // intervalle de polling pour sync score/vidéo
+
+        // Démarre le polling : toutes les 500ms, met à jour le score selon la position vidéo
+        function startDvwVideoSync() {
+            if (!dvwLoaded || !dvwData || !dvwData.actions) return;
+            if (dvwVideoSyncInterval) return; // déjà actif
+            dvwVideoSyncInterval = setInterval(() => {
+                if (!player || typeof player.getCurrentTime !== 'function') return;
+                try {
+                    const currentTime = player.getCurrentTime();
+                    syncScoreToVideoPosition(currentTime);
+                } catch(e) {}
+            }, 500);
+        }
+
+        function stopDvwVideoSync() {
+            if (dvwVideoSyncInterval) {
+                clearInterval(dvwVideoSyncInterval);
+                dvwVideoSyncInterval = null;
+            }
+        }
+
+        // Trouve l'action DVW dont le videoSeconds est le plus proche (sans dépasser) du temps courant
+        // et met à jour le score dans la bannière
+        function syncScoreToVideoPosition(currentTimeSec) {
+            if (!dvwData || !dvwData.actions) return;
+            const actions = dvwData.actions;
+            // On cherche la dernière action dont videoSeconds ≤ currentTimeSec
+            let bestAction = null;
+            let bestTime = -1;
+            for (const action of actions) {
+                const vt = action.videoSeconds;
+                if (vt === null || vt <= 0) continue;
+                const adjusted = vt + dvwOffsetSeconds;
+                if (adjusted <= currentTimeSec && adjusted > bestTime) {
+                    bestTime = adjusted;
+                    bestAction = action;
+                }
+            }
+            if (bestAction) updateScoreBannerFromAction(bestAction);
+        }
 
         function getMatchIdFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1038,6 +1682,7 @@
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
             initMatchListener();
+            initStatsListener(); // Pré-charger les rallies dès le départ
         });
 
         // Appelé automatiquement par YouTube API
@@ -1049,6 +1694,8 @@
             dbService.listenToMatch(currentMatchId, (match) => {
                 if (!match) return;
 
+                // Capturer l'état PRÉCÉDENT avant mise à jour (pour détecter les changements)
+                const prevMatchState = lastMatchState;
                 lastMatchState = match;
 
                 // Mettre à jour les noms avec la nouvelle structure
@@ -1151,12 +1798,13 @@
                 // Gestion de l'affichage selon le statut
                 if (match.status === 'live') {
                     showNormalScore();
-                    updateScoreUI(match.score, match.matchType);
+                    if (!dvwScoreActive) updateScoreUI(match.score, match.matchType);
                     checkBalleDeStatus(match);
                 } else if (match.status === 'finished') {
                     // Si on a des segments vidéo (Replay), on veut voir le match et le score défiler !
                     if (videoSegments.length > 0 || activeUrl) {
                         showNormalScore();
+                        if (!dvwScoreActive) updateScoreUI(match.score || { pointsTeam1: 0, setsTeam1: 0, pointsTeam2: 0, setsTeam2: 0 }, match.matchType);
                         // S'assurer que la synchro est active
                         if (!syncInterval && activeStartTimestamp) {
                             startSyncLoop();
@@ -1164,12 +1812,11 @@
                     } else {
                         // Pas de vidéo, on montre juste le résultat final
                         showVictoryDisplay(match);
-                        // S'assurer que le score final est affiché
-                        updateScoreUI(match.score, match.matchType);
+                        if (!dvwScoreActive) updateScoreUI(match.score, match.matchType);
                     }
                 } else if (match.status === 'upcoming') {
                     showNormalScore();
-                    updateScoreUI(match.score, match.matchType);
+                    if (!dvwScoreActive) updateScoreUI(match.score, match.matchType);
                     
                     if (match.history && activeStartTimestamp && !syncInterval) {
                         startSyncLoop();
@@ -1183,8 +1830,424 @@
                     hideSponsors();
                 }
 
+                // Afficher le score par set avec le gagnant en jaune
+                renderScoreParSetViewer(match);
+
+                // Mettre à jour le bouton DVW si disponible
+                initDvwIfAvailable(match);
+
+                // Détecter la diffusion Stats Live par l'animateur
+                // (utiliser prevMatchState capturé avant écrasement de lastMatchState)
+                if (match.liveStats?.active && !prevMatchState?.liveStats?.active) {
+                    activerStatLive();
+                }
+
                 lastMatchState = match;
             });
+        }
+
+        // ──────────────────────────────────────────
+        // FONCTIONS DVW REPLAY
+        // ──────────────────────────────────────────
+
+        function initDvwIfAvailable(match) {
+            const btn = document.getElementById('btnDvwActions');
+            if (!btn) return;
+            if (match.dvwStorageUrl) {
+                btn.style.display = 'inline-flex';
+                dvwOffsetSeconds = match.replaySync?.offsetSeconds || 0;
+                // Mettre à jour le lien "Recalibrer" avec l'ID du match courant
+                const recalBtn = document.getElementById('btnDvwRecalibrer');
+                if (recalBtn && currentMatchId) {
+                    recalBtn.href = 'replay-sync.html?id=' + currentMatchId;
+                }
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        function toggleDvwPanel() {
+            const panel = document.getElementById('dvwPanel');
+            const isOpen = panel.classList.contains('open');
+            if (!isOpen) {
+                panel.classList.add('open');
+                document.body.classList.add('dvw-open');
+                if (!dvwLoaded && lastMatchState?.dvwStorageUrl) {
+                    loadDvwFile(lastMatchState.dvwStorageUrl);
+                }
+            } else {
+                panel.classList.remove('open');
+                document.body.classList.remove('dvw-open');
+                stopDvwAutoplay();
+            }
+        }
+
+        async function loadDvwFile(url) {
+            const listEl = document.getElementById('dvwActionsList');
+            listEl.innerHTML = '<div class="dvw-loading">⏳ Chargement du fichier DVW...</div>';
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Erreur HTTP ' + response.status);
+                const text = await response.text();
+                dvwData = window.dvwParserLite.parseDvwLite(text);
+                dvwLoaded = true;
+
+                // Afficher un bandeau si le fichier n'a pas de timestamps vidéo
+                const noTsEl = document.getElementById('dvwNoTimestampBanner');
+                if (noTsEl) {
+                    if (!dvwData.hasVideoTimestamps) {
+                        noTsEl.style.display = 'block';
+                    } else {
+                        noTsEl.style.display = 'none';
+                    }
+                }
+
+                // Mettre à jour le score depuis les données DVW (si match replay sans score Firebase)
+                applyDvwScoreFromDvw();
+
+                populatePlayerFilter();
+                // Tri initial par videoSeconds (ordre chronologique)
+                dvwFilteredActions = [...dvwData.actions].sort((a, b) => {
+                    const vtA = a.videoSeconds ?? Infinity;
+                    const vtB = b.videoSeconds ?? Infinity;
+                    return vtA - vtB;
+                });
+                renderDvwActionsList();
+            } catch (err) {
+                console.error('Erreur chargement DVW:', err);
+                listEl.innerHTML = '<div class="dvw-empty">❌ Impossible de charger le fichier DVW.<br><small>' + err.message + '</small></div>';
+            }
+        }
+
+        // Met à jour le score overlay et les pills de sets depuis les données DVW
+        function applyDvwScoreFromDvw() {
+            if (!dvwData || !dvwData.setScores || dvwData.setScores.length === 0) return;
+            const sets = dvwData.setScores;
+
+            // Construire le setHistory pour renderScoreParSetViewer
+            const setHistory = sets.map(s => ({
+                setNumber: s.setNumber,
+                team1Points: s.homeScore,
+                team2Points: s.awayScore,
+                winner: s.winner === 'home' ? 'team1' : 'team2'
+            }));
+
+            const setsTeam1 = sets.filter(s => s.winner === 'home').length;
+            const setsTeam2 = sets.filter(s => s.winner === 'away').length;
+
+            // Afficher le score du dernier set joué dans les gros chiffres
+            const lastSet = sets[sets.length - 1];
+            const score = {
+                setsTeam1,
+                setsTeam2,
+                pointsTeam1: lastSet?.homeScore ?? 0,
+                pointsTeam2: lastSet?.awayScore ?? 0
+            };
+
+            dvwScoreActive = true; // bloquer l'écrasement par Firebase dès maintenant
+            showNormalScore();
+            updateScoreUI(score, lastMatchState?.matchType);
+
+            if (lastMatchState) {
+                renderScoreParSetViewer({ ...lastMatchState, score, setHistory, status: 'finished' });
+            }
+
+            // Mettre à jour les noms d'équipes depuis le DVW si encore par défaut
+            if (dvwData.teams) {
+                const t1El = document.getElementById('team1Name');
+                const t2El = document.getElementById('team2Name');
+                const t1 = dvwData.teams.home;
+                const t2 = dvwData.teams.away;
+                if (t1El && t1 && (t1El.textContent === 'ÉQUIPE 1' || t1El.textContent === 'Équipe 1')) {
+                    t1El.textContent = t1.toUpperCase();
+                }
+                if (t2El && t2 && (t2El.textContent === 'ÉQUIPE 2' || t2El.textContent === 'Équipe 2')) {
+                    t2El.textContent = t2.toUpperCase();
+                }
+            }
+        }
+
+        function populatePlayerFilter() {
+            if (!dvwData) return;
+            const select = document.getElementById('dvwFilterPlayer');
+            select.innerHTML = '<option value="">Tous</option>';
+            // Trier : domicile d'abord, puis extérieur, par numéro
+            const sorted = [...dvwData.players].sort((a, b) => {
+                if (a.team !== b.team) return a.team === 'home' ? -1 : 1;
+                return a.number - b.number;
+            });
+            sorted.forEach(p => {
+                const opt = document.createElement('option');
+                // Clé composite équipe:numéro pour distinguer N°7 home vs N°7 away
+                opt.value = p.team + ':' + p.number;
+                opt.textContent = 'N°' + p.number + ' — ' + p.name + ' (' + (p.team === 'home' ? '🏠' : '✈️') + ')';
+                select.appendChild(opt);
+            });
+        }
+
+        function applyDvwFilters() {
+            if (!dvwData) return;
+            stopDvwAutoplay();
+            const playerVal = document.getElementById('dvwFilterPlayer').value;
+            const skillVal = document.getElementById('dvwFilterSkill').value;
+            const qualityVal = document.getElementById('dvwFilterQuality').value;
+
+            const criteria = {};
+            let playerTeam = null;
+
+            if (playerVal) {
+                // Clé composite "équipe:numéro"
+                const parts = playerVal.split(':');
+                if (parts.length === 2) {
+                    playerTeam = parts[0];
+                    criteria.playerNumbers = [parseInt(parts[1])];
+                } else {
+                    criteria.playerNumbers = [parseInt(playerVal)];
+                }
+            }
+            if (skillVal) criteria.skills = [skillVal];
+            if (qualityVal) criteria.qualities = [qualityVal];
+
+            dvwFilteredActions = window.dvwParserLite.filterActions(dvwData.actions, criteria);
+
+            // Filtrer aussi par équipe si une joueuse spécifique est sélectionnée
+            if (playerTeam) {
+                dvwFilteredActions = dvwFilteredActions.filter(a => a.team === playerTeam);
+            }
+
+            // Trier par videoSeconds pour que l'autoplay soit dans l'ordre chronologique
+            dvwFilteredActions.sort((a, b) => {
+                const vtA = a.videoSeconds ?? Infinity;
+                const vtB = b.videoSeconds ?? Infinity;
+                return vtA - vtB;
+            });
+
+            dvwAutoplayIndex = 0;
+            dvwCurrentIndex = -1;
+            renderDvwActionsList();
+        }
+
+        // Filtre "Money Time" : actions en phase décisive de fin de set
+        // Sets 1-4 (to 25) : les deux équipes à ≥ 20 pts — Set 5 (to 15) : ≥ 10 pts
+        function applyMoneyTimeFilter() {
+            if (!dvwData || !dvwData.actions) return;
+            stopDvwAutoplay();
+            dvwFilteredActions = dvwData.actions.filter(action => {
+                const h = action.homeScore ?? 0;
+                const a = action.awayScore ?? 0;
+                if (action.setNumber === 5) return h >= 10 && a >= 10;
+                return h >= 20 && a >= 20;
+            });
+            dvwFilteredActions.sort((a, b) => (a.videoSeconds ?? Infinity) - (b.videoSeconds ?? Infinity));
+            dvwAutoplayIndex = 0;
+            dvwCurrentIndex = -1;
+            renderDvwActionsList();
+        }
+
+        function renderDvwActionsList() {
+            const listEl = document.getElementById('dvwActionsList');
+            if (!dvwFilteredActions || dvwFilteredActions.length === 0) {
+                listEl.innerHTML = '<div class="dvw-empty">Aucune action trouvée avec ces filtres.</div>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            const parser = window.dvwParserLite;
+
+            dvwFilteredActions.forEach((action, index) => {
+                const videoTime = parser.actionToVideoTime(action, dvwOffsetSeconds);
+                const hasTimestamp = videoTime !== null;
+
+                const player = parser.findPlayer(dvwData.players, action.playerNumber, action.team);
+                const playerName = player ? player.name : ('N°' + action.playerNumber);
+                const skillLabel = parser.SKILL_LABELS[action.skill] || action.skill;
+                const qualityLabel = parser.QUALITY_LABELS[action.quality] || '';
+                const qualityColor = parser.QUALITY_COLORS[action.quality] || '#fff';
+                const combo = action.comboCode ? ' <small style="opacity:0.7">(' + action.comboCode + ')</small>' : '';
+                const teamIcon = action.team === 'home' ? '🏠' : '✈️';
+                const scoreStr = (action.homeScore !== null && action.awayScore !== null)
+                    ? action.homeScore + '-' + action.awayScore
+                    : '';
+                const timeStr = hasTimestamp
+                    ? (' — ▶ ' + formatSeconds(videoTime))
+                    : '';
+
+                const chip = document.createElement('div');
+                // Toutes les chips sont cliquables : seek si timestamp, sinon juste highlight
+                chip.className = 'dvw-action-chip' + (hasTimestamp ? '' : ' no-timestamp');
+                chip.dataset.index = index;
+                chip.innerHTML = `
+                    <div class="dvw-chip-left">
+                        <div class="dvw-chip-context">Set ${action.setNumber} ${scoreStr ? '— ' + scoreStr : ''} ${teamIcon}${timeStr}</div>
+                        <div class="dvw-chip-main">${playerName} — ${skillLabel}${combo}</div>
+                    </div>
+                    <span class="dvw-chip-quality" style="color:${qualityColor}" title="${qualityLabel}">${action.quality}</span>
+                `;
+
+                if (hasTimestamp) {
+                    chip.addEventListener('click', () => seekToAction(videoTime, index));
+                } else {
+                    // Sans timestamp : clic = juste mettre en surbrillance l'action courante
+                    chip.addEventListener('click', () => highlightDvwChip(index));
+                }
+                listEl.appendChild(chip);
+            });
+        }
+
+        function seekToAction(videoTimeSec, chipIndex) {
+            stopDvwAutoplay();
+            if (player && typeof player.seekTo === 'function') {
+                player.seekTo(videoTimeSec, true);
+                player.playVideo();
+            }
+            highlightDvwChip(chipIndex);
+        }
+
+        function highlightDvwChip(index) {
+            dvwCurrentIndex = index;
+            document.querySelectorAll('.dvw-action-chip').forEach(c => c.classList.remove('playing'));
+            const chip = document.querySelector('.dvw-action-chip[data-index="' + index + '"]');
+            if (chip) {
+                chip.classList.add('playing');
+                chip.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+            // Mettre à jour la bannière score/set en fonction de l'action sélectionnée
+            if (dvwFilteredActions[index]) updateScoreBannerFromAction(dvwFilteredActions[index]);
+        }
+
+        // Met à jour le numéro de set et le score dans la bannière selon l'action DVW sélectionnée
+        // Utilise le score AU MOMENT de l'action (calculé par dvw-parser-lite.js via le modificateur "p")
+        function updateScoreBannerFromAction(action) {
+            if (!action) return;
+            const setEl = document.getElementById('currentSetDisplay');
+            if (setEl) setEl.textContent = action.setNumber;
+            if (action.homeScore !== null && action.awayScore !== null) {
+                const p1 = document.getElementById('team1Points');
+                const p2 = document.getElementById('team2Points');
+                if (p1) p1.textContent = action.homeScore;
+                if (p2) p2.textContent = action.awayScore;
+            }
+        }
+
+        // Navigation ↑↓ entre les actions : cherche et joue l'action à l'index cible
+        function navigateDvwAction(delta) {
+            if (!dvwFilteredActions || dvwFilteredActions.length === 0) return;
+            const target = Math.max(0, Math.min(dvwFilteredActions.length - 1, dvwCurrentIndex + delta));
+            if (target === dvwCurrentIndex && delta !== 0) return; // déjà au bord
+            const action = dvwFilteredActions[target];
+            const vt = window.dvwParserLite.actionToVideoTime(action, dvwOffsetSeconds);
+            if (vt !== null) {
+                seekToAction(vt, target);
+            } else {
+                highlightDvwChip(target); // pas de timestamp, juste surligner
+            }
+        }
+
+        function toggleDvwAutoplay() {
+            if (dvwAutoplayActive) {
+                stopDvwAutoplay();
+            } else {
+                startDvwAutoplay();
+            }
+        }
+
+        function startDvwAutoplay() {
+            if (!dvwFilteredActions || dvwFilteredActions.length === 0) return;
+            dvwAutoplayActive = true;
+            const btn = document.getElementById('btnDvwAutoplay');
+            if (btn) { btn.textContent = '⏹ Arrêter'; btn.classList.add('active'); }
+            playNextAction();
+        }
+
+        function stopDvwAutoplay() {
+            dvwAutoplayActive = false;
+            if (dvwAutoplayTimer) { clearTimeout(dvwAutoplayTimer); dvwAutoplayTimer = null; }
+            const btn = document.getElementById('btnDvwAutoplay');
+            if (btn) { btn.textContent = '▶ Lecture auto'; btn.classList.remove('active'); }
+        }
+
+        function playNextAction() {
+            if (!dvwAutoplayActive) return;
+            // Trouver la prochaine action avec timestamp vidéo
+            while (dvwAutoplayIndex < dvwFilteredActions.length) {
+                const action = dvwFilteredActions[dvwAutoplayIndex];
+                const vt = window.dvwParserLite.actionToVideoTime(action, dvwOffsetSeconds);
+                if (vt !== null) {
+                    const chipIdx = dvwAutoplayIndex;
+                    dvwAutoplayIndex++;
+
+                    // Seek 1s AVANT l'action → 5s de clip (1s avant + action + 4s après)
+                    const seekTime = Math.max(0, vt - 1);
+                    if (player && typeof player.seekTo === 'function') {
+                        player.seekTo(seekTime, true);
+                        player.playVideo();
+                    }
+                    highlightDvwChip(chipIdx);
+
+                    dvwAutoplayTimer = setTimeout(playNextAction, 5000);
+                    return;
+                }
+                dvwAutoplayIndex++;
+            }
+            // Fin de liste
+            stopDvwAutoplay();
+            dvwAutoplayIndex = 0;
+        }
+
+        // Avance ou recule la vidéo de delta secondes (appelé par boutons ET raccourcis clavier)
+        function seekVideoBy(delta) {
+            if (!player || typeof player.getCurrentTime !== 'function') return;
+            try {
+                const current = player.getCurrentTime();
+                player.seekTo(Math.max(0, current + delta), true);
+            } catch(e) {}
+        }
+
+        // Raccourcis clavier quand le panel DVW est ouvert :
+        // ↑ / ↓  → action précédente / suivante (seek + highlight)
+        // ←  / →  → reculer / avancer de 5s dans la vidéo
+        // ⇧← / ⇧→ → reculer / avancer de 1s dans la vidéo
+        document.addEventListener('keydown', function(e) {
+            const panel = document.getElementById('dvwPanel');
+            if (!panel || !panel.classList.contains('open')) return;
+            // Ne pas interférer quand l'utilisateur tape dans un champ
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowUp')   { e.preventDefault(); navigateDvwAction(-1); }
+            else if (e.key === 'ArrowDown')  { e.preventDefault(); navigateDvwAction(1); }
+            else if (e.key === 'ArrowLeft' && e.shiftKey)  { e.preventDefault(); seekVideoBy(-1); }
+            else if (e.key === 'ArrowRight' && e.shiftKey) { e.preventDefault(); seekVideoBy(1); }
+            else if (e.key === 'ArrowLeft')  { e.preventDefault(); seekVideoBy(-5); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); seekVideoBy(5); }
+        });
+
+        // Enregistre le match dans la liste des Replays (onglet 📹 Replay de lives-weekend)
+        async function enregistrerCommeReplay() {
+            if (!currentMatchId) return;
+            const btn = document.getElementById('btnEnregistrerReplay');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Enregistrement...'; }
+            try {
+                await firebase.database().ref('matches/' + currentMatchId).update({
+                    status: 'finished',
+                    hasReplay: true
+                });
+                if (btn) {
+                    btn.textContent = '✅ Enregistré dans les Replays !';
+                    btn.style.color = '#10b981';
+                    btn.style.borderColor = '#10b981';
+                    btn.style.background = 'rgba(16,185,129,0.1)';
+                }
+            } catch(err) {
+                console.error('Erreur enregistrement replay:', err);
+                if (btn) { btn.disabled = false; btn.textContent = '❌ Erreur — Réessayer'; }
+            }
+        }
+
+        function formatSeconds(secs) {
+            const h = Math.floor(secs / 3600);
+            const m = Math.floor((secs % 3600) / 60);
+            const s = Math.floor(secs % 60);
+            if (h > 0) return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            return m + ':' + String(s).padStart(2, '0');
         }
 
         function updateSegmentsUI() {
@@ -1482,6 +2545,14 @@
                         events: {
                             'onReady': (event) => {
                                 event.target.playVideo();
+                            },
+                            'onStateChange': (event) => {
+                                // Synchroniser le score DVW avec la position de la vidéo
+                                if (event.data === YT.PlayerState.PLAYING) {
+                                    startDvwVideoSync();
+                                } else {
+                                    stopDvwVideoSync();
+                                }
                             }
                         }
                     });
@@ -1548,6 +2619,318 @@
                 el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
                 if (remaining <= 0) hideSponsors();
             }, 1000);
+        }
+
+        // ===== STATS PAR SET — Variables d'état =====
+        let statsOverlayActif = false;
+        let statsRalliesListener = null;
+        let cachedRalliesObj = {};       // Cache rallies Firebase
+        let currentStatsSet = null;      // Set affiché (null = total)
+        let currentStatsIsTotal = false; // true = vue totale
+        let statLiveTimer = null;
+        let statLiveTimer2 = null;       // Timer pour séquence fin de match
+
+        // ── Ouvrir/fermer l'overlay ──────────────────
+        function toggleStatsViewer() {
+            statsOverlayActif = !statsOverlayActif;
+            const overlay = document.getElementById('statsViewerOverlay');
+            const btn = document.getElementById('btnStatsViewer');
+            overlay.classList.toggle('show', statsOverlayActif);
+            if (btn) btn.classList.toggle('actif', statsOverlayActif);
+
+            if (statsOverlayActif && currentMatchId) {
+                // Ouvrir manuellement → afficher le set courant par défaut
+                const sc = lastMatchState?.score || {};
+                const currentSet = lastMatchState?.currentSet || 1;
+                const pts = (sc.pointsTeam1 || 0) + (sc.pointsTeam2 || 0);
+                const setDefaut = pts > 0 ? currentSet : Math.max(1, currentSet - 1);
+                afficherStatsSet(setDefaut, false);
+                if (!statsRalliesListener) initStatsListener();
+            }
+        }
+
+        // ── Listener Firebase rallies ────────────────
+        function initStatsListener() {
+            if (!currentMatchId) return;
+            const ralliesRef = firebase.database().ref(`matches/${currentMatchId}/rallies`);
+            statsRalliesListener = ralliesRef.on('value', (snapshot) => {
+                cachedRalliesObj = snapshot.val() || {};
+                if (dvwLoaded && dvwData) {
+                    calculerStatsDepuisDvw(currentStatsSet, currentStatsIsTotal);
+                } else {
+                    calculerEtAfficherStatsViewer(cachedRalliesObj, currentStatsSet, currentStatsIsTotal);
+                }
+            });
+        }
+
+        // ── Sélectionner un onglet (set ou total) ────
+        function afficherStatsSet(setNum, isTotal) {
+            currentStatsSet = setNum;
+            currentStatsIsTotal = isTotal || false;
+            // Toggle classe CSS pour masquer ligne SCORE en vue totale
+            const overlay = document.getElementById('statsViewerOverlay');
+            if (overlay) overlay.classList.toggle('sv-total-mode', !!isTotal);
+            genererTabsStats(setNum, isTotal);
+            if (dvwLoaded && dvwData) {
+                calculerStatsDepuisDvw(setNum, isTotal);
+            } else {
+                calculerEtAfficherStatsViewer(cachedRalliesObj, setNum, isTotal);
+            }
+        }
+
+        // ── Générer les onglets par set ──────────────
+        function genererTabsStats(activeSet, isTotal) {
+            const el = document.getElementById('sv-tabs');
+            if (!el || !lastMatchState) return;
+            const sh = lastMatchState.setHistory;
+            const shArr = sh ? (Array.isArray(sh) ? sh : Object.values(sh)) : [];
+            const currentSet = lastMatchState.currentSet || 1;
+
+            const tabs = [];
+            // Sets terminés
+            for (const s of shArr) {
+                if (s && s.setNumber) tabs.push({ setNum: s.setNumber, label: 'Set ' + s.setNumber, isTotal: false });
+            }
+            // Set courant si pas encore dans setHistory
+            const inHistory = shArr.some(s => s && s.setNumber === currentSet);
+            if (!inHistory) tabs.push({ setNum: currentSet, label: 'Set ' + currentSet, isTotal: false });
+            // Onglet TOTAL
+            tabs.push({ setNum: null, label: 'TOTAL', isTotal: true });
+
+            el.innerHTML = tabs.map(tab => {
+                const actif = tab.isTotal ? isTotal : (tab.setNum === activeSet && !isTotal);
+                return `<button class="sv-tab${actif ? ' actif' : ''}"
+                    onclick="afficherStatsSet(${tab.isTotal ? 'null' : tab.setNum}, ${tab.isTotal})">${tab.label}</button>`;
+            }).join('');
+        }
+
+        // ── Calcul et affichage des stats depuis DVW ─
+        function calculerStatsDepuisDvw(targetSet, isTotal) {
+            if (!dvwData || !dvwData.actions) return;
+            const actions = isTotal
+                ? dvwData.actions
+                : dvwData.actions.filter(a => a.setNumber === targetSet);
+
+            const stats = {
+                team1: { aces: 0, kills: 0, blocs: 0, fautes: 0 },
+                team2: { aces: 0, kills: 0, blocs: 0, fautes: 0 }
+            };
+            for (const a of actions) {
+                const t = a.team === 'home' ? 'team1' : 'team2';
+                if (a.skill === 'S' && a.quality === '#') stats[t].aces++;
+                else if (a.skill === 'A' && a.quality === '#') stats[t].kills++;
+                else if (a.skill === 'B' && a.quality === '#') stats[t].blocs++;
+                if (a.quality === '=') stats[t].fautes++;
+            }
+
+            const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+
+            // Noms des équipes
+            if (lastMatchState) {
+                setEl('sv-nom1', lastMatchState.team1?.name || dvwData.teams?.home || 'Éq.1');
+                setEl('sv-nom2', lastMatchState.team2?.name || dvwData.teams?.away || 'Éq.2');
+                const j1 = document.getElementById('sv-jersey1');
+                const j2 = document.getElementById('sv-jersey2');
+                if (j1) j1.style.background = lastMatchState.team1?.color || '#6366f1';
+                if (j2) j2.style.background = lastMatchState.team2?.color || '#3b82f6';
+            } else {
+                setEl('sv-nom1', dvwData.teams?.home || 'Éq.1');
+                setEl('sv-nom2', dvwData.teams?.away || 'Éq.2');
+            }
+
+            // Sets gagnés
+            const sets = dvwData.setScores || [];
+            const setsTeam1 = sets.filter(s => s.winner === 'home').length;
+            const setsTeam2 = sets.filter(s => s.winner === 'away').length;
+            setEl('sv-sets1', setsTeam1);
+            setEl('sv-sets2', setsTeam2);
+
+            // Ligne SCORE
+            const scoreLbl = document.getElementById('sv-score-label');
+            if (isTotal) {
+                setEl('sv-score1', setsTeam1);
+                setEl('sv-score2', setsTeam2);
+                if (scoreLbl) scoreLbl.textContent = 'SETS';
+            } else {
+                if (scoreLbl) scoreLbl.textContent = 'SCORE';
+                const setEntry = sets.find(s => s.setNumber === targetSet);
+                setEl('sv-score1', setEntry?.homeScore ?? '–');
+                setEl('sv-score2', setEntry?.awayScore ?? '–');
+            }
+
+            // Stats
+            setEl('sv-aces1', stats.team1.aces);    setEl('sv-aces2', stats.team2.aces);
+            setEl('sv-kills1', stats.team1.kills);   setEl('sv-kills2', stats.team2.kills);
+            setEl('sv-blocs1', stats.team1.blocs);   setEl('sv-blocs2', stats.team2.blocs);
+            setEl('sv-fautes1', stats.team1.fautes); setEl('sv-fautes2', stats.team2.fautes);
+        }
+
+        // ── Calcul et affichage des stats ────────────
+        function calculerEtAfficherStatsViewer(ralliesObj, targetSet, isTotal) {
+            const allRallies = Array.isArray(ralliesObj) ? ralliesObj : Object.values(ralliesObj);
+            // Filtrer par set si vue par set
+            const rallies = (targetSet && !isTotal)
+                ? allRallies.filter(r => r && r.set === targetSet)
+                : allRallies;
+
+            const stats = {
+                team1: { aces: 0, kills: 0, blocs: 0, fautes: 0 },
+                team2: { aces: 0, kills: 0, blocs: 0, fautes: 0 }
+            };
+            for (const rally of rallies) {
+                if (!rally) continue;
+                const af = rally.actionFinale;
+                if (af) {
+                    const t = af.team;
+                    if (t === 'team1' || t === 'team2') {
+                        if (af.type === 'ace')  stats[t].aces++;
+                        if (af.type === 'kill') stats[t].kills++;
+                        if (af.type === 'bloc') stats[t].blocs++;
+                        if (af.dvwQuality === '=') stats[t].fautes++;
+                    }
+                }
+            }
+
+            const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+
+            if (lastMatchState) {
+                const sc = lastMatchState.score || {};
+                setEl('sv-nom1', lastMatchState.team1?.name || 'Éq.1');
+                setEl('sv-nom2', lastMatchState.team2?.name || 'Éq.2');
+                setEl('sv-sets1', sc.setsTeam1 || 0);
+                setEl('sv-sets2', sc.setsTeam2 || 0);
+
+                // Couleurs jerseys
+                const j1 = document.getElementById('sv-jersey1');
+                const j2 = document.getElementById('sv-jersey2');
+                if (j1) j1.style.background = lastMatchState.team1?.color || '#6366f1';
+                if (j2) j2.style.background = lastMatchState.team2?.color || '#3b82f6';
+
+                // Ligne SCORE : score du set affiché (ou sets gagnés pour TOTAL)
+                const scoreLbl = document.getElementById('sv-score-label');
+                if (isTotal) {
+                    setEl('sv-score1', sc.setsTeam1 || 0);
+                    setEl('sv-score2', sc.setsTeam2 || 0);
+                    if (scoreLbl) scoreLbl.textContent = 'SETS';
+                } else {
+                    if (scoreLbl) scoreLbl.textContent = 'SCORE';
+                    const sh = lastMatchState.setHistory;
+                    const shArr = sh ? (Array.isArray(sh) ? sh : Object.values(sh)) : [];
+                    const setEntry = shArr.find(s => s && s.setNumber === targetSet);
+                    if (setEntry) {
+                        setEl('sv-score1', setEntry.team1Points);
+                        setEl('sv-score2', setEntry.team2Points);
+                    } else {
+                        // Set en cours (pas encore dans setHistory)
+                        setEl('sv-score1', sc.pointsTeam1 || 0);
+                        setEl('sv-score2', sc.pointsTeam2 || 0);
+                    }
+                }
+            }
+
+            setEl('sv-aces1', stats.team1.aces);
+            setEl('sv-aces2', stats.team2.aces);
+            setEl('sv-kills1', stats.team1.kills);
+            setEl('sv-kills2', stats.team2.kills);
+            setEl('sv-blocs1', stats.team1.blocs);
+            setEl('sv-blocs2', stats.team2.blocs);
+            setEl('sv-fautes1', stats.team1.fautes);
+            setEl('sv-fautes2', stats.team2.fautes);
+        }
+
+        // ── Déclenchement à distance par l'animateur ─
+        function activerStatLive() {
+            const badge = document.getElementById('stat-live-badge');
+            const ls = lastMatchState?.liveStats || {};
+            const setAMontrer = ls.setAMontrer || lastMatchState?.currentSet || 1;
+            const isFinished = ls.matchFinished || lastMatchState?.status === 'finished';
+
+            // Ouvrir overlay et afficher le bon set
+            if (!statsOverlayActif) toggleStatsViewer();
+            if (!statsRalliesListener) initStatsListener();
+            afficherStatsSet(setAMontrer, false);
+            if (badge) badge.classList.add('visible');
+
+            // Annuler timers précédents
+            if (statLiveTimer) { clearTimeout(statLiveTimer); statLiveTimer = null; }
+            if (statLiveTimer2) { clearTimeout(statLiveTimer2); statLiveTimer2 = null; }
+
+            if (isFinished) {
+                // Fin de match : set → 20s → total → 20s → fermer
+                statLiveTimer = setTimeout(() => {
+                    afficherStatsSet(null, true); // Vue totale
+                }, 20000);
+                statLiveTimer2 = setTimeout(() => {
+                    if (badge) badge.classList.remove('visible');
+                    if (statsOverlayActif) toggleStatsViewer();
+                    statLiveTimer = null; statLiveTimer2 = null;
+                }, 40000);
+            } else {
+                // En cours : afficher 20s puis fermer
+                statLiveTimer = setTimeout(() => {
+                    if (badge) badge.classList.remove('visible');
+                    if (statsOverlayActif) toggleStatsViewer();
+                    statLiveTimer = null;
+                }, 20000);
+            }
+        }
+
+        // ===== EXPORT DVW (conservé) =====
+        function lancerExportDvw() {
+            if (!currentMatchId) {
+                alert('Aucun match chargé.');
+                return;
+            }
+            exportDvw.exporterMatch(currentMatchId);
+        }
+
+        // ===== SCORE PAR SET =====
+        function renderScoreParSetViewer(match) {
+            const container = document.getElementById('scoreSetsViewer');
+            if (!container) return;
+
+            const setHistory = Array.isArray(match.setHistory)
+                ? match.setHistory
+                : Object.values(match.setHistory || {});
+
+            const score = match.score || {};
+            const sets1 = score.setsTeam1 || 0;
+            const sets2 = score.setsTeam2 || 0;
+            const points1 = score.pointsTeam1 || 0;
+            const points2 = score.pointsTeam2 || 0;
+            const currentSet = sets1 + sets2 + 1;
+
+            // Rien à afficher si aucun set terminé et score courant à 0-0
+            if (setHistory.length === 0 && points1 === 0 && points2 === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // Sets terminés
+            setHistory.forEach(set => {
+                const s1Class = set.winner === 'team1' ? 'score-set-winner' : 'score-set-t1';
+                const s2Class = set.winner === 'team2' ? 'score-set-winner' : 'score-set-t2';
+                html += `<div class="set-pill">` +
+                    `<span class="set-num">S${set.setNumber}</span>` +
+                    `<span class="${s1Class}">${set.team1Points}</span>` +
+                    `<span class="score-sep">-</span>` +
+                    `<span class="${s2Class}">${set.team2Points}</span>` +
+                    `</div>`;
+            });
+
+            // Set en cours (si match pas terminé, ou si score non nul)
+            if (match.status !== 'finished' || (points1 > 0 || points2 > 0)) {
+                html += `<div class="set-pill set-en-cours">` +
+                    `<span class="set-num">S${currentSet}</span>` +
+                    `<span class="score-set-t1">${points1}</span>` +
+                    `<span class="score-sep">-</span>` +
+                    `<span class="score-set-t2">${points2}</span>` +
+                    `</div>`;
+            }
+
+            container.innerHTML = html;
         }
 
         function toggleFullScreen() {
