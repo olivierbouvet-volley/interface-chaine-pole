@@ -258,27 +258,38 @@ function parseDvwLite(text) {
     }
 
     // Calcul des scores courants par set (basé sur le modificateur "p")
-    // On assigne à chaque action le score AVANT qu'elle se produise
+    // IMPORTANT : DataVolley enregistre souvent "p" sur PLUSIEURS actions du même échange
+    // (ex: ace S# + erreur R= ont tous deux "p" avec le même videoSeconds).
+    // → Déduplication par (setNumber, videoSeconds) : on ne compte qu'UN point par échange.
     const runningScores = {}; // { setNumber: { home: 0, away: 0 } }
+    const countedRallies = new Set(); // clés déjà comptées : "sn_videoSeconds"
+    let noTimeIdx = 0; // compteur pour les actions sans timestamp vidéo valide
+
     for (const action of actions) {
         const sn = action.setNumber;
         if (!runningScores[sn]) runningScores[sn] = { home: 0, away: 0 };
         const sc = runningScores[sn];
 
-        // Score avant cette action
+        // Score AVANT cette action
         action.homeScore = sc.home;
         action.awayScore = sc.away;
 
-        // Si un point a été marqué sur cette action, on met à jour pour les suivantes
         if (action.pointScored) {
-            if (action.quality === '=') {
-                // Faute → l'adversaire marque
-                if (action.team === 'home') sc.away++;
-                else sc.home++;
-            } else {
-                // Kill / Ace / Bloc ou autre conclusion → l'équipe qui agit marque
-                if (action.team === 'home') sc.home++;
-                else sc.away++;
+            // Clé unique pour cet échange : préférer videoSeconds (fiable), sinon index auto
+            const rallyKey = sn + '_' + (action.videoSeconds != null && action.videoSeconds > 0
+                ? action.videoSeconds
+                : 'notime_' + (noTimeIdx++));
+            if (!countedRallies.has(rallyKey)) {
+                countedRallies.add(rallyKey);
+                if (action.quality === '=') {
+                    // Faute → l'adversaire marque
+                    if (action.team === 'home') sc.away++;
+                    else sc.home++;
+                } else {
+                    // Kill / Ace / Bloc gagnant → l'équipe qui agit marque
+                    if (action.team === 'home') sc.home++;
+                    else sc.away++;
+                }
             }
         }
     }

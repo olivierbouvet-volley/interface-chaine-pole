@@ -1530,7 +1530,7 @@
                 </div>
                 <div style="display:flex; gap:6px; margin-top:4px;">
                     <button class="dvw-btn-filter" style="flex:1" onclick="applyDvwFilters()">🔍 Filtrer</button>
-                    <button class="dvw-btn-filter dvw-btn-moneytime" style="flex:1" onclick="applyMoneyTimeFilter()" title="Affiche uniquement les moments décisifs de fin de set">⚡ Money Time</button>
+                    <button class="dvw-btn-filter dvw-btn-moneytime" style="flex:1" onclick="applyMoneyTimeFilter()" title="Moments décisifs : une équipe à ≥20pts avec écart ≤2 (tie-break : ≥10 écart ≤2)">⚡ Money Time</button>
                 </div>
             </div>
             <div id="dvwNoTimestampBanner" style="display:none; background:#7c3aed22; border:1px solid #7c3aed; border-radius:8px; padding:10px 12px; margin:8px 0; font-size:0.8rem; color:#c4b5fd; line-height:1.5;">
@@ -2028,15 +2028,18 @@
         }
 
         // Filtre "Money Time" : actions en phase décisive de fin de set
-        // Sets 1-4 (to 25) : les deux équipes à ≥ 20 pts — Set 5 (to 15) : ≥ 10 pts
+        // Sets 1-4 : au moins une équipe à ≥ 20 pts ET écart ≤ 2 (ex : 21-19 oui, 22-10 non)
+        // Set 5 (tie-break) : au moins une équipe à ≥ 10 pts ET écart ≤ 2
         function applyMoneyTimeFilter() {
             if (!dvwData || !dvwData.actions) return;
             stopDvwAutoplay();
             dvwFilteredActions = dvwData.actions.filter(action => {
                 const h = action.homeScore ?? 0;
                 const a = action.awayScore ?? 0;
-                if (action.setNumber === 5) return h >= 10 && a >= 10;
-                return h >= 20 && a >= 20;
+                const max = Math.max(h, a);
+                const gap = Math.abs(h - a);
+                if (action.setNumber === 5) return max >= 10 && gap <= 2;
+                return max >= 20 && gap <= 2;
             });
             dvwFilteredActions.sort((a, b) => (a.videoSeconds ?? Infinity) - (b.videoSeconds ?? Infinity));
             dvwAutoplayIndex = 0;

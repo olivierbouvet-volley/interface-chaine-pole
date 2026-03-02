@@ -309,20 +309,23 @@
                         card.className = 'replay-card';
                         card.onclick = () => window.location.href = `match-viewer.html?id=${match.id}`;
 
-                        const scoreStr = match.score ? `${match.score.setsHome || 0} - ${match.score.setsAway || 0}` : '0 - 0';
-                        const playerPhoto = match.playerPhoto || 'https://via.placeholder.com/100';
+                        const scoreStr = match.score ? `${match.score.setsTeam1 || 0} - ${match.score.setsTeam2 || 0}` : '0 - 0';
+                        const playerPhoto = match.team1?.playerPhoto || 'https://via.placeholder.com/100';
+                        const team1Name = match.team1?.name || 'Équipe 1';
+                        const team2Name = match.team2?.name || 'Équipe 2';
+                        const playerName = match.team1?.declaringPlayer || '';
 
                         card.innerHTML = `
                             <div class="play-overlay"><div class="play-btn">▶</div></div>
                             <div class="card-body">
                                 <div class="teams">
-                                    <span>${match.clubName}</span>
+                                    <span>${team1Name}</span>
                                     <span class="score-final">${scoreStr}</span>
                                 </div>
-                                <div class="match-meta">${match.opponent}</div>
+                                <div class="match-meta">${team2Name}</div>
                                 <div class="player-info">
-                                    <img src="${playerPhoto}" class="player-img" alt="${match.playerName}">
-                                    <span class="player-name">Filmée par ${match.playerName}</span>
+                                    <img src="${playerPhoto}" class="player-img" alt="${playerName}">
+                                    <span class="player-name">Filmée par ${playerName}</span>
                                 </div>
                             </div>
                         `;

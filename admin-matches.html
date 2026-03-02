@@ -231,6 +231,7 @@
     <script src="firebase-config.js"></script>
     <script src="db-service.js"></script>
     <script src="storage-service.js"></script>
+    <script src="export-dvw.js"></script>
 
     <script>
         async function loadMatches() {
@@ -353,6 +354,16 @@
                                         : match.dvwStorageUrl && !match.youtubeUrl
                                             ? `<p style="font-size:0.8rem; color:#f59e0b; margin:0;">⚠️ Ajoutez un lien YouTube pour accéder au replay</p>`
                                             : `<p style="font-size:0.8rem; opacity:0.6; margin:0;">💡 Chargez un fichier DVW pour activer l'analyse replay</p>`}
+                                </div>
+                                <!-- Générer DVW depuis les stats live -->
+                                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);">
+                                    <strong style="color:#a78bfa;font-size:0.85rem;">📊 Générer DVW depuis les stats live</strong>
+                                    <p style="font-size:0.78rem;opacity:0.7;margin:4px 0 8px 0;">Crée un fichier .dvw à partir des actions saisies en live par l'animateur et les parents.</p>
+                                    <button onclick="lancerExportDvw('${id}')"
+                                        style="width:100%;padding:9px 16px;background:rgba(167,139,250,0.15);border:1px solid #a78bfa;color:#a78bfa;border-radius:6px;cursor:pointer;font-weight:700;font-size:0.85rem;">
+                                        📥 Générer DVW
+                                    </button>
+                                    <div id="exportDvwStatut-${id}" style="display:none;"></div>
                                 </div>
                             </div>
                         </div>
@@ -567,6 +578,11 @@
                 progressEl.textContent = '';
                 alert('❌ Erreur lors du chargement du fichier DVW');
             }
+        }
+
+        function lancerExportDvw(id) {
+            exportDvw._statutElId = 'exportDvwStatut-' + id;
+            exportDvw.exporterMatch(id);
         }
 
         window.onload = loadMatches;

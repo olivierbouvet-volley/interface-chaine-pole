@@ -1941,10 +1941,12 @@
         let popup1bisTimer = null;
         let popup1bisRallyId = null;
         let popup1bisCountdown = 5;
+        let popupBallType = 'M'; // Type de service DVW : M=Flottant, Q=Sauté, T=Tendu
 
         function afficherPopup1bis(pointTeam, rallyId) {
             popup1bisRallyId = rallyId;
             popup1bisCountdown = 5;
+            popupBallType = 'M'; // Reset au flottant par défaut
 
             const nomEquipe = pointTeam === 'team1'
                 ? (currentMatch?.team1?.name || 'Équipe 1')
@@ -1953,11 +1955,21 @@
             const actions = ACTIONS_1BIS[pointTeam] || [];
             const isMatchMode = document.body.classList.contains('match-mode');
 
+            // Sélecteur de type de service (affiché si une action service est disponible)
+            const hasService = actions.some(a => a.dvwSkill === 'S');
+            const ballTypeHtml = hasService ? `
+                <div style="display:flex;gap:4px;margin-bottom:8px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
+                    <span style="font-size:0.7rem;color:#94a3b8;min-width:58px;">🏐 Service :</span>
+                    <button id="bbt-M" onclick="window._setBallType('M')" style="padding:3px 10px;border:1px solid #f59e0b;color:#fbbf24;border-radius:4px;background:rgba(245,158,11,0.3);cursor:pointer;font-size:0.75rem;font-weight:700;">⤴ Flottant</button>
+                    <button id="bbt-Q" onclick="window._setBallType('Q')" style="padding:3px 10px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);border-radius:4px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.75rem;">⚡ Sauté</button>
+                    <button id="bbt-T" onclick="window._setBallType('T')" style="padding:3px 10px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);border-radius:4px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.75rem;">🎯 Tendu</button>
+                </div>` : '';
+
             if (isMatchMode) {
                 // En match-mode : afficher dans la zone haute (état action)
                 const zhGrid = document.getElementById('zh-actions-grid');
                 if (zhGrid) {
-                    zhGrid.innerHTML = actions.map(a => `
+                    zhGrid.innerHTML = ballTypeHtml + actions.map(a => `
                         <button class="zh-btn-action ${a.classe}" onclick="selectionnerAction1bis('${a.id}','${a.teamAction}','${a.dvwSkill}','${a.dvwQuality}')">
                             ${a.label}
                         </button>
@@ -1971,7 +1983,7 @@
                 document.getElementById('popup1bis-titre').textContent = '🏆 Point ' + nomEquipe + ' — Action finale ?';
                 document.getElementById('popup1bis-timer').textContent = '⏱ 5s';
                 const gridEl = document.getElementById('popup1bis-actions');
-                gridEl.innerHTML = actions.map(a => `
+                gridEl.innerHTML = ballTypeHtml + actions.map(a => `
                     <button class="btn-action-1bis ${a.classe}" onclick="selectionnerAction1bis('${a.id}', '${a.teamAction}', '${a.dvwSkill}', '${a.dvwQuality}')">
                         ${a.label}
                     </button>
@@ -1993,7 +2005,8 @@
         }
 
         async function selectionnerAction1bis(type, team, dvwSkill, dvwQuality) {
-            const rallyId = popup1bisRallyId; // Capturer AVANT fermerPopup1bis() qui remet à null
+            const rallyId    = popup1bisRallyId; // Capturer AVANT fermerPopup1bis() qui remet à null
+            const ballType   = popupBallType;    // Type de service sélectionné
             fermerPopup1bis();
             if (!currentMatchId || !rallyId) {
                 console.warn('⚠️ selectionnerAction1bis : rallyId manquant');
@@ -2002,10 +2015,11 @@
 
             try {
                 await dbService.enrichRallyActionFinale(currentMatchId, rallyId, {
-                    type: type,
-                    team: team,
-                    dvwSkill: dvwSkill,
-                    dvwQuality: dvwQuality
+                    type:        type,
+                    team:        team,
+                    dvwSkill:    dvwSkill,
+                    dvwQuality:  dvwQuality,
+                    ballType:    dvwSkill === 'S' ? ballType : 'H', // Ball type uniquement pour le service
                 });
                 console.log('✅ Action finale enregistrée:', type, rallyId);
             } catch(e) {
@@ -2021,6 +2035,20 @@
                 });
             } catch(e) { /* non bloquant */ }
         }
+
+        // Sélecteur de type de service (appelé depuis les boutons inline du ballTypeHtml)
+        window._setBallType = function(type) {
+            popupBallType = type;
+            ['M','Q','T'].forEach(t => {
+                const btn = document.getElementById('bbt-' + t);
+                if (!btn) return;
+                const sel = t === type;
+                btn.style.background   = sel ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.05)';
+                btn.style.borderColor  = sel ? '#f59e0b' : 'rgba(255,255,255,0.2)';
+                btn.style.color        = sel ? '#fbbf24' : 'rgba(255,255,255,0.7)';
+                btn.style.fontWeight   = sel ? '700' : '400';
+            });
+        };
 
         function fermerPopup1bis() {
             if (popup1bisTimer) { clearInterval(popup1bisTimer); popup1bisTimer = null; }
@@ -2147,6 +2175,11 @@
             joueusesEnCours.splice(index, 1);
             compteurs.splice(index, 1);
             renderZoneJoueuses();
+            // Sauvegarder la liste mise à jour dans Firebase (animateur uniquement)
+            if (role === 'animateur' && currentMatchId) {
+                firebase.database().ref(`matches/${currentMatchId}/joueuses`).set(joueusesEnCours)
+                    .catch(e => console.error('❌ Erreur sauvegarde joueuses Firebase:', e));
+            }
         }
 
         function ouvrirPickerAjout() {
@@ -2834,25 +2867,31 @@
         async function initJoueuses(match) {
             // En mode stats, chaque parent gère ses propres joueuses indépendamment
             if (role === 'stats') return;
+
+            // Toujours afficher la section pour l'animateur (même sans joueuses déclarées)
+            const section = document.getElementById('section-joueuses');
+            section.style.display = 'block';
+
+            // Label équipes
+            const nom1 = match.team1?.name || 'Équipe 1';
+            const nom2 = match.team2?.name || 'Équipe 2';
+            document.getElementById('joueuses-equipes-label').textContent = `${nom1} vs ${nom2}`;
+
             const joueuses = match.joueuses;
-            if (!joueuses || joueuses.length === 0) return;
+            if (!joueuses || joueuses.length === 0) {
+                // Aucune joueuse déclarée : juste afficher le bouton Ajouter
+                mettreAJourBtnAjouter();
+                return;
+            }
 
             joueusesEnCours = Array.isArray(joueuses) ? joueuses : Object.values(joueuses);
             compteurs = joueusesEnCours.map(() => ({ ok: 0, err: 0 }));
-
-            const section = document.getElementById('section-joueuses');
-            section.style.display = 'block';
 
             const zone = document.getElementById('zone-joueuses');
             const n = joueusesEnCours.length;
             zone.className = n === 1 ? '' : `split-${Math.min(n, 4)}`;
 
             zone.innerHTML = joueusesEnCours.map((j, i) => renderCarte(j, i)).join('');
-
-            // Label équipes
-            const nom1 = match.team1?.name || 'Équipe 1';
-            const nom2 = match.team2?.name || 'Équipe 2';
-            document.getElementById('joueuses-equipes-label').textContent = `${nom1} vs ${nom2}`;
 
             mettreAJourBtnAjouter();
         }
@@ -3029,6 +3068,12 @@
                 // Restaurer les stats de la nouvelle joueuse si elle a déjà été suivie
                 compteurs[pickerCarteIndex] = restaurerStats(nouvelleJoueuse);
                 renderZoneJoueuses();
+            }
+
+            // Sauvegarder la liste dans Firebase (animateur uniquement) pour persistance
+            if (role === 'animateur' && currentMatchId) {
+                firebase.database().ref(`matches/${currentMatchId}/joueuses`).set(joueusesEnCours)
+                    .catch(e => console.error('❌ Erreur sauvegarde joueuses Firebase:', e));
             }
 
             document.getElementById('pickerJoueuse').classList.remove('show');
