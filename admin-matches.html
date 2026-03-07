@@ -204,6 +204,55 @@
             border: 1px solid var(--primary);
             color: var(--primary);
         }
+
+        /* === MODE SÉLECTION MULTIPLE === */
+        .match-row.selectable { cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+        .match-row.selectable:hover { background: rgba(255,255,255,0.08); }
+        .match-row.selected {
+            background: rgba(239,68,68,0.12);
+            border-color: rgba(239,68,68,0.5);
+        }
+
+        .match-checkbox {
+            display: none;
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            accent-color: var(--danger);
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        body.select-mode .match-checkbox { display: block; }
+        body.select-mode .match-row { cursor: pointer; }
+
+        /* Barre flottante de suppression */
+        #bulkBar {
+            display: none;
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            border: 1px solid rgba(239,68,68,0.5);
+            border-radius: 14px;
+            padding: 14px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            gap: 16px;
+            z-index: 999;
+            min-width: 320px;
+        }
+
+        body.select-mode #bulkBar { display: flex; }
+
+        #bulkBar .bulk-count {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f87171;
+            flex: 1;
+        }
     </style>
 </head>
 
@@ -215,7 +264,18 @@
             <a href="formulaire-match.html" class="btn btn-outline">➕ Nouveau Match Live</a>
             <a href="formulaire-match.html?mode=replay" class="btn btn-primary" style="background:#10b981;">🎬 Nouveau Match Replay</a>
             <button class="btn btn-outline" onclick="location.reload()">🔄 Actualiser</button>
+            <button class="btn btn-outline" id="btnSelectMode" onclick="toggleSelectMode()" style="border-color:var(--danger);color:var(--danger);">
+                ☑️ Sélectionner
+            </button>
         </div>
+    </div>
+
+    <!-- Barre flottante suppression en masse -->
+    <div id="bulkBar">
+        <span class="bulk-count" id="bulkCount">0 match sélectionné</span>
+        <button class="btn btn-outline" style="font-size:0.85rem;padding:7px 14px;" onclick="selectAllMatches()">✔ Tout sélectionner</button>
+        <button class="btn btn-danger" style="font-size:0.85rem;padding:7px 16px;" onclick="supprimerSelection()">🗑️ Supprimer la sélection</button>
+        <button class="btn btn-outline" style="font-size:0.85rem;padding:7px 14px;" onclick="toggleSelectMode()">✕ Annuler</button>
     </div>
 
     <div id="matchList" class="match-grid">
@@ -253,6 +313,7 @@
                     const match = matches[id];
                     const row = document.createElement('div');
                     row.className = 'match-row';
+                    row.setAttribute('data-id', id);
 
                     const statusClass = `status-${match.status || 'upcoming'}`;
                     const statusLabel = {
@@ -268,6 +329,7 @@
                     const currentOffset = match.videoSync?.offsetSeconds || 0;
 
                     row.innerHTML = `
+                        <input type="checkbox" class="match-checkbox" id="chk-${id}" onclick="event.stopPropagation(); toggleSelection('${id}')">
                         <div class="match-info">
                             <h3>${team1Name} vs ${team2Name}</h3>
                             <p>${match.playerName || match.team1?.declaringPlayer || 'N/A'} - ${match.date} ${match.time || ''}</p>
@@ -275,6 +337,7 @@
                         </div>
                         <div class="actions">
                             <button class="btn btn-outline" onclick="setStatus('${id}', 'upcoming')">⏳ Report</button>
+                            <a class="btn btn-outline" href="match-viewer.html?id=${id}" target="_blank" style="text-decoration:none;">🎬 Replay</a>
                             <button class="btn btn-outline" onclick="setStatus('${id}', 'live')">🔴 Direct</button>
                             <button class="btn btn-outline" onclick="setStatus('${id}', 'finished')">✓ Finir</button>
                             <button class="btn btn-toggle" onclick="toggleAdvanced('${id}')">⚙️ Avancé</button>
@@ -369,8 +432,82 @@
                         </div>
                     `;
                     container.appendChild(row);
+
+                    // Clic sur la ligne = toggle sélection en mode sélection
+                    row.addEventListener('click', (e) => {
+                        if (!document.body.classList.contains('select-mode')) return;
+                        if (e.target.closest('.actions') || e.target.closest('.advanced-panel')) return;
+                        toggleSelection(id);
+                    });
                 });
             });
+        }
+
+        let selectedIds = new Set();
+
+        function toggleSelectMode() {
+            const active = document.body.classList.toggle('select-mode');
+            const btn = document.getElementById('btnSelectMode');
+            if (active) {
+                btn.textContent = '✕ Quitter sélection';
+                btn.style.background = 'rgba(239,68,68,0.15)';
+            } else {
+                btn.textContent = '☑️ Sélectionner';
+                btn.style.background = '';
+                // Désélectionner tout
+                selectedIds.clear();
+                document.querySelectorAll('.match-row.selected').forEach(r => r.classList.remove('selected'));
+                document.querySelectorAll('.match-checkbox').forEach(c => c.checked = false);
+                majBulkBar();
+            }
+        }
+
+        function toggleSelection(id) {
+            const row = document.querySelector(`.match-row[data-id="${id}"]`);
+            const chk = document.getElementById('chk-' + id);
+            if (selectedIds.has(id)) {
+                selectedIds.delete(id);
+                if (row) row.classList.remove('selected');
+                if (chk) chk.checked = false;
+            } else {
+                selectedIds.add(id);
+                if (row) row.classList.add('selected');
+                if (chk) chk.checked = true;
+            }
+            majBulkBar();
+        }
+
+        function selectAllMatches() {
+            document.querySelectorAll('.match-row[data-id]').forEach(row => {
+                const id = row.getAttribute('data-id');
+                selectedIds.add(id);
+                row.classList.add('selected');
+                const chk = document.getElementById('chk-' + id);
+                if (chk) chk.checked = true;
+            });
+            majBulkBar();
+        }
+
+        function majBulkBar() {
+            const n = selectedIds.size;
+            const el = document.getElementById('bulkCount');
+            if (el) el.textContent = `${n} match${n > 1 ? 's' : ''} sélectionné${n > 1 ? 's' : ''}`;
+        }
+
+        async function supprimerSelection() {
+            const n = selectedIds.size;
+            if (n === 0) { alert('Aucun match sélectionné.'); return; }
+            if (!confirm(`⚠️ Supprimer définitivement ${n} match${n > 1 ? 's' : ''} ?\n\nCette action est irréversible.`)) return;
+            const ids = [...selectedIds];
+            let ok = 0, err = 0;
+            for (const id of ids) {
+                try {
+                    await firebase.database().ref('matches/' + id).remove();
+                    ok++;
+                } catch(e) { err++; }
+            }
+            alert(`✅ ${ok} match${ok > 1 ? 's' : ''} supprimé${ok > 1 ? 's' : ''}${err ? ` — ❌ ${err} échec(s)` : ''}.`);
+            toggleSelectMode();
         }
 
         async function setStatus(id, status) {

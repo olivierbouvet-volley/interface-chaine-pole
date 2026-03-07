@@ -1,0 +1,25 @@
+{
+  "name": "Live Match Viewer",
+  "short_name": "Match Live",
+  "description": "Visualiseur de match en direct - Interface Chaîne Pôle",
+  "start_url": "/lives-weekend.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "logo-pole-official.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo-pole-official.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -219,13 +219,91 @@
         }
 
         @media (max-width: 640px) {
-            h1 {
-                font-size: 1.8rem;
-            }
+            h1 { font-size: 1.8rem; }
+            .match-grid { grid-template-columns: 1fr; }
+            .search-bar { flex-direction: column; }
+        }
 
-            .match-grid {
-                grid-template-columns: 1fr;
-            }
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 180px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+        .search-input:focus { border-color: var(--primary); }
+        .search-input option { background: #1e293b; color: white; }
+
+        /* Couleur de la liste native (datalist) */
+        .search-input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.4); cursor: pointer; }
+
+        .search-count {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            margin-top: -24px;
+        }
+
+        .source-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .source-btn {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .source-btn.active {
+            background: rgba(99,102,241,0.25);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .video-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .badge-youtube  { background: rgba(255,0,0,0.15); color: #f87171; border: 1px solid rgba(255,0,0,0.25); }
+        .badge-facebook { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+
+        .highlight {
+            background: rgba(99,102,241,0.35);
+            border-radius: 3px;
+            padding: 0 2px;
         }
     </style>
 </head>
@@ -242,8 +320,25 @@
             </a>
         </header>
 
+        <!-- Barre de recherche -->
+        <div class="search-bar">
+            <input class="search-input" id="searchEquipe" type="search" list="listEquipes"
+                placeholder="🔍 Équipe…"
+                oninput="filtrerReplays()" autocomplete="off">
+            <datalist id="listEquipes"></datalist>
+            <input class="search-input" id="searchJoueuse" type="search" list="listJoueuses"
+                placeholder="👤 Joueuse…"
+                oninput="filtrerReplays()" autocomplete="off">
+            <datalist id="listJoueuses"></datalist>
+        </div>
+        <div class="source-filters">
+            <button class="source-btn active" id="srcAll" onclick="setSourceFilter('all')">🎬 Tous</button>
+            <button class="source-btn" id="srcYoutube" onclick="setSourceFilter('youtube')">▶️ YouTube</button>
+            <button class="source-btn" id="srcFacebook" onclick="setSourceFilter('facebook')">📘 Facebook</button>
+        </div>
+        <div id="searchCount" class="search-count"></div>
+
         <div id="replaysList">
-            <!-- Chargement... -->
             <div class="empty-state">
                 <div class="empty-icon">⏳</div>
                 <p>Récupération des archives...</p>
@@ -261,79 +356,184 @@
     <script src="db-service.js"></script>
 
     <script>
+        let allMatches = [];
+        let activeSourceFilter = 'all';
+
         function formatDate(dateStr) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('fr-FR', options);
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+        }
+
+        function getVideoUrl(m) {
+            return m.youtubeUrl || m.facebookLiveUrl || m.facebookUrl || m.videoUrl || null;
+        }
+
+        function getVideoSource(m) {
+            if (m.videoSource) return m.videoSource;
+            const url = getVideoUrl(m) || '';
+            if (url.includes('facebook.com') || url.includes('fb.watch')) return 'facebook';
+            return 'youtube';
+        }
+
+        // Retourne toutes les joueuses d'un match sous forme de string min
+        function joueusesMatch(match) {
+            const joueuses = Array.isArray(match.joueuses)
+                ? match.joueuses
+                : Object.values(match.joueuses || {});
+            return joueuses.map(j => (j.nom || '').toLowerCase()).join(' ');
+        }
+
+        function highlight(text, query) {
+            if (!query) return text;
+            const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+            return String(text).replace(re, '<mark class="highlight">$1</mark>');
+        }
+
+        function setSourceFilter(src) {
+            activeSourceFilter = src;
+            ['all','youtube','facebook'].forEach(s => {
+                const btn = document.getElementById('src' + s.charAt(0).toUpperCase() + s.slice(1));
+                if (btn) btn.classList.toggle('active', s === src);
+            });
+            filtrerReplays();
+        }
+
+        function filtrerReplays() {
+            const qEquipe   = (document.getElementById('searchEquipe').value   || '').trim().toLowerCase();
+            const qJoueuse  = (document.getElementById('searchJoueuse').value  || '').trim().toLowerCase();
+
+            const filtered = allMatches.filter(match => {
+                const t1 = (match.team1?.name || '').toLowerCase();
+                const t2 = (match.team2?.name || '').toLowerCase();
+                const okEquipe  = !qEquipe  || t1.includes(qEquipe)  || t2.includes(qEquipe);
+                const okJoueuse = !qJoueuse || joueusesMatch(match).includes(qJoueuse)
+                    || (match.team1?.declaringPlayer || '').toLowerCase().includes(qJoueuse);
+                const okSource  = activeSourceFilter === 'all' || getVideoSource(match) === activeSourceFilter;
+                return okEquipe && okJoueuse && okSource;
+            });
+
+            const countEl = document.getElementById('searchCount');
+            if (qEquipe || qJoueuse || activeSourceFilter !== 'all') {
+                countEl.textContent = `${filtered.length} match${filtered.length !== 1 ? 's' : ''} trouvé${filtered.length !== 1 ? 's' : ''}`;
+            } else {
+                countEl.textContent = `${allMatches.length} replay${allMatches.length !== 1 ? 's' : ''} disponible${allMatches.length !== 1 ? 's' : ''}`;
+            }
+
+            renderReplays(filtered, qEquipe, qJoueuse);
+        }
+
+        function renderReplays(matches, qEquipe = '', qJoueuse = '') {
+            const container = document.getElementById('replaysList');
+            container.innerHTML = '';
+
+            if (matches.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>Aucun replay correspondant.</p>
+                        <p style="font-size:0.85rem;opacity:0.6;margin-top:8px;">Essayez un autre terme de recherche.</p>
+                    </div>`;
+                return;
+            }
+
+            // Grouper par date (ordre anti-chrono)
+            const groups = {};
+            matches.forEach(m => {
+                if (!groups[m.date]) groups[m.date] = [];
+                groups[m.date].push(m);
+            });
+
+            Object.keys(groups).sort((a,b) => new Date(b) - new Date(a)).forEach(date => {
+                const section = document.createElement('div');
+                section.className = 'date-section';
+                section.innerHTML = `<div class="date-header">${formatDate(date)}</div><div class="match-grid"></div>`;
+
+                const grid = section.querySelector('.match-grid');
+                groups[date].forEach(match => {
+                    const card = document.createElement('div');
+                    card.className = 'replay-card';
+                    const videoUrl = getVideoUrl(match);
+                    card.onclick = () => window.location.href = `match-viewer.html?id=${match.id}`;
+
+                    const scoreStr    = match.score ? `${match.score.setsTeam1||0} - ${match.score.setsTeam2||0}` : '? - ?';
+                    const playerPhoto = match.team1?.playerPhoto || 'https://via.placeholder.com/100';
+                    const team1Name   = match.team1?.name || 'Équipe 1';
+                    const team2Name   = match.team2?.name || 'Équipe 2';
+                    const playerName  = match.team1?.declaringPlayer || '';
+                    const source      = getVideoSource(match);
+                    const badgeHtml   = source === 'facebook'
+                        ? '<span class="video-badge badge-facebook">📘 Facebook</span>'
+                        : '<span class="video-badge badge-youtube">▶️ YouTube</span>';
+
+                    // Joueuses du match pour affichage
+                    const joueuses = Array.isArray(match.joueuses)
+                        ? match.joueuses
+                        : Object.values(match.joueuses || {});
+                    const joueusesStr = joueuses.length
+                        ? joueuses.map(j => {
+                            const n = j.nom || '';
+                            return qJoueuse && n.toLowerCase().includes(qJoueuse)
+                                ? `<strong style="color:#818cf8">${highlight(n, qJoueuse)}</strong>`
+                                : n;
+                          }).filter(Boolean).join(', ')
+                        : '';
+
+                    card.innerHTML = `
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                        <div class="card-body">
+                            <div class="teams">
+                                <span>${highlight(team1Name, qEquipe)}</span>
+                                <span class="score-final">${scoreStr}</span>
+                            </div>
+                            <div class="match-meta">${highlight(team2Name, qEquipe)} ${badgeHtml}</div>
+                            ${joueusesStr ? `<div style="font-size:0.78rem;color:#94a3b8;margin-top:6px;line-height:1.5;">👥 ${joueusesStr}</div>` : ''}
+                            <div class="player-info">
+                                <img src="${playerPhoto}" class="player-img" alt="${playerName}" onerror="this.src='https://via.placeholder.com/100'">
+                                <span class="player-name">Filmée par ${playerName}</span>
+                            </div>
+                        </div>`;
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(section);
+            });
+        }
+
+        function peuplerDatalist(matches) {
+            // Équipes (uniques, triées)
+            const equipes = [...new Set(
+                matches.flatMap(m => [
+                    m.team1?.name || '',
+                    m.team2?.name || ''
+                ]).filter(Boolean)
+            )].sort((a, b) => a.localeCompare(b, 'fr'));
+
+            const dlEquipes = document.getElementById('listEquipes');
+            dlEquipes.innerHTML = equipes.map(e => `<option value="${e}">`).join('');
+
+            // Joueuses (uniques, triées)
+            const joueusesSet = new Set();
+            matches.forEach(m => {
+                const js = Array.isArray(m.joueuses) ? m.joueuses : Object.values(m.joueuses || {});
+                js.forEach(j => { if (j.nom) joueusesSet.add(j.nom); });
+                if (m.team1?.declaringPlayer) joueusesSet.add(m.team1.declaringPlayer);
+            });
+            const joueuses = [...joueusesSet].sort((a, b) => a.localeCompare(b, 'fr'));
+
+            const dlJoueuses = document.getElementById('listJoueuses');
+            dlJoueuses.innerHTML = joueuses.map(j => `<option value="${j}">`).join('');
         }
 
         function initReplays() {
             dbService.listenToAllMatches((matches) => {
-                const container = document.getElementById('replaysList');
-                container.innerHTML = '';
+                // Tous les matchs ayant une URL vidéo (YouTube OU Facebook), peu importe le statut
+                allMatches = Object.entries(matches)
+                    .filter(([, m]) => getVideoUrl(m))
+                    .map(([id, m]) => ({ id, ...m }))
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                // Filtrer seulement les matchs finis et ayant une vidéo
-                const finishedMatches = Object.entries(matches)
-                    .filter(([id, m]) => m.status === 'finished' && m.youtubeUrl)
-                    .map(([id, m]) => ({ id, ...m }));
-
-                if (finishedMatches.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🎬</div>
-                            <p>Aucun replay disponible pour le moment.</p>
-                            <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Les matchs apparaîtront ici une fois terminés.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Grouper par date
-                const groups = {};
-                finishedMatches.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(m => {
-                    if (!groups[m.date]) groups[m.date] = [];
-                    groups[m.date].push(m);
-                });
-
-                Object.keys(groups).forEach(date => {
-                    const section = document.createElement('div');
-                    section.className = 'date-section';
-                    section.innerHTML = `
-                        <div class="date-header">${formatDate(date)}</div>
-                        <div class="match-grid"></div>
-                    `;
-
-                    const grid = section.querySelector('.match-grid');
-                    groups[date].forEach(match => {
-                        const card = document.createElement('div');
-                        card.className = 'replay-card';
-                        card.onclick = () => window.location.href = `match-viewer.html?id=${match.id}`;
-
-                        const scoreStr = match.score ? `${match.score.setsTeam1 || 0} - ${match.score.setsTeam2 || 0}` : '0 - 0';
-                        const playerPhoto = match.team1?.playerPhoto || 'https://via.placeholder.com/100';
-                        const team1Name = match.team1?.name || 'Équipe 1';
-                        const team2Name = match.team2?.name || 'Équipe 2';
-                        const playerName = match.team1?.declaringPlayer || '';
-
-                        card.innerHTML = `
-                            <div class="play-overlay"><div class="play-btn">▶</div></div>
-                            <div class="card-body">
-                                <div class="teams">
-                                    <span>${team1Name}</span>
-                                    <span class="score-final">${scoreStr}</span>
-                                </div>
-                                <div class="match-meta">${team2Name}</div>
-                                <div class="player-info">
-                                    <img src="${playerPhoto}" class="player-img" alt="${playerName}">
-                                    <span class="player-name">Filmée par ${playerName}</span>
-                                </div>
-                            </div>
-                        `;
-                        grid.appendChild(card);
-                    });
-
-                    container.appendChild(section);
-                });
+                peuplerDatalist(allMatches);
+                filtrerReplays();
             });
         }
 

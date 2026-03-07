@@ -9,12 +9,21 @@
     ],
     "headers": [
       {
-        "source": "**/*.@(html|js|css)",
+        "source": "/manifest.json",
         "headers": [
           {
             "key": "Content-Type",
-            "value": "text/html; charset=utf-8"
+            "value": "application/manifest+json"
           },
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(html|js|css)",
+        "headers": [
           {
             "key": "Cache-Control",
             "value": "no-cache, no-store, must-revalidate"
