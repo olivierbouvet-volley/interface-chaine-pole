@@ -1296,21 +1296,19 @@
 
         /* Zone haute — ligne 1 noms */
         .zh-names-bar {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
             flex-shrink: 0;
-            padding-top: 2px;
+            padding: 2px 75px 0;
             position: relative;
         }
-        /* Stats absolu gauche, Fin absolu droite → noms+S1 vraiment centrés */
+        .zh-names-bar .zh-nom:first-of-type { text-align: right; padding-right: 2px; }
+        .zh-names-bar .zh-nom:last-of-type  { text-align: left;  padding-left: 2px; }
+        /* Stats absolu gauche, Fin absolu droite → S1 vraiment centré */
         .zh-names-bar .zh-btn-stats {
             position: absolute;
             left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
             top: 50%;
             transform: translateY(-50%);
         }
@@ -1346,7 +1344,7 @@
             font-weight: 900;
             line-height: 1;
             color: #fbbf24;
-            min-width: 44px;
+            width: 60px;
             text-align: center;
         }
         .zh-dash {
@@ -1471,9 +1469,24 @@
             flex-wrap: nowrap;
         }
         #zone-h-service-type.actif { display: flex; }
-        /* Zone action : relative pour timer absolu */
+        /* Zone action : relative pour timer et SKIP absolus en bas */
         #zone-h-action {
             position: relative;
+            overflow: visible;
+            padding-bottom: 20px;
+        }
+        .zh-btn-skip {
+            position: absolute;
+            bottom: 2px;
+            left: 4px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.45);
+            border-radius: 5px;
+            padding: 1px 6px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
         }
         .zh-cdown {
             position: absolute;
