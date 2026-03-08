@@ -667,13 +667,31 @@
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 8px 14px;
+            padding: 8px 10px;
             font-size: 0.82rem;
             font-weight: 600;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
+            flex: 1;
+        }
+
+        .qr-btn-row {
+            display: flex;
+            gap: 6px;
             margin-top: 10px;
-            width: 100%;
+        }
+
+        .btn-open-small {
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            flex: 1;
         }
 
         @media (max-width: 768px) {
@@ -1083,14 +1101,20 @@
                     <h4>🎬 ANIMATEUR</h4>
                     <div class="qr-subtitle">Score + Stats</div>
                     <div id="qrcode-animateur"></div>
-                    <button class="btn-copy-small" onclick="copyLinkAnimateur()">📋 Copier le lien</button>
+                    <div class="qr-btn-row">
+                        <button class="btn-copy-small" onclick="copyLinkAnimateur()">📋 Copier le lien</button>
+                        <button class="btn-open-small" onclick="window.open(urlAnimateur, '_blank')">🔗 Ouvrir</button>
+                    </div>
                 </div>
                 <!-- QR Parents -->
                 <div class="qr-item">
                     <h4>👪 PARENTS</h4>
                     <div class="qr-subtitle">Stats joueuses uniquement</div>
                     <div id="qrcode-parents"></div>
-                    <button class="btn-copy-small" onclick="copyLinkParents()">📋 Copier le lien</button>
+                    <div class="qr-btn-row">
+                        <button class="btn-copy-small" onclick="copyLinkParents()">📋 Copier le lien</button>
+                        <button class="btn-open-small" onclick="window.open(urlParents, '_blank')">🔗 Ouvrir</button>
+                    </div>
                 </div>
             </div>
 

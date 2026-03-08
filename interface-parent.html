@@ -1260,8 +1260,8 @@
             display: flex !important;
             flex-direction: column;
             flex-shrink: 0;
-            height: 25dvh;
-            min-height: 130px;
+            height: 30dvh;
+            min-height: 160px;
             background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
             color: white;
             padding: 8px 12px 6px;
@@ -1299,10 +1299,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
             padding-top: 2px;
-            position: relative; /* Pour positionner Fin en absolu */
+            position: relative;
+        }
+        /* Stats absolu gauche, Fin absolu droite → noms+S1 vraiment centrés */
+        .zh-names-bar .zh-btn-stats {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+            top: 50%;
+            transform: translateY(-50%);
         }
         .zh-nom {
             font-size: 1.05rem;
@@ -1321,6 +1331,7 @@
             text-align: center;
             min-width: 38px;
             white-space: nowrap;
+            line-height: 1;
         }
         /* Zone haute — ligne 2 score + jerseys (occupe tout l'espace restant) */
         .zh-score-bar {
@@ -1342,6 +1353,7 @@
             font-size: 1.4rem;
             color: rgba(255,255,255,0.3);
             font-weight: 300;
+            line-height: 1;
         }
         .zh-jersey {
             width: 34px;
@@ -1407,17 +1419,7 @@
             font-family: 'Inter', sans-serif;
             white-space: nowrap;
         }
-        /* .zh-sets-bar → remplacé par .zh-sets-table dans .zh-bottom-bar */
-        .zh-cdown {
-            display: none;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #f87171;
-            background: rgba(239,68,68,0.2);
-            padding: 2px 8px;
-            border-radius: 8px;
-            flex-shrink: 0;
-        }
+        /* .zh-cdown défini dans zone-h-action ci-dessus */
 
         /* États zone haute */
         .zh-etat {
@@ -1425,8 +1427,10 @@
             flex-shrink: 0;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             padding: 2px 0;
+            flex-wrap: nowrap;
+            overflow: hidden;
         }
         .zh-etat.actif { display: flex; }
 
@@ -1450,27 +1454,76 @@
             border-radius: 8px; padding: 6px 10px; font-size: 1.1rem;
             cursor: pointer; font-family: 'Inter', sans-serif;
         }
-        .zh-rally-label {
-            font-size: 0.8rem; color: #fbbf24; font-weight: 700;
-            text-align: center;
+        .zh-rally-label { display: none; }
+        .zh-service-status {
+            font-size: 0.65rem; color: #fbbf24; font-weight: 700;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            flex: 1; min-width: 0;
         }
-        .zh-rally-btns { display: flex; align-items: center; gap: 8px; }
-        .zh-btn-skip {
-            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
-            padding: 5px 8px; font-size: 0.75rem; cursor: pointer;
-            font-family: 'Inter', sans-serif; flex-shrink: 0;
+        /* Ligne 4 : type de service + statut — visible uniquement en état rally */
+        #zone-h-service-type {
+            display: none;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 2px 0;
+            flex-wrap: nowrap;
         }
+        #zone-h-service-type.actif { display: flex; }
+        /* Zone action : relative pour timer absolu */
+        #zone-h-action {
+            position: relative;
+        }
+        .zh-cdown {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            display: none;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #f87171;
+            background: rgba(239,68,68,0.2);
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+        .zh-ball-type-row {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .zh-bbt {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.7);
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .zh-bbt.selected {
+            border-color: #f59e0b;
+            background: rgba(245,158,11,0.3);
+            color: #fbbf24;
+        }
+        .zh-rally-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
         /* Actions Level 1bis en zone haute */
         .zh-actions-grid {
-            display: flex; flex-wrap: wrap; gap: 4px;
-            justify-content: center; align-content: center;
-            flex: 1; overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 100%;
+            flex-shrink: 0;
         }
         .zh-btn-action {
-            padding: 5px 7px; border-radius: 8px;
-            font-size: 0.7rem; font-weight: 700; cursor: pointer;
+            padding: 9px 12px; border-radius: 10px;
+            font-size: 0.85rem; font-weight: 700; cursor: pointer;
             font-family: 'Inter', sans-serif; border: 2px solid;
             text-align: center; white-space: nowrap; line-height: 1.2;
         }
@@ -1518,8 +1571,9 @@
 
         <!-- ZONE HAUTE MATCH-MODE (25dvh) — cachée par défaut, visible via body.match-mode -->
         <div id="zone-haute-match">
-            <!-- Ligne 1 : Noms équipes + numéro set + bouton Fin -->
+            <!-- Ligne 1 : Stats (gauche) + Noms équipes + numéro set + bouton Fin (droite) -->
             <div class="zh-names-bar">
+                <button class="zh-btn-stats" id="zh-btn-stats" onclick="diffuserStats()">📊 Stats</button>
                 <span class="zh-nom" id="zh-nom1">Éq.1</span>
                 <span class="zh-sep">—<span id="zh-set-num">S1</span>—</span>
                 <span class="zh-nom" id="zh-nom2">Éq.2</span>
@@ -1542,12 +1596,15 @@
                 <button class="zh-btn-service" onclick="marquerService('team2')">Service 🏐</button>
             </div>
             <div id="zone-h-rally" class="zh-etat">
-                <span class="zh-rally-label" id="zh-rally-label">🏐 Service en cours</span>
-                <div class="zh-rally-btns">
-                    <button class="zh-btn-point" onclick="marquerPoint('team1')">+1 <span id="zh-rpt1-nom">Éq.1</span></button>
-                    <button class="zh-btn-undo" onclick="scoringSystem.undoLastPoint()">↺</button>
-                    <button class="zh-btn-point" onclick="marquerPoint('team2')"><span id="zh-rpt2-nom">Éq.2</span> +1</button>
-                </div>
+                <button class="zh-btn-point" onclick="marquerPoint('team1')">+1 <span id="zh-rpt1-nom">Éq.1</span></button>
+                <button class="zh-btn-undo" onclick="scoringSystem.undoLastPoint()">↺</button>
+                <button class="zh-btn-point" onclick="marquerPoint('team2')"><span id="zh-rpt2-nom">Éq.2</span> +1</button>
+            </div>
+            <!-- Ligne 4 : Flottant/Smashé + statut service (visible en état rally) -->
+            <div id="zone-h-service-type">
+                <button id="zh-bbt-M" class="zh-bbt selected" onclick="window._setBallType('M')">⤴ Flottant</button>
+                <button id="zh-bbt-T" class="zh-bbt" onclick="window._setBallType('T')">💪 Smashé</button>
+                <span class="zh-service-status" id="zh-service-status"></span>
             </div>
             <div id="zone-h-action" class="zh-etat">
                 <div class="zh-actions-grid" id="zh-actions-grid"></div>
@@ -1556,10 +1613,9 @@
             </div>
             <!-- Message match terminé (remplace les boutons) -->
             <div id="zh-termine" style="display:none">✅ MATCH TERMINÉ</div>
-            <!-- Barre inférieure : tableau sets (gauche) + bouton Stats (droite) -->
+            <!-- Barre inférieure : tableau sets uniquement -->
             <div class="zh-bottom-bar">
                 <div id="zh-sets-bar" class="zh-sets-table"></div>
-                <button class="zh-btn-stats" id="zh-btn-stats" onclick="diffuserStats()">📊 Stats</button>
             </div>
         </div>
 
@@ -1878,8 +1934,10 @@
 
             // En match-mode : passer à l'état rally (zone haute)
             if (document.body.classList.contains('match-mode')) {
-                const zhLabel = document.getElementById('zh-rally-label');
-                if (zhLabel) zhLabel.textContent = '🏐 Service : ' + nomEquipe + ' — EN COURS';
+                const statusEl = document.getElementById('zh-service-status');
+                if (statusEl) statusEl.textContent = '🏐 Service : ' + nomEquipe + ' — EN COURS';
+                // Reset type de service à Flottant par défaut
+                window._setBallType('M');
                 setZoneHauteEtat('rally');
             }
         }
@@ -1901,6 +1959,8 @@
             document.getElementById('btn-service-team1').classList.remove('actif');
             document.getElementById('btn-service-team2').classList.remove('actif');
             document.getElementById('service-indicator').textContent = '🏐 Appuyez sur « Service » pour démarrer un rally';
+            const statusEl2 = document.getElementById('zh-service-status');
+            if (statusEl2) statusEl2.textContent = '';
             servingTeam = null;
 
             // Afficher le popup Level 1bis si on est animateur
@@ -1917,24 +1977,20 @@
         // ================================================================
         const ACTIONS_1BIS = {
             team1: [
-                { id: 'ace',      label: '⚡ ACE',             classe: 'positif', dvwSkill: 'S', dvwQuality: '#', teamAction: 'team1' },
-                { id: 'kill',     label: '💥 KILL (Attaque)',   classe: 'positif', dvwSkill: 'A', dvwQuality: '#', teamAction: 'team1' },
-                { id: 'bloc',     label: '🛡 BLOC',             classe: 'positif', dvwSkill: 'B', dvwQuality: '#', teamAction: 'team1' },
-                { id: 'ft_serv',  label: '❌ Faute Service',    classe: 'negatif', dvwSkill: 'S', dvwQuality: '=', teamAction: 'team2' },
-                { id: 'ft_recep', label: '❌ Faute Réception',  classe: 'negatif', dvwSkill: 'R', dvwQuality: '=', teamAction: 'team2' },
-                { id: 'ft_attq',  label: '❌ Faute Attaque',    classe: 'negatif', dvwSkill: 'A', dvwQuality: '=', teamAction: 'team2' },
-                { id: 'ft_bloc',  label: '❌ Faute Bloc',       classe: 'negatif', dvwSkill: 'B', dvwQuality: '=', teamAction: 'team2' },
-                { id: 'ft_filet', label: '❌ Faute Filet',      classe: 'negatif', dvwSkill: 'F', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ace',      label: '⚡ ACE',            classe: 'positif', dvwSkill: 'S', dvwQuality: '#', teamAction: 'team1' },
+                { id: 'kill',     label: '💥 KILL',            classe: 'positif', dvwSkill: 'A', dvwQuality: '#', teamAction: 'team1' },
+                { id: 'bloc',     label: '🛡 BLOC',            classe: 'positif', dvwSkill: 'B', dvwQuality: '#', teamAction: 'team1' },
+                { id: 'ft_serv',  label: '❌ Faute Service',   classe: 'negatif', dvwSkill: 'S', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ft_attq',  label: '❌ Faute Attaque',   classe: 'negatif', dvwSkill: 'A', dvwQuality: '=', teamAction: 'team2' },
+                { id: 'ft_filet', label: '❌ Faute Filet',     classe: 'negatif', dvwSkill: 'F', dvwQuality: '=', teamAction: 'team2' },
             ],
             team2: [
-                { id: 'ace',      label: '⚡ ACE',             classe: 'positif', dvwSkill: 'S', dvwQuality: '#', teamAction: 'team2' },
-                { id: 'kill',     label: '💥 KILL (Attaque)',   classe: 'positif', dvwSkill: 'A', dvwQuality: '#', teamAction: 'team2' },
-                { id: 'bloc',     label: '🛡 BLOC',             classe: 'positif', dvwSkill: 'B', dvwQuality: '#', teamAction: 'team2' },
-                { id: 'ft_serv',  label: '❌ Faute Service',    classe: 'negatif', dvwSkill: 'S', dvwQuality: '=', teamAction: 'team1' },
-                { id: 'ft_recep', label: '❌ Faute Réception',  classe: 'negatif', dvwSkill: 'R', dvwQuality: '=', teamAction: 'team1' },
-                { id: 'ft_attq',  label: '❌ Faute Attaque',    classe: 'negatif', dvwSkill: 'A', dvwQuality: '=', teamAction: 'team1' },
-                { id: 'ft_bloc',  label: '❌ Faute Bloc',       classe: 'negatif', dvwSkill: 'B', dvwQuality: '=', teamAction: 'team1' },
-                { id: 'ft_filet', label: '❌ Faute Filet',      classe: 'negatif', dvwSkill: 'F', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ace',      label: '⚡ ACE',            classe: 'positif', dvwSkill: 'S', dvwQuality: '#', teamAction: 'team2' },
+                { id: 'kill',     label: '💥 KILL',            classe: 'positif', dvwSkill: 'A', dvwQuality: '#', teamAction: 'team2' },
+                { id: 'bloc',     label: '🛡 BLOC',            classe: 'positif', dvwSkill: 'B', dvwQuality: '#', teamAction: 'team2' },
+                { id: 'ft_serv',  label: '❌ Faute Service',   classe: 'negatif', dvwSkill: 'S', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ft_attq',  label: '❌ Faute Attaque',   classe: 'negatif', dvwSkill: 'A', dvwQuality: '=', teamAction: 'team1' },
+                { id: 'ft_filet', label: '❌ Faute Filet',     classe: 'negatif', dvwSkill: 'F', dvwQuality: '=', teamAction: 'team1' },
             ]
         };
 
@@ -1961,15 +2017,16 @@
                 <div style="display:flex;gap:4px;margin-bottom:8px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
                     <span style="font-size:0.7rem;color:#94a3b8;min-width:58px;">🏐 Service :</span>
                     <button id="bbt-M" onclick="window._setBallType('M')" style="padding:3px 10px;border:1px solid #f59e0b;color:#fbbf24;border-radius:4px;background:rgba(245,158,11,0.3);cursor:pointer;font-size:0.75rem;font-weight:700;">⤴ Flottant</button>
-                    <button id="bbt-Q" onclick="window._setBallType('Q')" style="padding:3px 10px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);border-radius:4px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.75rem;">⚡ Sauté</button>
-                    <button id="bbt-T" onclick="window._setBallType('T')" style="padding:3px 10px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);border-radius:4px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.75rem;">🎯 Tendu</button>
+                    
+                    <button id="bbt-T" onclick="window._setBallType('T')" style="padding:3px 10px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);border-radius:4px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.75rem;">💪 Smashé</button>
                 </div>` : '';
 
             if (isMatchMode) {
                 // En match-mode : afficher dans la zone haute (état action)
+                // Le type de service est déjà sélectionné dans zone-h-rally
                 const zhGrid = document.getElementById('zh-actions-grid');
                 if (zhGrid) {
-                    zhGrid.innerHTML = ballTypeHtml + actions.map(a => `
+                    zhGrid.innerHTML = actions.map(a => `
                         <button class="zh-btn-action ${a.classe}" onclick="selectionnerAction1bis('${a.id}','${a.teamAction}','${a.dvwSkill}','${a.dvwQuality}')">
                             ${a.label}
                         </button>
@@ -2039,7 +2096,8 @@
         // Sélecteur de type de service (appelé depuis les boutons inline du ballTypeHtml)
         window._setBallType = function(type) {
             popupBallType = type;
-            ['M','Q','T'].forEach(t => {
+            // Boutons dynamiques dans la popup (mode non-match)
+            ['M','T'].forEach(t => {
                 const btn = document.getElementById('bbt-' + t);
                 if (!btn) return;
                 const sel = t === type;
@@ -2047,6 +2105,12 @@
                 btn.style.borderColor  = sel ? '#f59e0b' : 'rgba(255,255,255,0.2)';
                 btn.style.color        = sel ? '#fbbf24' : 'rgba(255,255,255,0.7)';
                 btn.style.fontWeight   = sel ? '700' : '400';
+            });
+            // Boutons permanents dans zone-h-rally
+            ['M','T'].forEach(t => {
+                const btn = document.getElementById('zh-bbt-' + t);
+                if (!btn) return;
+                btn.classList.toggle('selected', t === type);
             });
         };
 
@@ -2063,13 +2127,16 @@
         }
 
         // ================================================================
-        // ZONE HAUTE MATCH-MODE — Gestion des 3 états
+        // ZONE HAUTE MATCH-MODE — Gestion des états
         // ================================================================
         function setZoneHauteEtat(etat) {
             ['attente', 'rally', 'action'].forEach(e => {
                 const el = document.getElementById('zone-h-' + e);
                 if (el) el.classList.toggle('actif', e === etat);
             });
+            // Ligne 4 : visible uniquement en état rally
+            const serviceTypeEl = document.getElementById('zone-h-service-type');
+            if (serviceTypeEl) serviceTypeEl.classList.toggle('actif', etat === 'rally');
         }
 
         function mettreAJourZoneHauteScore(match) {
