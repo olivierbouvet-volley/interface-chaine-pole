@@ -634,7 +634,7 @@
             background: rgba(16, 185, 129, 0.2);
         }
 
-        /* ---- 2 QR codes côte à côte ---- */
+        /* ---- 3 QR codes ---- */
         .qr-codes-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -661,6 +661,11 @@
             color: var(--gray);
             margin-bottom: 12px;
         }
+
+        .qr-item.filmeur { border: 2px solid #F59E0B; }
+        .qr-item.filmeur h4 { color: #D97706; }
+        .qr-item.filmeur .btn-copy-small { background: #F59E0B; }
+        .qr-item.filmeur .btn-open-small { border-color: #F59E0B; color: #D97706; }
 
         .qr-item .btn-copy-small {
             background: var(--primary);
@@ -806,6 +811,56 @@
             transition: width 0.2s;
             border-radius: 99px;
         }
+
+        /* ── Choix domicile / extérieur ── */
+        #choix-terrain {
+            margin-bottom: 28px;
+            padding-bottom: 28px;
+            border-bottom: 2px dashed var(--light-gray);
+        }
+        #choix-terrain h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        #choix-terrain p {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 16px;
+        }
+        .choix-terrain-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .btn-terrain {
+            padding: 22px 16px;
+            border-radius: 16px;
+            border: 3px solid var(--light-gray);
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--light-gray);
+            transition: all 0.2s ease;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-terrain .terrain-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
+        .btn-terrain:hover { transform: scale(1.03); }
+        .btn-terrain.domicile.selected {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.1);
+            color: var(--primary);
+        }
+        .btn-terrain.exterieur.selected {
+            border-color: var(--danger);
+            background: rgba(239,68,68,0.1);
+            color: var(--danger);
+        }
+        #form-contenu {
+            display: none;
+        }
     </style>
 </head>
 
@@ -888,6 +943,23 @@
                 </div>
             </div>
 
+            <!-- ── Étape 0 : Domicile ou Extérieur ? ── -->
+            <div id="choix-terrain">
+                <h3>📍 Tu joues à domicile ou à l'extérieur ?</h3>
+                <p>Ton choix détermine l'ordre des équipes — ton équipe en premier, puis l'adversaire.</p>
+                <div class="choix-terrain-btns">
+                    <button type="button" class="btn-terrain domicile" onclick="choisirTerrain(true)">
+                        <span class="terrain-emoji">🏠</span>
+                        À DOMICILE
+                    </button>
+                    <button type="button" class="btn-terrain exterieur" onclick="choisirTerrain(false)">
+                        <span class="terrain-emoji">✈️</span>
+                        À L'EXTÉRIEUR
+                    </button>
+                </div>
+            </div>
+
+            <div id="form-contenu">
             <form id="matchForm">
                 <!-- Section Type de Match -->
                 <div class="form-section">
@@ -910,11 +982,10 @@
                     </div>
                 </div>
 
-                <!-- Section Équipe 1 -->
-                <div class="form-section"
+                <!-- Section Mon équipe -->
+                <div class="form-section" id="section-mon-equipe"
                     style="border-left: 4px solid var(--primary); padding-left: 20px; margin-top: 30px;">
-                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">🏐 Équipe 1 (Domicile)
-                    </h3>
+                    <h3 id="titre-mon-equipe" style="font-size: 1.2rem; margin-bottom: 20px; color: var(--primary);">🏐 Mon équipe</h3>
 
                     <div class="form-group">
                         <label>Nom de l'équipe <span class="required">*</span></label>
@@ -989,11 +1060,10 @@
                     </div>
                 </div>
 
-                <!-- Section Équipe 2 -->
-                <div class="form-section"
+                <!-- Section Adversaire -->
+                <div class="form-section" id="section-adversaire"
                     style="border-left: 4px solid var(--danger); padding-left: 20px; margin-top: 30px;">
-                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--danger);">🏐 Équipe 2 (Extérieur)
-                    </h3>
+                    <h3 id="titre-adversaire" style="font-size: 1.2rem; margin-bottom: 20px; color: var(--danger);">🏐 Adversaire</h3>
 
                     <div class="form-group">
                         <label>Nom de l'équipe <span class="required">*</span></label>
@@ -1058,8 +1128,8 @@
                             <input type="number" placeholder="N°" class="input-numero" min="1" max="99">
                             <input type="text" placeholder="Nom Prénom" class="input-nom">
                             <select class="select-equipe">
-                                <option value="team1">Domicile</option>
-                                <option value="team2">Adverse</option>
+                                <option value="team1">Mon équipe</option>
+                                <option value="team2">Adversaire</option>
                             </select>
                             <button type="button" class="btn-supprimer" style="display:none;" onclick="supprimerJoueuse(this)">✕</button>
                         </div>
@@ -1080,6 +1150,7 @@
                     </button>
                 </div>
             </form>
+            </div><!-- fin #form-contenu -->
         </div>
     </div>
 
@@ -1094,7 +1165,7 @@
             <h2>Match déclaré !</h2>
             <p>Partagez ces liens selon les rôles :</p>
 
-            <!-- 2 QR codes côte à côte -->
+            <!-- 3 QR codes -->
             <div class="qr-codes-grid">
                 <!-- QR Animateur -->
                 <div class="qr-item">
@@ -1114,6 +1185,16 @@
                     <div class="qr-btn-row">
                         <button class="btn-copy-small" onclick="copyLinkParents()">📋 Copier le lien</button>
                         <button class="btn-open-small" onclick="window.open(urlParents, '_blank')">🔗 Ouvrir</button>
+                    </div>
+                </div>
+                <!-- QR Filmeur -->
+                <div class="qr-item filmeur" style="grid-column: 1 / -1;">
+                    <h4>📹 FILMEUR</h4>
+                    <div class="qr-subtitle">Guide pour filmer le match</div>
+                    <div id="qrcode-filmeur" style="display:flex; justify-content:center;"></div>
+                    <div class="qr-btn-row">
+                        <button class="btn-copy-small" onclick="copyLinkFilmeur()">📋 Copier le lien</button>
+                        <button class="btn-open-small" onclick="window.open(urlFilmeur, '_blank')">🔗 Ouvrir</button>
                     </div>
                 </div>
             </div>
@@ -1144,6 +1225,51 @@
         let currentMatchId = null;
         let urlAnimateur = '';
         let urlParents = '';
+        let urlFilmeur = '';
+        let joueDomicile = null; // true = domicile, false = extérieur
+
+        // ---- Choix domicile / extérieur ----
+        function choisirTerrain(domicile) {
+            joueDomicile = domicile;
+
+            document.querySelector('.btn-terrain.domicile').classList.toggle('selected', domicile === true);
+            document.querySelector('.btn-terrain.exterieur').classList.toggle('selected', domicile === false);
+
+            const sectionMonEquipe = document.getElementById('section-mon-equipe');
+            const titreMonEquipe   = document.getElementById('titre-mon-equipe');
+            const titreAdversaire  = document.getElementById('titre-adversaire');
+
+            if (domicile) {
+                titreMonEquipe.textContent  = '🏐 Mon équipe (Domicile)';
+                titreAdversaire.textContent = '🏐 Adversaire (Extérieur)';
+                titreMonEquipe.style.color  = 'var(--primary)';
+                sectionMonEquipe.style.borderLeftColor = 'var(--primary)';
+            } else {
+                titreMonEquipe.textContent  = '🏐 Mon équipe (Extérieur)';
+                titreAdversaire.textContent = '🏐 Adversaire (Domicile)';
+                titreMonEquipe.style.color  = 'var(--danger)';
+                sectionMonEquipe.style.borderLeftColor = 'var(--danger)';
+            }
+
+            // Mettre à jour les options dans tous les selects joueuses existants
+            updateJoueuseOptions();
+
+            // Afficher le formulaire et scroller dessus
+            const formContenu = document.getElementById('form-contenu');
+            formContenu.style.display = 'block';
+            setTimeout(() => formContenu.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        }
+
+        function updateJoueuseOptions() {
+            const monEquipeVal  = joueDomicile === false ? 'team2' : 'team1';
+            const adversaireVal = joueDomicile === false ? 'team1' : 'team2';
+            document.querySelectorAll('.select-equipe').forEach(sel => {
+                sel.innerHTML = `
+                    <option value="${monEquipeVal}">Mon équipe</option>
+                    <option value="${adversaireVal}">Adversaire</option>
+                `;
+            });
+        }
 
         // ---- Gestion de la section Joueuses ----
         const MAX_JOUEUSES = 4;
@@ -1157,12 +1283,14 @@
             const row = document.createElement('div');
             row.className = 'joueuse-row';
             row.dataset.index = index;
+            const optA = joueDomicile === false ? 'team2' : 'team1';
+            const optB = joueDomicile === false ? 'team1' : 'team2';
             row.innerHTML = `
                 <input type="number" placeholder="N°" class="input-numero" min="1" max="99">
                 <input type="text" placeholder="Nom Prénom" class="input-nom">
                 <select class="select-equipe">
-                    <option value="team1">Domicile</option>
-                    <option value="team2">Adverse</option>
+                    <option value="${optA}">Mon équipe</option>
+                    <option value="${optB}">Adversaire</option>
                 </select>
                 <button type="button" class="btn-supprimer" onclick="supprimerJoueuse(this)">✕</button>
             `;
@@ -1385,6 +1513,13 @@
         document.getElementById('matchForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Vérifier que le choix domicile/extérieur a été fait
+            if (joueDomicile === null) {
+                alert('⚠️ Merci d\'indiquer si tu joues à domicile ou à l\'extérieur.');
+                document.getElementById('choix-terrain').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.classList.add('btn-loading');
@@ -1392,15 +1527,18 @@
 
             try {
                 // Récupérer les données du formulaire
+                // team1* = "Mon équipe" dans le formulaire ; team2* = "Adversaire" dans le formulaire
+                // Si extérieur : inverser dans Firebase (team1 = domicile = adversaire, team2 = extérieur = mon équipe)
+                const monEquipeNom       = document.getElementById('team1Name').value.trim();
+                const monEquipeCouleur   = document.getElementById('team1Color').value;
+                const monEquipePrenom    = document.getElementById('team1FirstName').value.trim();
+                const monEquipeNomFamille = document.getElementById('team1LastName').value.trim();
+                const adversaireNom      = document.getElementById('team2Name').value.trim();
+                const adversaireCouleur  = document.getElementById('team2Color').value;
+
                 const formData = {
                     matchType: document.getElementById('matchType').value,
                     category: document.getElementById('category').value,
-                    team1Name: document.getElementById('team1Name').value.trim(),
-                    team1Color: document.getElementById('team1Color').value,
-                    team1FirstName: document.getElementById('team1FirstName').value.trim(),
-                    team1LastName: document.getElementById('team1LastName').value.trim(),
-                    team2Name: document.getElementById('team2Name').value.trim(),
-                    team2Color: document.getElementById('team2Color').value,
                     date: document.getElementById('matchDate').value,
                     time: document.getElementById('matchTime').value
                 };
@@ -1421,25 +1559,27 @@
                     console.log('✅ Affiche match uploadée:', matchPosterUrl);
                 }
 
+                // Assigner team1 / team2 selon domicile/extérieur
+                // Firebase : team1 = domicile, team2 = extérieur (convention FDME)
+                const monEquipeData = {
+                    name: monEquipeNom,
+                    color: monEquipeCouleur,
+                    declaringPlayer: `${monEquipePrenom} ${monEquipeNomFamille}`,
+                    playerPhoto: playerPhotoUrl,
+                    photoCrop: playerPhotoUrl ? { zoom: cropData.zoom, offsetX: cropData.offsetX, offsetY: cropData.offsetY } : null
+                };
+                const adversaireData = {
+                    name: adversaireNom,
+                    color: adversaireCouleur
+                };
+
                 // Créer le match
                 const matchData = {
                     matchType: formData.matchType,
                     category: formData.category,
-                    team1: {
-                        name: formData.team1Name,
-                        color: formData.team1Color,
-                        declaringPlayer: `${formData.team1FirstName} ${formData.team1LastName}`,
-                        playerPhoto: playerPhotoUrl,
-                        photoCrop: playerPhotoUrl ? {
-                            zoom: cropData.zoom,
-                            offsetX: cropData.offsetX,
-                            offsetY: cropData.offsetY
-                        } : null
-                    },
-                    team2: {
-                        name: formData.team2Name,
-                        color: formData.team2Color
-                    },
+                    joueDomicile: joueDomicile, // true = mon équipe est domicile (team1)
+                    team1: joueDomicile ? monEquipeData : adversaireData,
+                    team2: joueDomicile ? adversaireData : monEquipeData,
                     matchPoster: matchPosterUrl,
                     date: formData.date,
                     time: formData.time,
@@ -1471,10 +1611,11 @@
         function showSuccessModal(matchId) {
             const modal = document.getElementById('successModal');
 
-            // Générer les 2 URLs
+            // Générer les 3 URLs
             const baseUrl = window.location.origin + window.location.pathname.replace('formulaire-match.html', '');
             urlAnimateur = `${baseUrl}interface-parent.html?match=${matchId}&role=animateur`;
             urlParents   = `${baseUrl}interface-parent.html?match=${matchId}&role=stats`;
+            urlFilmeur   = `${baseUrl}filmeur-match.html?match=${matchId}`;
 
             // QR code Animateur
             document.getElementById('qrcode-animateur').innerHTML = '';
@@ -1493,6 +1634,16 @@
                 width: 140,
                 height: 140,
                 colorDark: '#10B981',
+                colorLight: '#ffffff'
+            });
+
+            // QR code Filmeur
+            document.getElementById('qrcode-filmeur').innerHTML = '';
+            new QRCode(document.getElementById('qrcode-filmeur'), {
+                text: urlFilmeur,
+                width: 140,
+                height: 140,
+                colorDark: '#D97706',
                 colorLight: '#ffffff'
             });
 
@@ -1526,6 +1677,20 @@
                 document.execCommand('copy');
                 document.body.removeChild(ta);
                 alert('✅ Lien Parents copié !');
+            });
+        }
+
+        function copyLinkFilmeur() {
+            navigator.clipboard.writeText(urlFilmeur).then(() => {
+                alert('✅ Lien Filmeur copié !');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = urlFilmeur;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('✅ Lien Filmeur copié !');
             });
         }
 

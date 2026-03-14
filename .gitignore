@@ -17,3 +17,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 .git_backup_parent/
+
+# Clé API Gemini — NE PAS COMMITTER
+gemini-config.js
+.env

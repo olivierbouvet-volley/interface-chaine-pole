@@ -98,6 +98,54 @@
             margin-bottom: 20px;
         }
 
+        .filmeur-info-box {
+            display: none;
+            background: #FFF7ED;
+            border: 1px solid #FED7AA;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .filmeur-info-box.visible { display: block; }
+
+        .filmeur-info-box .filmeur-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #92400E;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .filmeur-info-box .filmeur-profil {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1877F2;
+            word-break: break-all;
+        }
+
+        .filmeur-info-box .filmeur-instruction {
+            font-size: 0.82rem;
+            color: #92400E;
+            margin-top: 6px;
+        }
+
+        .btn-fb-profil {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 14px;
+            background: #1877F2;
+            color: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
         .input-group {
             display: flex;
             gap: 10px;
@@ -668,6 +716,22 @@
             max-width: 400px;
         }
 
+        /* ---- Sélecteur type de service inline (5s après clic Service) ---- */
+        #service-type-inline {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            margin: -8px auto 12px;
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.25);
+            max-width: 400px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #92400e;
+        }
         /* ---- Masquer les boutons animateur en mode stats ---- */
         .role-stats .btns-animateur {
             display: none !important;
@@ -1566,6 +1630,72 @@
             font-size: 0.68rem; cursor: pointer; color: #ef4444;
             flex-shrink: 0;
         }
+        /* Bouton 🏐 SRV dans le header de la carte joueuse */
+        .btn-srv-header {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white; border: none; border-radius: 6px;
+            padding: 3px 7px; font-size: 0.68rem; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            flex-shrink: 0; white-space: nowrap;
+        }
+
+        /* ── Roster Quick Pick (step 3) ── */
+        #roster-quick-pick {
+            position: fixed;
+            bottom: -130px;
+            left: 0; right: 0;
+            z-index: 5500;
+            background: rgba(15, 23, 42, 0.97);
+            border-top: 2px solid rgba(99,102,241,0.35);
+            border-radius: 16px 16px 0 0;
+            padding: 10px 14px 20px;
+            transition: bottom 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #roster-quick-pick.visible { bottom: 0; }
+        .rqp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 9px;
+        }
+        .rqp-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            letter-spacing: 0.3px;
+        }
+        .rqp-right { display: flex; align-items: center; gap: 8px; }
+        .rqp-countdown { font-size: 0.7rem; color: #475569; }
+        .rqp-skip {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.45);
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        .rqp-skip:hover { color: white; border-color: rgba(255,255,255,0.5); }
+        .rqp-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+        .rqp-btn {
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.35);
+            color: #e0e7ff;
+            border-radius: 10px;
+            padding: 7px 13px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.15s;
+        }
+        .rqp-btn:hover, .rqp-btn:active { background: rgba(99,102,241,0.35); }
+        .rqp-num { font-size: 1rem; font-weight: 800; min-width: 20px; text-align: center; }
+        .rqp-nom { font-size: 0.7rem; opacity: 0.7; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
 </head>
 
@@ -1652,6 +1782,19 @@
         <!-- ÉTAPE 1 : Lien Vidéo -->
         <div class="card youtube-section">
             <h2>📹 Étape 1 : Lien YouTube ou Facebook Live</h2>
+
+            <!-- Info filmeur (option "animateur récupère") -->
+            <div class="filmeur-info-box" id="filmeurInfoBox">
+                <div class="filmeur-label">📹 Filmeur Facebook — À faire par l'animateur</div>
+                <div class="filmeur-profil" id="filmeurProfilNom"></div>
+                <div class="filmeur-instruction">
+                    Dès que le live démarre, ouvre le profil Facebook ci-dessus, copie le lien de la vidéo en direct et colle-le dans le champ ci-dessous.
+                </div>
+                <button class="btn-fb-profil" id="filmeurProfilBtn" onclick="ouvrirProfilFilmeur()">
+                    👤 Ouvrir le profil Facebook
+                </button>
+            </div>
+
             <div class="input-group">
                 <input type="url" id="youtubeInput" placeholder="YouTube ou Facebook: https://..." />
                 <button class="btn btn-primary" onclick="saveYoutubeUrl()">
@@ -1695,6 +1838,13 @@
 
             <!-- Indicateur de service -->
             <div id="service-indicator">🏐 Appuyez sur « Service » pour démarrer un rally</div>
+
+            <!-- Sélecteur type de service (5s après clic Service, mode non-match) -->
+            <div id="service-type-inline" class="btns-animateur">
+                <span>🏐 Type :</span>
+                <button id="si-bbt-M" onclick="window._setBallType('M')" style="padding:4px 12px;border:1px solid #f59e0b;color:#fbbf24;border-radius:6px;background:rgba(245,158,11,0.3);cursor:pointer;font-size:0.8rem;font-weight:700;font-family:'Inter',sans-serif;">⤴ Flottant</button>
+                <button id="si-bbt-T" onclick="window._setBallType('T')" style="padding:4px 12px;border:1px solid rgba(245,158,11,0.2);color:#92400e;border-radius:6px;background:rgba(245,158,11,0.05);cursor:pointer;font-size:0.8rem;font-family:'Inter',sans-serif;">💪 Smashé</button>
+            </div>
 
             <div class="score-board">
                 <!-- Équipe 1 -->
@@ -1761,6 +1911,18 @@
             </h2>
             <div id="zone-joueuses"></div>
             <button class="btn-ajouter-joueuse" id="btn-ajouter-joueuse" onclick="ouvrirPickerAjout()">+ Ajouter une joueuse</button>
+        </div>
+
+        <!-- ROSTER QUICK PICK (suggestions joueurs contextuelles — étape 3) -->
+        <div id="roster-quick-pick">
+            <div class="rqp-header">
+                <span class="rqp-label" id="rqp-label">🏀 Qui a servi ?</span>
+                <div class="rqp-right">
+                    <span class="rqp-countdown" id="rqp-countdown"></span>
+                    <button class="rqp-skip" onclick="dismissRosterQuickPick()">SKIP →</button>
+                </div>
+            </div>
+            <div class="rqp-buttons" id="rqp-buttons"></div>
         </div>
 
         <!-- PICKER joueuse (slide-up) -->
@@ -1945,6 +2107,17 @@
                 console.error('❌ Erreur startRally:', e);
             }
 
+            // Quick-pick : qui a servi ?
+            if (dernierRallyId) {
+                const rid = dernierRallyId;
+                showRosterQuickPick(team, 'service', rid, async (joueuse) => {
+                    try {
+                        await firebase.database().ref(`matches/${currentMatchId}/rallies/${rid}/servingPlayerNumber`).set(joueuse.numero);
+                        await firebase.database().ref(`matches/${currentMatchId}/rallies/${rid}/servingPlayerName`).set(joueuse.nom);
+                    } catch(e) { console.warn('Erreur update serving player', e); }
+                });
+            }
+
             // En match-mode : passer à l'état rally (zone haute)
             if (document.body.classList.contains('match-mode')) {
                 const statusEl = document.getElementById('zh-service-status');
@@ -1952,6 +2125,15 @@
                 // Reset type de service à Flottant par défaut
                 window._setBallType('M');
                 setZoneHauteEtat('rally');
+            } else {
+                // Non-match-mode : afficher le sélecteur de type de service pendant 5 secondes
+                window._setBallType('M'); // reset au Flottant par défaut
+                const si = document.getElementById('service-type-inline');
+                if (si) {
+                    si.style.display = 'flex';
+                    clearTimeout(window._svcTypeHideTimer);
+                    window._svcTypeHideTimer = setTimeout(() => { si.style.display = 'none'; }, 5000);
+                }
             }
         }
 
@@ -1975,6 +2157,9 @@
             const statusEl2 = document.getElementById('zh-service-status');
             if (statusEl2) statusEl2.textContent = '';
             servingTeam = null;
+            // Cacher le sélecteur de type de service inline (mode non-match)
+            const si = document.getElementById('service-type-inline');
+            if (si) { si.style.display = 'none'; clearTimeout(window._svcTypeHideTimer); }
 
             // Afficher le popup Level 1bis si on est animateur
             if (role === 'animateur' && dernierRallyId) {
@@ -2012,10 +2197,15 @@
         let popup1bisCountdown = 5;
         let popupBallType = 'M'; // Type de service DVW : M=Flottant, Q=Sauté, T=Tendu
 
+        // ── Roster Quick Pick (step 3) ──
+        let rosterFull = { team1: [], team2: [] };
+        let rosterQuickTimer = null;
+        let rosterQuickCountdown = 0;
+
         function afficherPopup1bis(pointTeam, rallyId) {
             popup1bisRallyId = rallyId;
             popup1bisCountdown = 5;
-            popupBallType = 'M'; // Reset au flottant par défaut
+            // popupBallType conserve la valeur sélectionnée avant le point (défaut 'M' fixé dans marquerService)
 
             const nomEquipe = pointTeam === 'team1'
                 ? (currentMatch?.team1?.name || 'Équipe 1')
@@ -2059,6 +2249,7 @@
                     </button>
                 `).join('');
                 document.getElementById('popup1bis').classList.add('show');
+                window._setBallType(popupBallType); // Refléter la sélection courante dans les boutons
             }
 
             // Timer 5 secondes (commun aux deux modes)
@@ -2096,6 +2287,21 @@
                 console.error('❌ Erreur enrichRallyActionFinale:', e);
             }
 
+            // Quick-pick : qui a réalisé l’action ?
+            if (type !== 'service') { // Le service a déjà son picker dans marquerService
+                showRosterQuickPick(team, type, rallyId, async (joueuse) => {
+                    try {
+                        await dbService.savePlayerAction(
+                            currentMatchId, rallyId, joueuse,
+                            RQP_SKILL[type] || 'A',
+                            RQP_QUAL[type]  || '~',
+                            RQP_LABEL[type] || type,
+                            role
+                        );
+                    } catch(e) { console.warn('Erreur savePlayerAction depuis quick-pick:', e); }
+                });
+            }
+
             // Écrire dans lastAction pour la bannière stats-mode (non bloquant)
             try {
                 firebase.database().ref(`matches/${currentMatchId}/lastAction`).set({
@@ -2104,6 +2310,69 @@
                     timestamp: Date.now()
                 });
             } catch(e) { /* non bloquant */ }
+        }
+
+        // ── Roster Quick Pick : fonctions (step 3) ──
+        const RQP_LABELS = {
+            service:  '🏀 Qui a servi ?',
+            ace:      '⚡ ACE — Qui a servi ?',
+            kill:     '💥 KILL — Qui a attaqué ?',
+            bloc:     '🛡 BLOC — Qui a bloqué ?',
+            ft_serv:  '❌ Faute Service — Qui ?',
+            ft_attq:  '❌ Faute Attaque — Qui ?',
+            ft_filet: '❌ Faute Filet — Qui ?',
+        };
+        const RQP_SKILL  = { ace:'S', kill:'A', bloc:'B', ft_serv:'S', ft_attq:'A', ft_filet:'F' };
+        const RQP_QUAL   = { ace:'#', kill:'#', bloc:'#', ft_serv:'=', ft_attq:'=', ft_filet:'=' };
+        const RQP_LABEL  = { ace:'ACE', kill:'KILL', bloc:'BLOC', ft_serv:'Faute Service', ft_attq:'Faute Attaque', ft_filet:'Faute Filet' };
+
+        function showRosterQuickPick(team, context, rallyId, callback) {
+            const players = (rosterFull[team] || []).filter(j => j.numero > 0);
+            if (players.length === 0) return; // Pas de roster → skip silencieux
+            dismissRosterQuickPick();
+
+            document.getElementById('rqp-label').textContent = RQP_LABELS[context] || '🏀 Qui ?';
+
+            const teamColor = team === 'team1'
+                ? (currentMatch?.team1?.color || '#6366f1')
+                : (currentMatch?.team2?.color || '#3b82f6');
+
+            const escapedRid = (rallyId || '').replace(/'/g, '');
+            document.getElementById('rqp-buttons').innerHTML = players.map(j => {
+                const nomEscaped = (j.nom || '').replace(/'/g, '');
+                return `<button class="rqp-btn" onclick="selectRosterPlayer('${team}',${j.numero},'${nomEscaped}','${escapedRid}','${context}')" style="border-color:${teamColor}55;">
+                    <span class="rqp-num" style="color:${teamColor}">${j.numero}</span>
+                    ${j.nom ? `<span class="rqp-nom">${j.nom.split(' ')[0]}</span>` : ''}
+                </button>`;
+            }).join('');
+
+            window._rqpCallback = callback;
+            document.getElementById('roster-quick-pick').classList.add('visible');
+
+            rosterQuickCountdown = 5;
+            document.getElementById('rqp-countdown').textContent = '5s';
+            rosterQuickTimer = setInterval(() => {
+                rosterQuickCountdown--;
+                const cd = document.getElementById('rqp-countdown');
+                if (cd) cd.textContent = rosterQuickCountdown > 0 ? rosterQuickCountdown + 's' : '';
+                if (rosterQuickCountdown <= 0) dismissRosterQuickPick();
+            }, 1000);
+        }
+
+        function selectRosterPlayer(team, numero, nom, rallyId, context) {
+            dismissRosterQuickPick();
+            const joueuse = { numero: parseInt(numero), nom: nom || '', equipe: team };
+            if (window._rqpCallback) {
+                window._rqpCallback(joueuse, rallyId, context);
+                window._rqpCallback = null;
+            }
+        }
+
+        function dismissRosterQuickPick() {
+            clearInterval(rosterQuickTimer);
+            rosterQuickTimer = null;
+            document.getElementById('roster-quick-pick')?.classList.remove('visible');
+            window._rqpCallback = null;
         }
 
         // Sélecteur de type de service (appelé depuis les boutons inline du ballTypeHtml)
@@ -2117,6 +2386,16 @@
                 btn.style.background   = sel ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.05)';
                 btn.style.borderColor  = sel ? '#f59e0b' : 'rgba(255,255,255,0.2)';
                 btn.style.color        = sel ? '#fbbf24' : 'rgba(255,255,255,0.7)';
+                btn.style.fontWeight   = sel ? '700' : '400';
+            });
+            // Boutons inline sélecteur service (5s après clic Service en non-match-mode)
+            ['M','T'].forEach(t => {
+                const btn = document.getElementById('si-bbt-' + t);
+                if (!btn) return;
+                const sel = t === type;
+                btn.style.background   = sel ? 'rgba(245,158,11,0.3)' : 'rgba(245,158,11,0.05)';
+                btn.style.borderColor  = sel ? '#f59e0b' : 'rgba(245,158,11,0.2)';
+                btn.style.color        = sel ? '#fbbf24' : '#92400e';
                 btn.style.fontWeight   = sel ? '700' : '400';
             });
             // Boutons permanents dans zone-h-rally
@@ -2147,9 +2426,9 @@
                 const el = document.getElementById('zone-h-' + e);
                 if (el) el.classList.toggle('actif', e === etat);
             });
-            // Ligne 4 : visible uniquement en état rally
+            // Ligne 4 : visible en état rally ET pendant la phase action (5s post-point)
             const serviceTypeEl = document.getElementById('zone-h-service-type');
-            if (serviceTypeEl) serviceTypeEl.classList.toggle('actif', etat === 'rally');
+            if (serviceTypeEl) serviceTypeEl.classList.toggle('actif', etat === 'rally' || etat === 'action');
         }
 
         function mettreAJourZoneHauteScore(match) {
@@ -2651,6 +2930,31 @@
                     initJoueuses(match);
                 }
 
+                // Charger le roster complet pour le quick-picker (toujours, toutes équipes)
+                if (match.joueuses) {
+                    const all = Array.isArray(match.joueuses) ? match.joueuses : Object.values(match.joueuses);
+                    rosterFull = { team1: [], team2: [] };
+                    all.filter(j => j && j.numero > 0).forEach(j => {
+                        const eq = j.equipe === 'team2' ? 'team2' : 'team1';
+                        if (!rosterFull[eq].find(r => r.numero === j.numero))
+                            rosterFull[eq].push(j);
+                    });
+                    rosterFull.team1.sort((a,b) => a.numero - b.numero);
+                    rosterFull.team2.sort((a,b) => a.numero - b.numero);
+                }
+
+                // Afficher info filmeur Facebook si option "animateur récupère"
+                if (match.filmeurInfo && match.filmeurInfo.option === 'animateur' && match.filmeurInfo.facebookProfile) {
+                    const box = document.getElementById('filmeurInfoBox');
+                    const nomEl = document.getElementById('filmeurProfilNom');
+                    if (box && nomEl) {
+                        nomEl.textContent = match.filmeurInfo.facebookProfile;
+                        box.classList.add('visible');
+                    }
+                } else if (document.getElementById('filmeurInfoBox')) {
+                    document.getElementById('filmeurInfoBox').classList.remove('visible');
+                }
+
                 // Pré-remplir le lien YouTube si présent
                 if (match.youtubeUrl) {
                     document.getElementById('youtubeInput').value = match.youtubeUrl;
@@ -2661,17 +2965,19 @@
 
         // Afficher les informations du match
         function displayMatchInfo(match) {
+            // Chercher la joueuse déclarante dans team1 ou team2 (selon domicile/extérieur)
+            const declaringPlayer = match.team1?.declaringPlayer || match.team2?.declaringPlayer || 'Non renseigné';
             const matchInfoHtml = `
                 <div class="info-row">
-                    <span class="info-label">Joueuse</span>
-                    <span class="info-value">${match.team1?.declaringPlayer || 'Non renseigné'}</span>
+                    <span class="info-label">Joueuse déclarante</span>
+                    <span class="info-value">${declaringPlayer}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Équipe 1 (Domicile)</span>
+                    <span class="info-label">Équipe domicile</span>
                     <span class="info-value">${match.team1?.name || 'Non renseigné'}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Équipe 2 (Adversaire)</span>
+                    <span class="info-label">Équipe extérieur</span>
                     <span class="info-value">${match.team2?.name || 'Non renseigné'}</span>
                 </div>
                 <div class="info-row">
@@ -2729,6 +3035,18 @@
             });
 
             console.log(`✅ Score mis à jour: ${team} = ${newValue}`);
+        }
+
+        // Ouvrir le profil Facebook du filmeur
+        function ouvrirProfilFilmeur() {
+            const profil = document.getElementById('filmeurProfilNom')?.textContent?.trim();
+            if (!profil) return;
+            let url = profil;
+            if (!profil.startsWith('http')) {
+                // Si c'est un nom, on cherche sur Facebook
+                url = `https://www.facebook.com/search/people/?q=${encodeURIComponent(profil)}`;
+            }
+            window.open(url, '_blank');
         }
 
         // Sauvegarder le lien YouTube
@@ -2906,6 +3224,12 @@
                 { label: '🔄 En Jeu',   classe: 'pastille-enjeu',  quality: '!', dvwLabel: 'En jeu' },
                 { label: '❌ Faute',    classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
             ],
+            relance: [
+                { label: '⭐ Parfaite',   classe: 'pastille-parfait', quality: '#', dvwLabel: 'Parfaite!' },
+                { label: '✅ Bonne',      classe: 'pastille-bon',    quality: '+', dvwLabel: 'Bonne' },
+                { label: '🔵 3m / Fixe',  classe: 'pastille-enjeu',  quality: '-', dvwLabel: '3m / Fixe' },
+                { label: '❌ Faute',      classe: 'pastille-faute',  quality: '=', dvwLabel: 'Faute' },
+            ],
             reception: [
                 { label: '⭐ Parfaite', classe: 'pastille-parfait', quality: '#', dvwLabel: 'Parfaite!' },
                 { label: '✅ Bonne',    classe: 'pastille-bon',    quality: '+', dvwLabel: 'Bonne' },
@@ -2935,8 +3259,8 @@
         };
 
         const SKILLS_INFO = [
-            { id: 'service',   label: '🏐 Service' },
-            { id: 'reception', label: '📩 Récep' },
+            { id: 'relance',   label: '📩 Relance' },
+            { id: 'reception', label: '🎯 Récep' },
             { id: 'attaque',   label: '⚡ Attaque' },
             { id: 'passe',     label: '🤲 Passe' },
             { id: 'contre',    label: '🛡 Contre' },
@@ -2990,6 +3314,7 @@
                     <div class="joueuse-numero" style="background:${joueuse.equipe === 'team1' ? (currentMatch?.team1?.color || 'var(--primary)') : (currentMatch?.team2?.color || '#3b82f6')}">${joueuse.numero || '?'}</div>
                     <span class="joueuse-nom">${joueuse.nom || 'Joueuse'}</span>
                     <span class="joueuse-equipe-badge ${badgeClass}">${joueuse.equipe === 'team1' ? 'DOM' : 'ADV'}</span>
+                    <button class="btn-srv-header" onclick="selectionnerSkill(${index}, 'service')">🏐 SRV</button>
                     <button class="btn-changer-joueuse" onclick="ouvrirPicker(${index})">↕</button>
                     <button class="btn-retirer-joueuse" onclick="retirerJoueuse(${index})" title="Retirer">✕</button>
                 </div>
@@ -3047,8 +3372,8 @@
                 servingTeam = null;
                 if (document.body.classList.contains('match-mode')) setZoneHauteEtat('attente');
                 if (rallyId && typeAction) {
-                    const dvwSkillMap = { 'service':'S','attaque':'A','contre':'B',
-                        'ft_service':'S','ft_reception':'R','ft_attaque':'A','ft_contre':'B','ft_passe':'P','ft_defense':'D','ft_filet':'F' };
+                    const dvwSkillMap = { 'service':'S','attaque':'A','contre':'B','relance':'R',
+                        'ft_service':'S','ft_reception':'R','ft_attaque':'A','ft_contre':'B','ft_passe':'P','ft_defense':'D','ft_filet':'F','ft_relance':'R' };
                     const dvwSkill = dvwSkillMap[typeAction] || dvwSkillMap[skill] || 'A';
                     await dbService.enrichRallyActionFinale(currentMatchId, rallyId, {
                         type: typeAction, team: teamAction, dvwSkill, dvwQuality: quality === '=' ? '=' : '#'

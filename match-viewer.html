@@ -336,6 +336,7 @@
                 right: -290px;
             }
             #dvwPanel.open { right: 0; }
+            #dvwEditSheet { width: 290px; }
 
             .dvw-header { padding: 4px 10px; }
             .dvw-header h3 { font-size: 0.75rem; }
@@ -1342,6 +1343,20 @@
             line-height: 1;
         }
         .dvw-close:hover { opacity: 1; }
+        .dvw-fdme-btn {
+            background: none;
+            border: 1px solid rgba(245,158,11,0.5);
+            color: #fbbf24;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 3px 8px;
+            border-radius: 6px;
+            opacity: 0.85;
+            line-height: 1.4;
+            display: none;
+        }
+        .dvw-fdme-btn:hover { opacity: 1; border-color: #f59e0b; background: rgba(245,158,11,0.12); }
         .dvw-filters {
             padding: 12px 14px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -1490,6 +1505,307 @@
             opacity: 0.6;
             font-size: 0.85rem;
         }
+        /* ── Onglets DVW / Saisies ── */
+        .dvw-tab-bar {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+        .dvw-tab {
+            flex: 1;
+            padding: 8px 4px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255,255,255,0.45);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            letter-spacing: 0.3px;
+        }
+        .dvw-tab.active {
+            color: #a5b4fc;
+            border-bottom-color: #6366f1;
+        }
+        .dvw-tab:hover:not(.active) { color: rgba(255,255,255,0.7); }
+        /* ── Fiche édition action (slide-up dans le panneau) ── */
+        #dvwEditSheet {
+            position: fixed;
+            bottom: -100%;
+            right: 0;
+            width: 360px;
+            background: rgba(15,23,42,0.99);
+            border-top: 2px solid rgba(99,102,241,0.6);
+            border-left: 2px solid rgba(99,102,241,0.5);
+            border-radius: 12px 12px 0 0;
+            padding: 14px 14px 8px;
+            z-index: 210;
+            transition: bottom 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        #dvwEditSheet.open { bottom: 0; }
+        .edit-sheet-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .edit-sheet-title button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0;
+        }
+        .edit-sheet-section {
+            margin-bottom: 10px;
+        }
+        .edit-sheet-label {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        /* Bascule équipe */
+        .team-toggle {
+            display: flex;
+            gap: 6px;
+        }
+        .team-toggle button {
+            flex: 1;
+            padding: 7px 4px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.55);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .team-toggle button.active {
+            background: rgba(99,102,241,0.3);
+            border-color: #6366f1;
+            color: #e0e7ff;
+        }
+        /* Grille joueurs */
+        .player-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .player-grid button {
+            min-width: 46px;
+            padding: 5px 4px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.12s;
+            line-height: 1.2;
+        }
+        .player-grid button.active {
+            background: rgba(99,102,241,0.35);
+            border-color: #818cf8;
+            color: #e0e7ff;
+        }
+        .player-grid button:hover:not(.active) { border-color: rgba(255,255,255,0.3); color: white; }
+        .player-num-manual {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 5px;
+        }
+        .player-num-manual input {
+            width: 55px;
+            padding: 5px 7px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+        .player-num-manual label { font-size: 0.72rem; opacity: 0.5; }
+        /* Grille skill */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+        .skill-grid button, .skill-grid-btn {
+            padding: 7px 4px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 7px;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.12s;
+            text-align: center;
+        }
+        .skill-grid button.active, .skill-grid-btn.active {
+            background: rgba(99,102,241,0.3);
+            border-color: #6366f1;
+            color: #e0e7ff;
+        }
+        /* Grille qualité */
+        .qual-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .qual-btn {
+            padding: 7px 4px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 7px;
+            background: rgba(255,255,255,0.04);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.12s;
+        }
+        .qual-btn.active {
+            border-width: 2px;
+            background: rgba(255,255,255,0.18) !important;
+            box-shadow: inset 0 0 0 1px currentColor;
+            filter: brightness(1.25);
+        }
+        /* Préview DVW auto-générée */
+        .dvw-preview-line {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            color: #a5b4fc;
+            letter-spacing: 1px;
+        }
+        /* Boutons bas de fiche */
+        .edit-sheet-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .edit-sheet-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-sheet-cancel {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6);
+        }
+        .btn-sheet-save {
+            background: #10b981;
+            color: white;
+        }
+        .btn-sheet-save:hover { background: #059669; }
+        /* Chip DVW avec badge édité */
+        .dvw-chip-edited-badge {
+            font-size: 0.65rem;
+            background: rgba(16,185,129,0.2);
+            border: 1px solid rgba(16,185,129,0.5);
+            color: #6ee7b7;
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        /* Chip saisie Firebase (non-DVW) */
+        .dvw-action-chip.chip-firebase {
+            border-color: rgba(251,191,36,0.2);
+        }
+        .dvw-action-chip.chip-firebase:hover {
+            background: rgba(251,191,36,0.12);
+            border-color: rgba(251,191,36,0.45);
+        }
+        .dvw-action-chip.chip-firebase.chip-edited {
+            border-color: rgba(16,185,129,0.4);
+        }
+        /* ── Mini-actions chip (seek vidéo / éditer) ── */
+        .fb-chip-actions {
+            display: none; gap: 6px; padding-top: 6px; width: 100%;
+        }
+        .fb-chip-actions button {
+            flex: 1; padding: 7px 4px; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600; cursor: pointer;
+        }
+        .fb-chip-actions .fb-seek-btn {
+            background: rgba(99,102,241,0.2); color: #a5b4fc;
+            border: 1px solid rgba(99,102,241,0.4);
+        }
+        .fb-chip-actions .fb-edit-btn {
+            background: rgba(251,191,36,0.15); color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.35);
+        }
+        .dvw-action-chip.fb-selected {
+            background: rgba(99,102,241,0.1) !important;
+            border-color: rgba(99,102,241,0.35) !important;
+        }
+        .dvw-action-chip.fb-selected .fb-chip-actions { display: flex; }
+        /* Sur desktop, le chip entier est cliquable pour seek → curseur pointer */
+        @media (hover: hover) { .dvw-action-chip.chip-firebase { cursor: pointer; } }
+        /* ── Mini-court rotation (flux replay FDME) ── */
+        .rally-sep-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 2px 2px;
+        }
+        .rally-sep-label {
+            font-size: 0.68rem; opacity: 0.35;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            flex: 1;
+        }
+        .mini-court {
+            display: grid; grid-template-columns: repeat(3, 20px);
+            gap: 1px; flex-shrink: 0;
+        }
+        .mini-court .mp {
+            width: 20px; height: 15px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 2px;
+            font-size: 0.52rem; font-family: monospace;
+            color: rgba(255,255,255,0.4);
+        }
+        .mini-court .mp.server {
+            background: rgba(251,191,36,0.2);
+            border-color: rgba(251,191,36,0.4);
+            color: #fbbf24; font-weight: 700; font-size: 0.46rem;
+        }
+        .edit-chip-btn {
+            padding: 3px 6px;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 5px;
+            color: #a5b4fc;
+            font-size: 0.7rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: 6px;
+            transition: all 0.12s;
+        }
+        .edit-chip-btn:hover { background: rgba(99,102,241,0.3); }
         /* ── Boutons footer côte à côte ── */
         .dvw-footer-row {
             display: flex;
@@ -1831,10 +2147,34 @@
         <!-- Panneau DVW -->
         <div id="dvwPanel">
             <div class="dvw-header">
-                <h3>📋 Actions DVW</h3>
+                <h3>📋 Actions</h3>
+                <button class="dvw-fdme-btn" id="dvwFdmeBtn" onclick="openFdme()" title="Ouvrir la feuille de match">📄 FDME</button>
                 <button class="dvw-close" onclick="toggleDvwPanel()">✕</button>
             </div>
-            <div class="dvw-filters">
+            <!-- Onglets DVW / Saisies Firebase -->
+            <div class="dvw-tab-bar">
+                <button class="dvw-tab active" id="tabDvw" onclick="switchDvwTab('dvw')">📋 DVW</button>
+                <button class="dvw-tab" id="tabSaisies" onclick="switchDvwTab('saisies')">🔥 Saisies</button>
+            </div>
+            <!-- Bannière saisie passeuses (s'affiche si non configurées) -->
+            <div id="dvwPasseuseBanner" style="display:none;padding:8px 10px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;margin:6px 0 4px 0;font-size:0.8rem;">
+                <div style="font-weight:600;color:#f59e0b;margin-bottom:7px;">🏐 Passeuses — activer le filtre Rotation</div>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <span id="dvwPasseuseLabelT1" style="opacity:0.75;font-size:0.75rem;"></span>
+                    <input type="number" id="dvwPasseuseT1" placeholder="N°" min="1" max="99"
+                        style="width:55px;padding:4px 7px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:0.9rem;">
+                    <span id="dvwPasseuseLabelT2" style="opacity:0.75;font-size:0.75rem;"></span>
+                    <input type="number" id="dvwPasseuseT2" placeholder="N°" min="1" max="99"
+                        style="width:55px;padding:4px 7px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:0.9rem;">
+                    <button onclick="savePasseusesViewer()"
+                        style="padding:4px 12px;background:#f59e0b;color:#000;border:none;border-radius:5px;font-size:0.8rem;font-weight:700;cursor:pointer;">✓ OK</button>
+                    <button onclick="document.getElementById('dvwPasseuseBanner').style.display='none'"
+                        style="padding:4px 8px;background:rgba(255,255,255,0.08);color:white;border:none;border-radius:5px;font-size:0.8rem;cursor:pointer;">✕</button>
+                </div>
+            </div>
+
+            <!-- Zone filtres (DVW uniquement) -->
+            <div id="dvwFiltersZone" class="dvw-filters">
                 <div class="dvw-filter-row">
                     <label>👤 Joueur</label>
                     <select class="dvw-select" id="dvwFilterPlayer">
@@ -1851,7 +2191,7 @@
                         <option value="B">Bloc</option>
                         <option value="D">Défense</option>
                         <option value="E">Passe</option>
-                        <option value="F">Balle libre</option>
+                        <option value="F">Relance</option>
                     </select>
                     <button class="dvw-btn-filter dvw-btn-moneytime dvw-btn-inline" onclick="applyMoneyTimeFilter()" title="Moments décisifs : une équipe à ≥20pts avec écart ≤2 (tie-break : ≥10 écart ≤2)">⚡ Money Time</button>
                 </div>
@@ -1867,6 +2207,29 @@
                         <option value="="># Faute</option>
                     </select>
                     <button class="dvw-btn-filter dvw-btn-inline" onclick="applyDvwFilters()">🔍 Filtrer</button>
+                </div>
+                <!-- Filtre Rotation : visible seulement quand passeuses sont configurées -->
+                <div class="dvw-filter-row" id="dvwFilterRotationRow" style="display:none;">
+                    <label>🔄 Rotation</label>
+                    <select class="dvw-select" id="dvwFilterRotation">
+                        <option value="">Toutes</option>
+                        <optgroup label="— Service —">
+                            <option value="S1">S1 — Passeuse en zone 1 🏐</option>
+                            <option value="S2">S2 — Passeuse en zone 2</option>
+                            <option value="S3">S3 — Passeuse en zone 3</option>
+                            <option value="S4">S4 — Passeuse en zone 4</option>
+                            <option value="S5">S5 — Passeuse en zone 5</option>
+                            <option value="S6">S6 — Passeuse en zone 6</option>
+                        </optgroup>
+                        <optgroup label="— Sideout —">
+                            <option value="R1">R1 — Passeuse en zone 1</option>
+                            <option value="R2">R2 — Passeuse en zone 2</option>
+                            <option value="R3">R3 — Passeuse en zone 3</option>
+                            <option value="R4">R4 — Passeuse en zone 4</option>
+                            <option value="R5">R5 — Passeuse en zone 5</option>
+                            <option value="R6">R6 — Passeuse en zone 6</option>
+                        </optgroup>
+                    </select>
                 </div>
             </div>
             <div id="dvwNoTimestampBanner" style="display:none; background:#7c3aed22; border:1px solid #7c3aed; border-radius:8px; padding:10px 12px; margin:8px 0; font-size:0.8rem; color:#c4b5fd; line-height:1.5;">
@@ -1903,6 +2266,65 @@
                     🤖 « Je veux voir... » — Bientôt disponible
                 </div>
             </div>
+
+            <!-- ── Fiche édition action (slide-up) ── -->
+            <div id="dvwEditSheet">
+                <div class="edit-sheet-title">
+                    <span id="editSheetTitle">✏️ Action</span>
+                    <button onclick="closeEditSheet()">✕</button>
+                </div>
+                <!-- Équipe -->
+                <div class="edit-sheet-section">
+                    <div class="edit-sheet-label">Équipe</div>
+                    <div class="team-toggle">
+                        <button id="es-team-home" onclick="esSelectTeam('home')">🏠 <span id="es-team-home-name">Domicile</span></button>
+                        <button id="es-team-away" onclick="esSelectTeam('away')">✈️ <span id="es-team-away-name">Extérieur</span></button>
+                    </div>
+                </div>
+                <!-- Joueuse -->
+                <div class="edit-sheet-section">
+                    <div class="edit-sheet-label">Joueuse</div>
+                    <div class="player-grid" id="esPlayerGrid"></div>
+                    <div class="player-num-manual">
+                        <label>N° manuel :</label>
+                        <input type="number" id="esPlayerManual" min="0" max="99" placeholder="—" oninput="esOnManualPlayer()" />
+                    </div>
+                </div>
+                <!-- Action / Skill -->
+                <div class="edit-sheet-section">
+                    <div class="edit-sheet-label">Action</div>
+                    <div class="skill-grid">
+                        <button class="skill-grid-btn" id="esSkill-S" onclick="esSelectSkill('S')">🏐 Service</button>
+                        <button class="skill-grid-btn" id="esSkill-R" onclick="esSelectSkill('R')">📩 Réception</button>
+                        <button class="skill-grid-btn" id="esSkill-F" onclick="esSelectSkill('F')">🔄 Relance</button>
+                        <button class="skill-grid-btn" id="esSkill-E" onclick="esSelectSkill('E')">🎯 Passe</button>
+                        <button class="skill-grid-btn" id="esSkill-A" onclick="esSelectSkill('A')">💥 Attaque</button>
+                        <button class="skill-grid-btn" id="esSkill-B" onclick="esSelectSkill('B')">🛡 Bloc</button>
+                        <button class="skill-grid-btn" id="esSkill-D" onclick="esSelectSkill('D')">🤼 Défense</button>
+                    </div>
+                </div>
+                <!-- Qualité -->
+                <div class="edit-sheet-section">
+                    <div class="edit-sheet-label">Qualité / Résultat</div>
+                    <div class="qual-grid">
+                        <button class="qual-btn" id="esQual-#" onclick="esSelectQual('#')" style="color:#fbbf24;white-space:normal;line-height:1.2;"># Ace/Kill<br><span style="font-size:0.62rem;opacity:0.85;font-weight:500;">Parfaite</span></button>
+                        <button class="qual-btn" id="esQual-+" onclick="esSelectQual('+')" style="color:#34d399;">+ Positif</button>
+                        <button class="qual-btn" id="esQual-!" onclick="esSelectQual('!')" style="color:#94a3b8;">! Neutre</button>
+                        <button class="qual-btn" id="esQual--" onclick="esSelectQual('-')" style="color:#f87171;">- Négatif</button>
+                        <button class="qual-btn" id="esQual-/" onclick="esSelectQual('/')" style="color:#c084fc;">/ Bloqué</button>
+                        <button class="qual-btn" id="esQual-=" onclick="esSelectQual('=')" style="color:#ef4444;">= Faute</button>
+                    </div>
+                </div>
+                <!-- Préview DVW -->
+                <div class="edit-sheet-section">
+                    <div class="edit-sheet-label">Ligne DVW générée</div>
+                    <div class="dvw-preview-line" id="esDvwPreview">—</div>
+                </div>
+                <div class="edit-sheet-actions">
+                    <button class="btn-sheet-cancel" onclick="closeEditSheet()">✕ Annuler</button>
+                    <button class="btn-sheet-save" onclick="saveEditSheet()">✅ Enregistrer</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1916,6 +2338,8 @@
     <script src="db-service.js"></script>
     <script src="export-dvw.js"></script>
     <script src="dvw-parser-lite.js"></script>
+    <script src="fdme-service.js"></script>
+    <script src="rotation-engine.js"></script>
 
     <script>
         let currentMatchId = null;
@@ -1938,6 +2362,36 @@
         let dvwAutoplayIndex = 0;
         let dvwCurrentIndex = -1;    // index de l'action actuellement sélectionnée
         let dvwScoreActive = false;  // true dès que le score DVW est chargé → bloque l'écrasement Firebase
+        let dvwSyncPaused = false;    // true si l'utilisateur a verrouillé le score manuellement (clic action)
+        let dvwHomeIsTeam1 = true;    // DVW home (‘*’) correspond à Firebase team1 (calculé au chargement DVW)
+
+        // ── Onglet Saisies Firebase ──
+        let activeTab = 'dvw';             // 'dvw' | 'saisies'
+        let fbActionsData = [];            // Actions Firebase converties pour la liste
+        let fbEditsData = {};              // dvwEdits chargés depuis Firebase
+        let fbRosterCache = { team1: [], team2: [] }; // Effectif des joueuses
+        let fbDataLoaded = false;          // true dès le premier chargement Firebase
+        let fbRalliesMap = {};              // rallyId → rally (rotationTeam1/2 incluse si dispo)
+        let currentPasseuses = {};          // { team1: N, team2: N } numéros des passeuses
+        let rotationByScoreKey = {};        // "set:h:v" → { rot1, rot2, servingTeam } pour filtre rotation
+        let currentFdmeData = null;         // fdmeData Firebase (disponible en flux replay post-FDME)
+        let currentFdmeSwapped = false;     // true si teams FDME ont été permutées pour matcher home/away
+        let fbTAncrage = 0;                 // timestamp ms du 1er rally (ancre vidéo)
+        let fbVideoOffset = 0;              // offset vidéo calibré (replaySync.offsetSeconds)
+
+        // ── Fiche édition action ──
+        let editSheetAction = null;        // Action en cours d'édition
+        let esTeam = 'home';               // Équipe sélectionnée dans la fiche
+        let esPlayerNum = 0;               // Numéro joueur sélectionné
+        let esSkill = 'S';                 // Skill sélectionné
+        let esQual = '#';                  // Qualité sélectionnée
+
+        // ── Constantes labels skill/qualité ──
+        const SKILL_LABELS_ES = { S:'Service', R:'Réception', E:'Passe', A:'Attaque', B:'Bloc', D:'Défense', F:'Relance' };
+        const QUAL_LABELS_ES  = { '#':'Ace / Kill', '+':'Positif', '!':'Neutre', '-':'Négatif', '/':'Bloqué', '=':'Faute' };
+        const QUAL_COLORS_ES  = { '#':'#fbbf24', '+':'#34d399', '!':'#94a3b8', '-':'#f87171', '/':'#c084fc', '=':'#ef4444' };
+        const SKILL_ICON_ES   = { S:'🏐', R:'📩', E:'🎯', A:'💥', B:'🛡', D:'🤼', F:'�' };
+        const SKILL_DVW_MAP   = { service:'S', réception:'R', reception:'R', passe:'E', attaque:'A', attack:'A', bloc:'B', defense:'D', défense:'D' };
         let dvwVideoSyncInterval = null; // intervalle de polling pour sync score/vidéo
 
         // Démarre le polling : toutes les 500ms, met à jour le score selon la position vidéo
@@ -1945,6 +2399,8 @@
             if (!dvwLoaded || !dvwData || !dvwData.actions) return;
             if (dvwVideoSyncInterval) return; // déjà actif
             dvwVideoSyncInterval = setInterval(() => {
+                // Pause si l'utilisateur vient de cliquer sur une action (attendre que le seek soit effectif)
+                if (dvwSyncPaused) return;
                 if (!player || typeof player.getCurrentTime !== 'function') return;
                 try {
                     const currentTime = player.getCurrentTime();
@@ -1960,24 +2416,34 @@
             }
         }
 
-        // Trouve l'action DVW dont le videoSeconds est le plus proche (sans dépasser) du temps courant
-        // et met à jour le score dans la bannière
+        // Trouve le rally Firebase le plus récent dont le timestampServe correspond
+        // à une position vidéo ≤ videoSec, et met à jour la bannière avec son scoreAvant.
+        // Plus fiable que le comptage interne du DVW (qui peut manquer des actions).
         function syncScoreToVideoPosition(currentTimeSec) {
-            if (!dvwData || !dvwData.actions) return;
-            const actions = dvwData.actions;
-            // On cherche la dernière action dont videoSeconds ≤ currentTimeSec
-            let bestAction = null;
-            let bestTime = -1;
-            for (const action of actions) {
-                const vt = action.videoSeconds;
-                if (vt === null || vt <= 0) continue;
-                const adjusted = vt + dvwOffsetSeconds;
-                if (adjusted <= currentTimeSec && adjusted > bestTime) {
-                    bestTime = adjusted;
-                    bestAction = action;
+            // Priorité 1 : données Firebase (scoreAvant exact par rally)
+            if (fbDataLoaded && fbTAncrage > 0 && Object.keys(fbRalliesMap).length > 0) {
+                let bestRally = null, bestVT = -1;
+                for (const rally of Object.values(fbRalliesMap)) {
+                    const ts = rally.timestampServe || rally.timestampPoint || 0;
+                    if (!ts) continue;
+                    const vt = fbVideoOffset + (ts - fbTAncrage) / 1000;
+                    if (vt <= currentTimeSec && vt > bestVT) { bestVT = vt; bestRally = rally; }
+                }
+                if (bestRally) {
+                    const sa = bestRally.scoreAvant || {};
+                    updateScoreUI({
+                        pointsTeam1: sa.pointsTeam1 ?? 0,
+                        pointsTeam2: sa.pointsTeam2 ?? 0,
+                        setsTeam1:   sa.setsTeam1   ?? 0,
+                        setsTeam2:   sa.setsTeam2   ?? 0,
+                    });
+                    const setEl = document.getElementById('currentSetDisplay');
+                    if (setEl) setEl.textContent = bestRally.set || 1;
+                    return;
                 }
             }
-            if (bestAction) updateScoreBannerFromAction(bestAction);
+            // Fallback : comptage DVW (moins précis si DVW incomplet)
+            if (dvwData && dvwData.actions) updateScoreFromVideoPosition(currentTimeSec);
         }
 
         function getMatchIdFromUrl() {
@@ -2158,13 +2624,13 @@
                 // Gestion de l'affichage selon le statut
                 if (match.status === 'live') {
                     showNormalScore();
-                    if (!dvwScoreActive) updateScoreUI(match.score, match.matchType);
+                    if (!dvwLoaded) updateScoreUI(match.score, match.matchType);
                     checkBalleDeStatus(match);
                 } else if (match.status === 'finished') {
                     // Si on a des segments vidéo (Replay), on veut voir le match et le score défiler !
                     if (videoSegments.length > 0 || activeUrl) {
                         showNormalScore();
-                        if (!dvwScoreActive) updateScoreUI(match.score || { pointsTeam1: 0, setsTeam1: 0, pointsTeam2: 0, setsTeam2: 0 }, match.matchType);
+                        if (!dvwLoaded) updateScoreUI(match.score || { pointsTeam1: 0, setsTeam1: 0, pointsTeam2: 0, setsTeam2: 0 }, match.matchType);
                         // S'assurer que la synchro est active
                         if (!syncInterval && activeStartTimestamp) {
                             startSyncLoop();
@@ -2172,11 +2638,11 @@
                     } else {
                         // Pas de vidéo, on montre juste le résultat final
                         showVictoryDisplay(match);
-                        if (!dvwScoreActive) updateScoreUI(match.score, match.matchType);
+                        if (!dvwLoaded) updateScoreUI(match.score, match.matchType);
                     }
                 } else if (match.status === 'upcoming') {
                     showNormalScore();
-                    if (!dvwScoreActive) updateScoreUI(match.score, match.matchType);
+                    if (!dvwLoaded) updateScoreUI(match.score, match.matchType);
                     
                     if (match.history && activeStartTimestamp && !syncInterval) {
                         startSyncLoop();
@@ -2221,9 +2687,24 @@
                 if (recalBtn && currentMatchId) {
                     recalBtn.href = 'replay-sync.html?id=' + currentMatchId;
                 }
+                // Charger le DVW en arrière-plan dès que l'URL est connue
+                if (!dvwLoaded) {
+                    loadDvwFile(match.dvwStorageUrl);
+                }
+                // Charger aussi les rallies Firebase en background pour la sync score précise
+                // (scoreAvant de chaque rally = source de vérité, plus précis que le comptage DVW)
+                if (!fbDataLoaded) {
+                    loadFirebaseActionsForPanel();
+                }
             } else {
                 btn.style.display = 'none';
             }
+        }
+
+        function openFdme() {
+            const url = lastMatchState?.fdmeUrl;
+            if (url) { window.open(url, '_blank'); }
+            else { alert('Aucune feuille de match disponible pour ce match.'); }
         }
 
         function toggleDvwPanel() {
@@ -2232,19 +2713,704 @@
             if (!isOpen) {
                 panel.classList.add('open');
                 document.body.classList.add('dvw-open');
+                // Charger le fichier DVW si disponible
                 if (!dvwLoaded && lastMatchState?.dvwStorageUrl) {
                     loadDvwFile(lastMatchState.dvwStorageUrl);
                 }
+                // Toujours charger les saisies Firebase
+                if (!fbDataLoaded) {
+                    loadFirebaseActionsForPanel();
+                }
+                // Afficher le bouton FDME si disponible
+                const fdmeBtn = document.getElementById('dvwFdmeBtn');
+                if (fdmeBtn) fdmeBtn.style.display = lastMatchState?.fdmeUrl ? 'inline-block' : 'none';
             } else {
                 panel.classList.remove('open');
                 document.body.classList.remove('dvw-open');
                 stopDvwAutoplay();
+                closeEditSheet();
+                // Ne pas réinitialiser dvwScoreActive : le DVW reste chargé (dvwLoaded)
+                // et la synchro score vidéo continue de fonctionner
+                dvwSyncPaused = false;
+            }
+        }
+
+        function openFdme() {
+            const url = lastMatchState?.fdmeUrl;
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                alert('Aucune feuille de match (FDME) disponible pour ce match.');
+            }
+        }
+
+        // ── Bascule onglet DVW / Saisies ──
+        function switchDvwTab(tab) {
+            activeTab = tab;
+            document.getElementById('tabDvw').classList.toggle('active', tab === 'dvw');
+            document.getElementById('tabSaisies').classList.toggle('active', tab === 'saisies');
+            const filtersZone = document.getElementById('dvwFiltersZone');
+            if (filtersZone) filtersZone.style.display = tab === 'dvw' ? '' : 'none';
+            closeEditSheet();
+            if (tab === 'dvw') {
+                renderDvwActionsList();
+            } else {
+                if (!fbDataLoaded) {
+                    loadFirebaseActionsForPanel();
+                } else {
+                    renderSaisiesList();
+                }
+            }
+        }
+
+        // ── Chargement des saisies Firebase (rallies + playerActions + dvwEdits) ──
+        // ── Fusion intelligente animateur/parent (étape 2) ──
+        // Règles :
+        //  - Même skill + même rally, un role animateur + un role parent → 1 seul chip
+        //    timestamp = animateur, numéro/nom = celui qui a un numero > 0
+        //  - Skills différents → actions distinctes conservées
+        //  - actionFinale : si un chip du même skill existe → enrichit sa qualité DVW
+        //                   sinon → chip standalone sans joueur
+        function mergeFirebaseActions(rawActions, actionFinale) {
+            // Grouper par skill normalisé
+            const bySkill = {};
+            rawActions.forEach(pa => {
+                const sk = (pa.skill || 'A').charAt(0).toUpperCase();
+                if (!bySkill[sk]) bySkill[sk] = [];
+                bySkill[sk].push(pa);
+            });
+
+            const result = [];
+
+            Object.values(bySkill).forEach(group => {
+                const animGroup  = group.filter(a => a.parentRole === 'animateur');
+                const statsGroup = group.filter(a => a.parentRole !== 'animateur');
+
+                if (animGroup.length > 0 && statsGroup.length > 0) {
+                    // Fusionner la première paire : timestamp animateur + meilleur joueur
+                    const anim = animGroup[0];
+                    const stat = statsGroup[0];
+                    const animNum = parseInt(anim.joueuse?.numero || 0);
+                    const statNum = parseInt(stat.joueuse?.numero || 0);
+                    // Choisir le joueur le plus complet (numéro > 0 prioritaire)
+                    const bestJoueuse = (animNum > 0) ? anim.joueuse
+                                      : (statNum > 0 ? stat.joueuse : anim.joueuse);
+                    // Si l'animateur n'a pas de qualité et le parent en a une → prendre celle du parent
+                    const bestQuality = (anim.quality && anim.quality !== '~') ? anim.quality : (stat.quality || anim.quality || '~');
+                    result.push({ ...anim, joueuse: bestJoueuse, quality: bestQuality, _mergedRoles: true });
+                    // Surplus : autres actions parent ou animateur → garder séparément
+                    statsGroup.slice(1).forEach(a => result.push({ ...a }));
+                    animGroup.slice(1).forEach(a => result.push({ ...a }));
+                } else {
+                    // Même rôle ou un seul rôle → garder toutes les actions (joueurs différents)
+                    group.forEach(a => result.push({ ...a }));
+                }
+            });
+
+            // Intégrer l'actionFinale
+            if (actionFinale) {
+                const afSkill = (actionFinale.dvwSkill || 'A').charAt(0).toUpperCase();
+                const afQual  = actionFinale.dvwQuality || '#';
+                const afTeamRaw = actionFinale.team || 'team1';
+                // Chercher un chip existant avec le même skill
+                const matching = result.find(a => (a.skill || 'A').charAt(0).toUpperCase() === afSkill);
+                if (matching) {
+                    // Enrichir la qualité avec la décision finale de l'animateur
+                    matching.quality = afQual;
+                    matching._enrichedByActionFinale = true;
+                } else {
+                    // Aucun playerAction pour ce skill → chip standalone
+                    result.push({
+                        _fromActionFinale: true,
+                        skill: afSkill,
+                        quality: afQual,
+                        joueuse: { equipe: afTeamRaw, numero: 0, nom: '' },
+                        parentRole: 'animateur',
+                        timestamp: 0,
+                    });
+                }
+            }
+
+            return result.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        }
+
+        // Seek vidéo vers le rally d'une action Firebase (flux replay)
+        function seekFbAction(action) {
+            if (!fbTAncrage) return;
+            const rally = fbRalliesMap[action.rallyId];
+            const ts = rally?.timestampServe || 0;
+            if (!ts) return;
+            const videoSec = fbVideoOffset + (ts - fbTAncrage) / 1000;
+            if (player && typeof player.seekTo === 'function') {
+                player.seekTo(Math.max(0, videoSec), true);
+                player.playVideo();
+            }
+        }
+
+        async function loadFirebaseActionsForPanel() {
+            const listEl = document.getElementById('dvwActionsList');
+            if (activeTab === 'saisies') {
+                listEl.innerHTML = '<div class="dvw-loading">⏳ Chargement des saisies...</div>';
+            }
+            try {
+                const [ralliesSnap, paSnap, editsSnap] = await Promise.all([
+                    firebase.database().ref('matches/' + currentMatchId + '/rallies').once('value'),
+                    firebase.database().ref('matches/' + currentMatchId + '/playerActions').once('value'),
+                    firebase.database().ref('matches/' + currentMatchId + '/dvwEdits').once('value'),
+                ]);
+                const ralliesRaw = ralliesSnap.val() || {};
+                const paRaw      = paSnap.val()      || {};
+                fbEditsData      = editsSnap.val()   || {};
+
+                // Charger fdmeData si disponible (flux replay post-FDME)
+                try { currentFdmeData = await fdmeService.getFdmeData(currentMatchId); }
+                catch(e) { currentFdmeData = null; }
+
+                // Normaliser l'ordre team1/team2 FDME pour qu'il corresponde à home/away du match
+                // Gemini extrait les équipes dans l'ordre FDME qui peut différer du match Firebase
+                if (currentFdmeData) {
+                    const mHome = (lastMatchState?.team1?.name || lastMatchState?.team1?.nom || '').toLowerCase().trim();
+                    const mAway = (lastMatchState?.team2?.name || lastMatchState?.team2?.nom || '').toLowerCase().trim();
+                    const f1    = (currentFdmeData.team1?.nom || '').toLowerCase().trim();
+                    const f2    = (currentFdmeData.team2?.nom || '').toLowerCase().trim();
+                    // Recouvrement partiel (4 premiers caractères significatifs)
+                    const overlap = (a, b) => { const n = Math.min(4, a.length, b.length); return n > 0 && (a.includes(b.slice(0,n)) || b.includes(a.slice(0,n))); };
+                    // Si FDME team1 ressemble à away (et pas à home) → permuter
+                    if (mAway && f1 && overlap(f1, mAway) && !overlap(f1, mHome)) {
+                        currentFdmeData = { ...currentFdmeData, team1: currentFdmeData.team2, team2: currentFdmeData.team1 };
+                        currentFdmeSwapped = true;
+                        console.log('[FDME] Équipes permutées pour correspondre home/away match');
+                    } else {
+                        currentFdmeSwapped = false;
+                    }
+                }
+
+                // Ancrage vidéo pour seek depuis les chips Firebase
+                fbVideoOffset = lastMatchState?.replaySync?.offsetSeconds
+                             || lastMatchState?.videoSync?.offsetSeconds || 0;
+                const _ancrageRallies = Object.values(ralliesRaw)
+                    .filter(r => r && r.timestampServe > 0)
+                    .sort((a, b) => a.timestampServe - b.timestampServe);
+                fbTAncrage = _ancrageRallies[0]?.timestampServe || 0;
+
+                // Construire le roster à partir des playerActions
+                Object.values(paRaw).forEach(a => {
+                    if (!a || !a.joueuse) return;
+                    const eq = a.joueuse.equipe || 'team1';
+                    const n  = parseInt(a.joueuse.numero || 0);
+                    if (n > 0) {
+                        if (!fbRosterCache[eq]) fbRosterCache[eq] = [];
+                        if (!fbRosterCache[eq].find(r => r.numero === n)) {
+                            fbRosterCache[eq].push({ numero: n, nom: a.joueuse.nom || '' });
+                            fbRosterCache[eq].sort((a, b) => a.numero - b.numero);
+                        }
+                    }
+                });
+
+                // Grouper les playerActions par rallyId
+                const byRally = {};
+                Object.values(paRaw).forEach(a => {
+                    if (!a) return;
+                    const rid = a.rallyId || '_noid';
+                    if (!byRally[rid]) byRally[rid] = [];
+                    byRally[rid].push(a);
+                });
+
+                // Convertir les rallies en actions du panneau
+                fbActionsData = [];
+                const allRalliesSorted = Object.values(ralliesRaw)
+                    .filter(r => r)
+                    .sort((a, b) => (a.index || a.timestampServe || 0) - (b.index || b.timestampServe || 0));
+
+                allRalliesSorted.forEach((rally, ri) => {
+                    const rid      = rally.rallyId || rally.id || ('r' + ri);
+                    const setNum   = rally.set || 1;
+                    const servTeam = rally.servingTeam === 'team2' ? 'away' : 'home';
+                    // scoreAvant = score au moment du service (affiché sur la chip de service)
+                    const sa       = rally.scoreAvant || {};
+                    const scoreStr = (sa.pointsTeam1 !== undefined ? sa.pointsTeam1 : '?') + '-' + (sa.pointsTeam2 !== undefined ? sa.pointsTeam2 : '?');
+                    // scoreApres = score APRÈS le point → correspond au score affiché au moment de la saisie
+                    const sp       = rally.scoreApres || {};
+                    const scoreAp  = (sp.pointsTeam1 !== undefined ? sp.pointsTeam1 : '?') + '-' + (sp.pointsTeam2 !== undefined ? sp.pointsTeam2 : '?');
+                    const servNum  = parseInt(rally.servingPlayerNumber || rally.servingPlayerNumber_computed || 0);
+                    const servNumStr = String(servNum > 0 ? servNum : 0).padStart(2, '0');
+                    const eqPfx   = servTeam === 'home' ? '*' : 'a';
+                    const svcKey  = rid + '__S__svc';
+                    fbRalliesMap[rid] = rally; // stocker pour accès dans renderSaisiesList
+
+                    // Chercher un playerAction de skill S pour enrichir le chip de service
+                    const rawPActions = byRally[rid] || [];
+                    const svcPA = rawPActions.find(a => (a.skill || '').charAt(0).toUpperCase() === 'S');
+                    // Qualité : playerAction S > actionFinale S > default '+'
+                    let svcQual = '+';
+                    let svcFinalNum = servNum;
+                    let svcFinalName = '';
+                    if (svcPA) {
+                        svcQual = svcPA.quality || '+';
+                        const paNum = parseInt(svcPA.joueuse?.numero || 0);
+                        if (paNum > 0) { svcFinalNum = paNum; svcFinalName = svcPA.joueuse?.nom || ''; }
+                    } else if (rally.actionFinale?.dvwSkill === 'S') {
+                        svcQual = rally.actionFinale.dvwQuality || '+';
+                    }
+                    const svcNumStr2 = String(svcFinalNum > 0 ? svcFinalNum : 0).padStart(2, '0');
+
+                    // Action de service
+                    fbActionsData.push({
+                        type: 'service',
+                        skill: 'S', quality: svcQual,
+                        label: 'Service',
+                        team: servTeam,
+                        playerNumber: svcFinalNum,
+                        playerName: svcFinalName,
+                        set: setNum, score: scoreStr,
+                        rallyId: rid,
+                        actionKey: svcKey,
+                        dvwLine: eqPfx + svcNumStr2 + 'SM' + svcQual + '~~~' + ';p;;;;;;00.00.00;' + setNum + ';1;1;1;0;;',
+                        rotationTeam1: rally.rotationTeam1 || null,
+                        rotationNum1:   rally.rotationNum1  || null,
+                        rotationNum2:   rally.rotationNum2  || null,
+                        rotationTeam2: rally.rotationTeam2 || null,
+                    });
+
+                    // Fusionner playerActions + actionFinale (dédupliquer animateur/parent)
+                    // Exclure le skill S et l'actionFinale S déjà absorbés dans le chip de service
+                    const rawPActionsNoSvc = rawPActions.filter(a => (a.skill || '').charAt(0).toUpperCase() !== 'S');
+                    const afForMerge = (rally.actionFinale?.dvwSkill === 'S') ? null : rally.actionFinale;
+                    const mergedActions = mergeFirebaseActions(rawPActionsNoSvc, afForMerge);
+                    mergedActions.forEach((ma, mi) => {
+                        const isAf    = !!ma._fromActionFinale;
+                        const joueuse = ma.joueuse || {};
+                        const maTeam  = (joueuse.equipe === 'team2') ? 'away' : 'home';
+                        const maEq    = maTeam === 'home' ? '*' : 'a';
+                        const maNum   = parseInt(joueuse.numero || 0);
+                        const maNumStr = String(maNum > 0 ? maNum : 0).padStart(2, '0');
+                        const skillCode = (ma.skill || 'A').charAt(0).toUpperCase();
+                        const qual      = ma.quality || '~';
+                        const aKey      = rid + '__' + skillCode + '__' + qual + '__' + maTeam + '__' + (isAf ? 'af' : mi);
+                        fbActionsData.push({
+                            type: isAf ? 'actionFinale' : 'playerAction',
+                            skill: skillCode, quality: qual,
+                            label: (SKILL_LABELS_ES[skillCode] || skillCode),
+                            team: maTeam,
+                            playerNumber: maNum,
+                            playerName: maNum > 0 ? (joueuse.nom || '') : '',
+                            set: setNum, score: scoreAp,
+                            rallyId: rid,
+                            actionKey: aKey,
+                            mergedRoles: ma._mergedRoles || false,
+                            enrichedByAf: ma._enrichedByActionFinale || false,
+                            dvwLine: maEq + maNumStr + skillCode + 'H' + qual + '~~~' + ';p;;;;;;00.00.00;' + setNum + ';1;1;1;0;;',
+                        });
+                    });
+                });
+
+                fbDataLoaded = true;
+                if (activeTab === 'saisies') renderSaisiesList();
+
+                // Construire la map score→rotation pour le filtre Rotation du panneau DVW
+                // Clé "set:pointsH:pointsV" = score AVANT le rally → unique dans un match
+                rotationByScoreKey = {};
+                Object.values(fbRalliesMap).forEach(rally => {
+                    const sA = rally.scoreAvant || {};
+                    if (sA.pointsTeam1 !== undefined && sA.pointsTeam2 !== undefined) {
+                        const key = `${rally.set || 1}:${sA.pointsTeam1}:${sA.pointsTeam2}`;
+                        rotationByScoreKey[key] = {
+                            rot1: rally.rotationTeam1 || [],
+                            rot2: rally.rotationTeam2 || [],
+                            servingTeam: rally.servingTeam || 'team1'
+                        };
+                    }
+                });
+
+                // Charger les passeuses depuis Firebase (fdmeData.passeuses)
+                if (!currentPasseuses.team1 && !currentPasseuses.team2) {
+                    firebase.database().ref('matches/' + currentMatchId + '/fdmeData/passeuses').once('value').then(snap => {
+                        const p = snap.val() || {};
+                        if (p.team1 || p.team2) {
+                            currentPasseuses = p;
+                            _onPasseusesLoaded();
+                        } else {
+                            _afficherBannierePasseuses();
+                        }
+                    });
+                } else {
+                    _onPasseusesLoaded();
+                }
+
+            } catch(e) {
+                console.error('Erreur chargement saisies Firebase:', e);
+                if (activeTab === 'saisies') {
+                    document.getElementById('dvwActionsList').innerHTML =
+                        '<div class="dvw-empty">❌ Erreur : ' + e.message + '</div>';
+                }
+            }
+        }
+
+        // ── Rendu de la liste Saisies Firebase ──
+        function renderSaisiesList() {
+            const listEl = document.getElementById('dvwActionsList');
+            if (!fbActionsData || fbActionsData.length === 0) {
+                listEl.innerHTML = '<div class="dvw-empty">Aucune saisie trouvée pour ce match.</div>';
+                return;
+            }
+            const t1Name = lastMatchState?.team1?.name || lastMatchState?.team1?.nom || 'Domicile';
+            const t2Name = lastMatchState?.team2?.name || lastMatchState?.team2?.nom || 'Extérieur';
+            listEl.innerHTML = '';
+
+            // Grouper par set + score pour afficher un séparateur de rally
+            let lastRallyId = null;
+            fbActionsData.forEach((action, index) => {
+                // Séparateur de rally
+                if (action.rallyId !== lastRallyId && action.type === 'service') {
+                    lastRallyId = action.rallyId;
+                    const sep = document.createElement('div');
+                    sep.className = 'rally-sep-row';
+
+                    const label = document.createElement('span');
+                    label.className = 'rally-sep-label';
+                    label.textContent = 'Set ' + action.set + ' — ' + action.score;
+                    sep.appendChild(label);
+
+                    // Mini-terrain de la rotation de l'équipe serveuse (flux replay FDME)
+                    const rot    = action.team === 'away' ? action.rotationTeam2 : action.rotationTeam1;
+                    const rotNum = action.team === 'away' ? action.rotationNum2   : action.rotationNum1;
+                    if (rot && rot.length === 6) {
+                        // Badge rotation R1-R6 (même convention que DataProject *z{n})
+                        const rotBadge = document.createElement('span');
+                        rotBadge.style.cssText = 'font-size:0.6rem;font-weight:700;color:#a78bfa;font-family:monospace;margin-left:4px;opacity:0.9;';
+                        rotBadge.title = 'Rotation ' + (rotNum || '?') + ' (DataProject *z' + (rotNum || '?') + ')';
+                        rotBadge.textContent = 'R' + (rotNum || '?');
+                        label.appendChild(rotBadge);
+
+                        const courtEl = document.createElement('div');
+                        courtEl.className = 'mini-court';
+                        courtEl.title = 'R' + (rotNum||'?') + ' — ' + (action.team === 'away' ? 'extérieur' : 'domicile') + ' : ' + rot.join('-');
+                        // Affichage terrain : [P4][P3][P2] / [P5][P6][P1🏐] (net en haut)
+                        const order = [rot[3], rot[2], rot[1], rot[4], rot[5], rot[0]];
+                        order.forEach((num, i) => {
+                            const cell = document.createElement('span');
+                            cell.className = 'mp' + (i === 5 ? ' server' : '');
+                            cell.textContent = i === 5 ? '🏐' + num : num;
+                            courtEl.appendChild(cell);
+                        });
+                        sep.appendChild(courtEl);
+                    }
+
+                    listEl.appendChild(sep);
+                }
+
+                const edit = fbEditsData[action.actionKey] || fbEditsData[(action.actionKey || '').replace(/[.#$/[\]]/g,'_')];
+                const hasEdit = edit && edit.line;
+                const teamIcon = action.team === 'home' ? '🏠' : '✈️';
+                const teamName = action.team === 'home' ? t1Name : t2Name;
+                const skillLabel = SKILL_LABELS_ES[action.skill] || action.skill || '?';
+                const qualColor  = QUAL_COLORS_ES[action.quality] || '#94a3b8';
+                const qualLabel  = QUAL_LABELS_ES[action.quality] || action.quality || '~';
+                const playerStr  = action.playerNumber > 0
+                    ? ('#' + action.playerNumber + (action.playerName ? ' ' + action.playerName : ''))
+                    : '—';
+                const dvwCode = hasEdit
+                    ? (edit.line.split(';')[0] || edit.line).substring(0, 10)
+                    : (action.dvwLine || '').split(';')[0].substring(0, 10);
+
+                const chip = document.createElement('div');
+                chip.className = 'dvw-action-chip chip-firebase' + (hasEdit ? ' chip-edited' : '');
+                chip.dataset.fbIndex = index;
+                chip.innerHTML = `
+                    <div style="display:flex;align-items:flex-start;width:100%;gap:4px;">
+                        <div class="dvw-chip-left" style="flex:1;min-width:0;">
+                            <div class="dvw-chip-context">${teamIcon} ${teamName} — ${playerStr}</div>
+                            <div class="dvw-chip-main">${SKILL_ICON_ES[action.skill] || ''} ${skillLabel}
+                                ${hasEdit ? '<span class="dvw-chip-edited-badge">✅ édité</span>' : ''}
+                                ${action.mergedRoles ? '<span style="font-size:0.6rem;opacity:0.55;margin-left:3px;" title="Fusionné animateur+parent">🔀</span>' : ''}
+                                ${action.enrichedByAf ? '<span style="font-size:0.6rem;opacity:0.5;margin-left:2px;" title="Qualité confirmée par action finale">✓af</span>' : ''}
+                            </div>
+                            <div style="font-size:0.66rem;opacity:0.4;font-family:monospace;margin-top:2px;">${dvwCode}</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+                            <span class="dvw-chip-quality" style="color:${qualColor}" title="${qualLabel}">${action.quality || '~'}</span>
+                            <button class="edit-chip-btn" title="Compléter / éditer cette action">✏️</button>
+                        </div>
+                    </div>
+                    <div class="fb-chip-actions">
+                        <button class="fb-seek-btn">▶ Vidéo</button>
+                        <button class="fb-edit-btn">✏️ Éditer</button>
+                    </div>
+                `;
+                // Bouton ✏️ (coin haut-droit) → toujours ouvrir la fiche
+                chip.querySelector('.edit-chip-btn').addEventListener('click', e => {
+                    e.stopPropagation(); openEditSheet(action, index);
+                });
+                // Mini-barre (mobile uniquement via fb-selected)
+                chip.querySelector('.fb-seek-btn').addEventListener('click', e => {
+                    e.stopPropagation(); seekFbAction(action);
+                });
+                chip.querySelector('.fb-edit-btn').addEventListener('click', e => {
+                    e.stopPropagation(); openEditSheet(action, index);
+                });
+                // Desktop : clic simple → seek ; double-clic → éditer
+                // Mobile  : tap → sélectionner + afficher mini-barre
+                const _isMobileChip = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+                if (_isMobileChip) {
+                    chip.addEventListener('click', (e) => {
+                        if (e.target.closest('.edit-chip-btn, .fb-chip-actions')) return;
+                        const wasSelected = chip.classList.contains('fb-selected');
+                        document.querySelectorAll('.dvw-action-chip.fb-selected').forEach(c => c.classList.remove('fb-selected'));
+                        if (!wasSelected) chip.classList.add('fb-selected');
+                    });
+                } else {
+                    let _fbDblTimer = null;
+                    chip.addEventListener('click', (e) => {
+                        if (e.target.closest('.edit-chip-btn, .fb-chip-actions')) return;
+                        if (_fbDblTimer) {
+                            clearTimeout(_fbDblTimer); _fbDblTimer = null;
+                            openEditSheet(action, index);
+                        } else {
+                            _fbDblTimer = setTimeout(() => {
+                                _fbDblTimer = null; seekFbAction(action);
+                            }, 260);
+                        }
+                    });
+                }
+                listEl.appendChild(chip);
+            });
+        }
+
+        // ── Fiche édition action ──
+        function openEditSheet(action, index) {
+            editSheetAction = { ...action, _listIndex: index };
+
+            // Pré-remplir les sélecteurs
+            esTeam = action.team || 'home';
+            esPlayerNum = action.playerNumber || 0;
+            esSkill = action.skill || 'S';
+            esQual  = action.quality || (action.type === 'service' ? '/' : '#');
+
+            // Récupérer un éventuel edit existant et écraser si trouvé
+            const existingEdit = fbEditsData[action.actionKey] || fbEditsData[(action.actionKey || '').replace(/[.#$/[\]]/g,'_')];
+            if (existingEdit && existingEdit.line) {
+                const rawLine = existingEdit.line;
+                // Parser la ligne DVW pour pré-remplir
+                const tc = rawLine[0];
+                esTeam = (tc === '*') ? 'home' : (tc === 'a' ? 'away' : esTeam);
+                const pn = parseInt(rawLine.substring(1,3));
+                if (!isNaN(pn) && pn >= 0) esPlayerNum = pn;
+                const sk = rawLine[3];
+                if (sk && SKILL_LABELS_ES[sk]) esSkill = sk;
+                const ql = rawLine[5];
+                if (ql && QUAL_LABELS_ES[ql]) esQual = ql;
+            }
+
+            // Pré-remplir le champ N° manuel avec le numéro déjà déterminé
+            document.getElementById('esPlayerManual').value = esPlayerNum > 0 ? esPlayerNum : '';
+
+            // Titre
+            const t1Name = lastMatchState?.team1?.name || lastMatchState?.team1?.nom || 'Domicile';
+            const t2Name = lastMatchState?.team2?.name || lastMatchState?.team2?.nom || 'Extérieur';
+            const teamName = action.team === 'home' ? t1Name : t2Name;
+            document.getElementById('editSheetTitle').textContent =
+                '✏️ S' + action.set + ' ' + action.score + ' — ' + teamName;
+
+            // Noms d'équipe dans les boutons
+            document.getElementById('es-team-home-name').textContent = t1Name.substring(0, 10);
+            document.getElementById('es-team-away-name').textContent = t2Name.substring(0, 10);
+
+            // Grille de joueurs selon l'équipe sélectionnée
+            esRebuildPlayerGrid();
+            esRefreshTeamButtons();
+            esRefreshSkillButtons();
+            esRefreshQualButtons();
+            esRefreshPlayerGrid();
+            esUpdatePreview();
+
+            document.getElementById('dvwEditSheet').classList.add('open');
+        }
+
+        function closeEditSheet() {
+            document.getElementById('dvwEditSheet').classList.remove('open');
+            editSheetAction = null;
+        }
+
+        // Sélecteurs fiche édition
+        function esSelectTeam(team) {
+            esTeam = team;
+            esPlayerNum = 0;
+            esRefreshTeamButtons();
+            esRebuildPlayerGrid();
+            esRefreshPlayerGrid();
+            esUpdatePreview();
+        }
+        function esSelectSkill(skill) {
+            esSkill = skill;
+            esRefreshSkillButtons();
+            esUpdatePreview();
+        }
+        function esSelectQual(qual) {
+            esQual = qual;
+            esRefreshQualButtons();
+            esUpdatePreview();
+        }
+        function esSelectPlayer(num) {
+            esPlayerNum = num;
+            document.getElementById('esPlayerManual').value = num > 0 ? num : '';
+            esRefreshPlayerGrid();
+            esUpdatePreview();
+        }
+        function esOnManualPlayer() {
+            const v = parseInt(document.getElementById('esPlayerManual').value || '0');
+            esPlayerNum = isNaN(v) ? 0 : v;
+            esRefreshPlayerGrid();
+            esUpdatePreview();
+        }
+
+        function esRefreshTeamButtons() {
+            document.getElementById('es-team-home').classList.toggle('active', esTeam === 'home');
+            document.getElementById('es-team-away').classList.toggle('active', esTeam === 'away');
+        }
+        function esRefreshSkillButtons() {
+            ['S','R','F','E','A','B','D'].forEach(s => {
+                const btn = document.getElementById('esSkill-' + s);
+                if (btn) btn.classList.toggle('active', s === esSkill);
+            });
+        }
+        function esRefreshQualButtons() {
+            ['#','+','!','-','/','='].forEach(q => {
+                const btn = document.getElementById('esQual-' + q);
+                if (btn) btn.classList.toggle('active', q === esQual);
+            });
+        }
+        function esRebuildPlayerGrid() {
+            const fbKey = esTeam === 'home' ? 'team1' : 'team2';
+            const grid = document.getElementById('esPlayerGrid');
+            grid.innerHTML = '';
+
+            const makeBtn = (p) => {
+                const btn = document.createElement('button');
+                const prenom = (p.nom || '').split(' ').pop() || '';
+                btn.textContent = '#' + p.numero + (prenom ? ' ' + prenom : '');
+                btn.title = (p.nom || ('#' + p.numero)) + (p.libero ? ' (Libero)' : '');
+                if (p.libero) btn.style.color = '#fb923c'; // libero en orange
+                btn.dataset.num = p.numero;
+                btn.addEventListener('click', () => esSelectPlayer(p.numero));
+                return btn;
+            };
+
+            const addSectionLabel = (text) => {
+                const d = document.createElement('div');
+                d.style.cssText = 'font-size:0.6rem;opacity:0.4;width:100%;margin:4px 0 2px;text-transform:uppercase;letter-spacing:0.5px;';
+                d.textContent = text;
+                grid.appendChild(d);
+            };
+
+            // ── Roster FDME (priorité) : terrain puis banc ──
+            if (currentFdmeData) {
+                const fdmeTeam = esTeam === 'home' ? currentFdmeData.team1 : currentFdmeData.team2;
+                const allJoueuses = fdmeTeam?.joueurs || [];
+
+                // Rotation actuelle depuis le rally de l'action en cours
+                // rotationTeam1/2 en Firebase = Firebase team1/team2 (le swap FDME est appliqué
+                // directement par rotation-engine lors du calcul, donc pas d'inversion ici)
+                let currentRotation = null;
+                if (editSheetAction?.rallyId) {
+                    const rally = fbRalliesMap[editSheetAction.rallyId];
+                    if (rally) {
+                        const rotHome = rally.rotationTeam1;
+                        const rotAway = rally.rotationTeam2;
+                        currentRotation = esTeam === 'home' ? rotHome : rotAway;
+                    }
+                }
+
+                let terrain = [], banc = [];
+                if (currentRotation && currentRotation.length === 6) {
+                    const terrainSet = new Set(currentRotation);
+                    terrain = allJoueuses.filter(j => terrainSet.has(j.numero));
+                    terrain.sort((a, b) => currentRotation.indexOf(a.numero) - currentRotation.indexOf(b.numero));
+                    banc = allJoueuses.filter(j => !terrainSet.has(j.numero));
+                } else {
+                    banc = [...allJoueuses];
+                }
+                banc.sort((a, b) => a.numero - b.numero);
+
+                if (terrain.length > 0) {
+                    addSectionLabel('⬤ Sur le terrain');
+                    terrain.forEach(p => grid.appendChild(makeBtn(p)));
+                }
+                if (banc.length > 0) {
+                    addSectionLabel(terrain.length > 0 ? '○ Remplaçantes' : 'Effectif');
+                    banc.forEach(p => grid.appendChild(makeBtn(p)));
+                }
+                if (allJoueuses.length === 0) {
+                    grid.innerHTML = '<span style="font-size:0.72rem;opacity:0.4;padding:4px;">FDME chargée — aucune joueuse extraite</span>';
+                }
+                return;
+            }
+
+            // ── Fallback : roster depuis playerActions + DVW ──
+            const roster = fbRosterCache[fbKey] || [];
+            let dvwRoster = [];
+            if (dvwData && dvwData.players) {
+                dvwRoster = dvwData.players
+                    .filter(p => esTeam === 'home' ? p.team === 'home' : p.team === 'away')
+                    .map(p => ({ numero: p.number, nom: p.name }));
+            }
+            const merged = [...roster];
+            dvwRoster.forEach(p => { if (!merged.find(r => r.numero === p.numero)) merged.push(p); });
+            merged.sort((a, b) => a.numero - b.numero);
+            if (merged.length > 0) {
+                merged.forEach(p => grid.appendChild(makeBtn(p)));
+            } else {
+                grid.innerHTML = '<span style="font-size:0.72rem;opacity:0.4;padding:4px;">Aucun joueur connu — utilisez le champ manuel</span>';
+            }
+        }
+        function esRefreshPlayerGrid() {
+            document.querySelectorAll('#esPlayerGrid button').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.num) === esPlayerNum);
+            });
+        }
+        function esUpdatePreview() {
+            const tc   = esTeam === 'home' ? '*' : 'a';
+            const num  = String(esPlayerNum > 0 ? esPlayerNum : 0).padStart(2, '0');
+            const sk   = esSkill || 'S';
+            const ql   = esQual || '/';
+            // Sous-type H pour la plupart; M pour service (optionnel)
+            const sub  = sk === 'S' ? 'M' : 'H';
+            const line = tc + num + sk + sub + ql + '~~~';
+            document.getElementById('esDvwPreview').textContent = line;
+        }
+
+        // ── Sauvegarde fiche édition → dvwEdits Firebase ──
+        async function saveEditSheet() {
+            if (!editSheetAction) return;
+            const tc   = esTeam === 'home' ? '*' : 'a';
+            const num  = String(esPlayerNum > 0 ? esPlayerNum : 0).padStart(2, '0');
+            const sk   = esSkill || 'S';
+            const ql   = esQual || '/';
+            const sub  = sk === 'S' ? 'M' : 'H';
+            // Ligne DVW complète avec champs set
+            const setNum = editSheetAction.set || 1;
+            const mainLine = tc + num + sk + sub + ql + '~~~' + ';p;;;;;;00.00.00;' + setNum + ';1;1;1;0;;';
+            const edit = { line: mainLine, before: [], after: [], ts: Date.now() };
+            const safeKey = (editSheetAction.actionKey || '').replace(/[.#$/[\]]/g, '_');
+            fbEditsData[editSheetAction.actionKey] = edit;
+            try {
+                await firebase.database()
+                    .ref('matches/' + currentMatchId + '/dvwEdits/' + safeKey)
+                    .set(edit);
+                closeEditSheet();
+                // Rafraîchir la liste pour afficher le badge "édité"
+                if (activeTab === 'saisies') renderSaisiesList();
+                else renderDvwActionsList();
+            } catch(e) {
+                alert('Erreur sauvegarde : ' + e.message);
             }
         }
 
         async function loadDvwFile(url) {
             const listEl = document.getElementById('dvwActionsList');
-            listEl.innerHTML = '<div class="dvw-loading">⏳ Chargement du fichier DVW...</div>';
+            const panelOpen = document.getElementById('dvwPanel')?.classList.contains('open');
+            if (panelOpen && activeTab === 'dvw') {
+                listEl.innerHTML = '<div class="dvw-loading">⏳ Chargement du fichier DVW...</div>';
+            }
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Erreur HTTP ' + response.status);
@@ -2284,24 +3450,41 @@
             if (!dvwData || !dvwData.setScores || dvwData.setScores.length === 0) return;
             const sets = dvwData.setScores;
 
-            // Construire le setHistory pour renderScoreParSetViewer
+            // Déterminer si DVW home (‘*’) correspond bien à team1 de Firebase
+            // Si le DVW a été créé avec l'autre équipe en home, il faut inverser
+            const dvwHomeName = (dvwData.teams?.home || '').toLowerCase().trim();
+            const fbTeam1Name = (lastMatchState?.team1?.name || lastMatchState?.team1?.nom || '').toLowerCase().trim();
+            const overlap4 = (a, b) => {
+                const n = Math.min(4, a.length, b.length);
+                return n > 0 && (a.includes(b.slice(0, n)) || b.includes(a.slice(0, n)));
+            };
+            // dvw home correspond à team1 si les noms se ressemblent (ou si on ne sait pas)
+            const dvwHomeIsTeam1Calc = !dvwHomeName || !fbTeam1Name || overlap4(dvwHomeName, fbTeam1Name);
+            dvwHomeIsTeam1 = dvwHomeIsTeam1Calc; // stocker pour la boucle de synchro
+            console.log('[DVW] home=“' + dvwHomeName + '” fbTeam1=“' + fbTeam1Name + '” dvwHomeIsTeam1=' + dvwHomeIsTeam1);
+
+            // Construire le setHistory en respectant l’ordre Firebase team1/team2
             const setHistory = sets.map(s => ({
                 setNumber: s.setNumber,
-                team1Points: s.homeScore,
-                team2Points: s.awayScore,
-                winner: s.winner === 'home' ? 'team1' : 'team2'
+                team1Points: dvwHomeIsTeam1Calc ? s.homeScore  : s.awayScore,
+                team2Points: dvwHomeIsTeam1Calc ? s.awayScore  : s.homeScore,
+                winner: (s.winner === 'home') === dvwHomeIsTeam1Calc ? 'team1' : 'team2'
             }));
 
-            const setsTeam1 = sets.filter(s => s.winner === 'home').length;
-            const setsTeam2 = sets.filter(s => s.winner === 'away').length;
+            const setsTeam1 = dvwHomeIsTeam1Calc
+                ? sets.filter(s => s.winner === 'home').length
+                : sets.filter(s => s.winner === 'away').length;
+            const setsTeam2 = dvwHomeIsTeam1Calc
+                ? sets.filter(s => s.winner === 'away').length
+                : sets.filter(s => s.winner === 'home').length;
 
-            // Afficher le score du dernier set joué dans les gros chiffres
+            // Score du dernier set dans les gros chiffres
             const lastSet = sets[sets.length - 1];
             const score = {
                 setsTeam1,
                 setsTeam2,
-                pointsTeam1: lastSet?.homeScore ?? 0,
-                pointsTeam2: lastSet?.awayScore ?? 0
+                pointsTeam1: dvwHomeIsTeam1Calc ? (lastSet?.homeScore ?? 0) : (lastSet?.awayScore ?? 0),
+                pointsTeam2: dvwHomeIsTeam1Calc ? (lastSet?.awayScore ?? 0) : (lastSet?.homeScore ?? 0)
             };
 
             dvwScoreActive = true; // bloquer l'écrasement par Firebase dès maintenant
@@ -2325,6 +3508,57 @@
                     t2El.textContent = t2.toUpperCase();
                 }
             }
+        }
+
+        // ──────────────────────────────────────────
+        // PASSEUSES + FILTRE ROTATION
+        // ──────────────────────────────────────────
+
+        function _afficherBannierePasseuses() {
+            const banner = document.getElementById('dvwPasseuseBanner');
+            if (!banner) return;
+            const t1Name = lastMatchState?.team1?.name || lastMatchState?.team1?.nom || 'Équipe 1';
+            const t2Name = lastMatchState?.team2?.name || lastMatchState?.team2?.nom || 'Équipe 2';
+            const el1 = document.getElementById('dvwPasseuseLabelT1');
+            const el2 = document.getElementById('dvwPasseuseLabelT2');
+            if (el1) el1.textContent = t1Name + ' :';
+            if (el2) el2.textContent = t2Name + ' :';
+            // Pré-remplir si déjà saisis précédemment
+            if (currentPasseuses.team1) { const i = document.getElementById('dvwPasseuseT1'); if (i) i.value = currentPasseuses.team1; }
+            if (currentPasseuses.team2) { const i = document.getElementById('dvwPasseuseT2'); if (i) i.value = currentPasseuses.team2; }
+            banner.style.display = 'block';
+        }
+
+        async function savePasseusesViewer() {
+            const t1 = parseInt(document.getElementById('dvwPasseuseT1')?.value) || 0;
+            const t2 = parseInt(document.getElementById('dvwPasseuseT2')?.value) || 0;
+            if (!t1 && !t2) { alert('Entrez au moins un numéro de passeuse.'); return; }
+            currentPasseuses = { team1: t1 || null, team2: t2 || null };
+            await firebase.database().ref('matches/' + currentMatchId + '/fdmeData/passeuses').set(currentPasseuses);
+            document.getElementById('dvwPasseuseBanner').style.display = 'none';
+            _onPasseusesLoaded();
+        }
+
+        function _onPasseusesLoaded() {
+            // Afficher le filtre Rotation
+            const rotRow = document.getElementById('dvwFilterRotationRow');
+            if (rotRow) rotRow.style.display = 'flex';
+            // Re-render si la liste est déjà affichée
+            if (activeTab === 'dvw' && dvwFilteredActions && dvwFilteredActions.length > 0) renderDvwActionsList();
+        }
+
+        // Retourne le label de rotation home pour une action DVW : 'S1'...'S6' ou 'R1'...'R6', ou null
+        function getRotationLabel(action) {
+            const setter = parseInt(currentPasseuses?.team1 || 0);
+            if (!setter) return null;
+            const key = `${action.setNumber}:${action.homeScore}:${action.awayScore}`;
+            const rotData = rotationByScoreKey[key];
+            if (!rotData || !Array.isArray(rotData.rot1) || rotData.rot1.length !== 6) return null;
+            const idx = rotData.rot1.indexOf(setter);
+            if (idx < 0) return null;
+            const zone = idx + 1; // 1-6
+            const isServing = rotData.servingTeam === 'team1';
+            return (isServing ? 'S' : 'R') + zone;
         }
 
         function populatePlayerFilter() {
@@ -2367,12 +3601,18 @@
             }
             if (skillVal) criteria.skills = [skillVal];
             if (qualityVal) criteria.qualities = [qualityVal];
+            const rotationVal = document.getElementById('dvwFilterRotation')?.value || '';
 
             dvwFilteredActions = window.dvwParserLite.filterActions(dvwData.actions, criteria);
 
             // Filtrer aussi par équipe si une joueuse spécifique est sélectionnée
             if (playerTeam) {
                 dvwFilteredActions = dvwFilteredActions.filter(a => a.team === playerTeam);
+            }
+
+            // Filtre Rotation : S1-S6 (service) ou R1-R6 (sideout) pour l'équipe home
+            if (rotationVal) {
+                dvwFilteredActions = dvwFilteredActions.filter(a => getRotationLabel(a) === rotationVal);
             }
 
             // Trier par videoSeconds pour que l'autoplay soit dans l'ordre chronologique
@@ -2422,7 +3662,9 @@
                 const hasTimestamp = videoTime !== null;
 
                 const player = parser.findPlayer(dvwData.players, action.playerNumber, action.team);
-                const playerName = player ? player.name : ('N°' + action.playerNumber);
+                const playerName = action.isGeneric
+                    ? (action.team === 'home' ? '🏠 Service' : '✈️ Service')
+                    : (player ? player.name : ('N°' + action.playerNumber));
                 const skillLabel = parser.SKILL_LABELS[action.skill] || action.skill;
                 const qualityLabel = parser.QUALITY_LABELS[action.quality] || '';
                 const qualityColor = parser.QUALITY_COLORS[action.quality] || '#fff';
@@ -2435,22 +3677,45 @@
                     ? (' — ▶ ' + formatSeconds(videoTime))
                     : '';
 
+                // Badge rotation (S1-S6 service / R1-R6 sideout) si passeuses configurées
+                const rotLabel = getRotationLabel(action);
+                const rotBadge = rotLabel
+                    ? `<span style="font-size:0.68rem;padding:2px 5px;background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:4px;color:#a5b4fc;margin-right:2px;">${rotLabel}</span>`
+                    : '';
+
                 const chip = document.createElement('div');
                 // Toutes les chips sont cliquables : seek si timestamp, sinon juste highlight
                 chip.className = 'dvw-action-chip' + (hasTimestamp ? '' : ' no-timestamp');
                 chip.dataset.index = index;
+
+                // Construire l'action au format compatible avec openEditSheet
+                const dvwAction = {
+                    skill: action.skill, quality: action.quality,
+                    team: action.team, playerNumber: action.playerNumber,
+                    set: action.setNumber, score: scoreStr,
+                    rallyId: null,
+                    actionKey: 'dvw__' + index + '__' + action.skill + '__' + action.team,
+                    dvwLine: '', type: 'dvwParsed',
+                };
+
                 chip.innerHTML = `
-                    <div class="dvw-chip-left">
+                    <div class="dvw-chip-left" style="flex:1;min-width:0;">
                         <div class="dvw-chip-context">Set ${action.setNumber} ${scoreStr ? '— ' + scoreStr : ''} ${teamIcon}${timeStr}</div>
-                        <div class="dvw-chip-main">${playerName} — ${skillLabel}${combo}</div>
+                        <div class="dvw-chip-main">${rotBadge}${playerName} — ${skillLabel}${combo}</div>
                     </div>
-                    <span class="dvw-chip-quality" style="color:${qualityColor}" title="${qualityLabel}">${action.quality}</span>
+                    <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+                        <span class="dvw-chip-quality" style="color:${qualityColor}" title="${qualityLabel}">${action.quality}</span>
+                        <button class="edit-chip-btn" title="Compléter / éditer cette action">✏️</button>
+                    </div>
                 `;
 
+                chip.querySelector('.edit-chip-btn').addEventListener('click', e => {
+                    e.stopPropagation();
+                    openEditSheet(dvwAction, index);
+                });
                 if (hasTimestamp) {
                     chip.addEventListener('click', () => seekToAction(videoTime, index));
                 } else {
-                    // Sans timestamp : clic = juste mettre en surbrillance l'action courante
                     chip.addEventListener('click', () => highlightDvwChip(index));
                 }
                 listEl.appendChild(chip);
@@ -2464,6 +3729,10 @@
                 player.playVideo();
             }
             highlightDvwChip(chipIndex);
+            // Verrouiller la synchro 3s le temps que l'utilisateur voit le score de l'action
+            dvwSyncPaused = true;
+            clearTimeout(window._dvwSyncPauseTimer);
+            window._dvwSyncPauseTimer = setTimeout(() => { dvwSyncPaused = false; }, 3000);
         }
 
         function highlightDvwChip(index) {
@@ -2482,13 +3751,30 @@
         // Utilise le score AU MOMENT de l'action (calculé par dvw-parser-lite.js via le modificateur "p")
         function updateScoreBannerFromAction(action) {
             if (!action) return;
+            // Priorité : scoreAvant Firebase (exact) via rallyId
+            if (action.rallyId && fbRalliesMap[action.rallyId]) {
+                const rally = fbRalliesMap[action.rallyId];
+                const sa = rally.scoreAvant || {};
+                updateScoreUI({
+                    pointsTeam1: sa.pointsTeam1 ?? 0,
+                    pointsTeam2: sa.pointsTeam2 ?? 0,
+                    setsTeam1:   sa.setsTeam1   ?? 0,
+                    setsTeam2:   sa.setsTeam2   ?? 0,
+                });
+                const setEl = document.getElementById('currentSetDisplay');
+                if (setEl) setEl.textContent = rally.set || action.setNumber || 1;
+                return;
+            }
+            // Fallback : score DVW (homeScore/awayScore avec mapping home/team1)
             const setEl = document.getElementById('currentSetDisplay');
             if (setEl) setEl.textContent = action.setNumber;
             if (action.homeScore !== null && action.awayScore !== null) {
                 const p1 = document.getElementById('team1Points');
                 const p2 = document.getElementById('team2Points');
-                if (p1) p1.textContent = action.homeScore;
-                if (p2) p2.textContent = action.awayScore;
+                const pt1 = dvwHomeIsTeam1 ? action.homeScore : action.awayScore;
+                const pt2 = dvwHomeIsTeam1 ? action.awayScore : action.homeScore;
+                if (p1) p1.textContent = pt1;
+                if (p2) p2.textContent = pt2;
             }
         }
 
@@ -2830,24 +4116,64 @@
             scoreboardNormal.style.display = 'flex';
         }
 
+        // Met à jour le score de la bannière directement depuis la position vidéo et les données DVW
+        // Utilise dvwOffsetSeconds (calibration replaySync) comme syncScoreToVideoPosition
+        function updateScoreFromVideoPosition(videoSec) {
+            if (!dvwData || !dvwData.actions || !dvwData.hasVideoTimestamps) return false;
+
+            // Trouver la dernière action avec un timestamp vidéo valide ≤ position courante
+            // On applique le même offset que syncScoreToVideoPosition : adjusted = vt + dvwOffsetSeconds
+            let bestAction = null;
+            let bestVS = -1;
+            for (const a of dvwData.actions) {
+                if (a.videoSeconds == null || a.videoSeconds <= 0) continue;
+                if (a.homeScore === null || a.homeScore === undefined) continue;
+                // videoSeconds already contains the offset (baked in by export-dvw.js: offset + relSec)
+                if (a.videoSeconds <= videoSec && a.videoSeconds > bestVS) {
+                    bestVS = a.videoSeconds;
+                    bestAction = a;
+                }
+            }
+            if (!bestAction) return false;
+
+            // Sets gagnés dans les sets terminés AVANT le set actuel de l'action
+            const completedSets = (dvwData.setScores || []).filter(s => s.setNumber < bestAction.setNumber);
+            const homeWins = completedSets.filter(s => s.winner === 'home').length;
+            const awayWins = completedSets.filter(s => s.winner === 'away').length;
+
+            const score = {
+                pointsTeam1: dvwHomeIsTeam1 ? (bestAction.homeScore ?? 0) : (bestAction.awayScore ?? 0),
+                pointsTeam2: dvwHomeIsTeam1 ? (bestAction.awayScore ?? 0) : (bestAction.homeScore ?? 0),
+                setsTeam1:   dvwHomeIsTeam1 ? homeWins : awayWins,
+                setsTeam2:   dvwHomeIsTeam1 ? awayWins : homeWins,
+            };
+            updateScoreUI(score);
+
+            const setEl = document.getElementById('currentSetDisplay');
+            if (setEl) setEl.textContent = bestAction.setNumber;
+            return true;
+        }
+
         function startSyncLoop() {
             if (syncInterval) clearInterval(syncInterval);
             console.log('🕒 Boucle de synchro active sur le segment à t=', activeStartTimestamp);
 
             syncInterval = setInterval(() => {
+                // Pause uniquement si l'utilisateur a manuellement verrouillé (clic action)
+                if (dvwSyncPaused) return;
+
                 if (!player || typeof player.getCurrentTime !== 'function') return;
 
+                // Si DVW chargé : la synchro score est gérée par dvwVideoSyncInterval (500ms)
+                // Ici on ne gère que le fallback Firebase scoreHistory (matchs sans DVW)
+                if (dvwLoaded) return;
+
                 const currentVideoTimeMs = player.getCurrentTime() * 1000;
-                
-                // Récupérer le décalage manuel (admin)
                 let offsetMs = 0;
-                if (lastMatchState && lastMatchState.videoSync && lastMatchState.videoSync.offsetSeconds) {
+                if (lastMatchState?.videoSync?.offsetSeconds) {
                     offsetMs = lastMatchState.videoSync.offsetSeconds * 1000;
                 }
-
-                // Appliquer l'offset au timestamp actuel calculé
                 const matchCurrentTimestamp = activeStartTimestamp + currentVideoTimeMs + offsetMs;
-
                 let activeScore = null;
                 for (const event of scoreHistory) {
                     if (event.timestamp <= matchCurrentTimestamp) {
@@ -2857,11 +4183,10 @@
                     }
                 }
 
+                // N'afficher que si on a trouvé un score valide
+                // (ne pas réinitialiser à 0-0 quand on est avant le 1er événement)
                 if (activeScore) {
                     updateScoreUI(activeScore);
-                } else if (scoreHistory.length > 0) {
-                    // Si on est avant le premier événement de l'historique, on affiche le score initial
-                    updateScoreUI(scoreHistory[0].score);
                 }
             }, 1000);
         }
@@ -3175,7 +4500,7 @@
             const allRallies = Array.isArray(ralliesObj) ? ralliesObj : Object.values(ralliesObj);
             // Filtrer par set si vue par set
             const rallies = (targetSet && !isTotal)
-                ? allRallies.filter(r => r && r.set === targetSet)
+                ? allRallies.filter(r => r && Number(r.set) === Number(targetSet))
                 : allRallies;
 
             const stats = {
@@ -3372,6 +4697,8 @@
             let panStartTx = null, panStartTy = null;
             let tapStartX  = null, tapStartY  = null, tapStartT = null; // détection tap
             let lastTapT   = 0; // pour double-tap
+            let lastTouchInteractionTs = 0; // évite le double trigger touch + click
+            let lastMouseMoveTs = 0;
 
             function applyTransform() {
                 const t = getTarget();
@@ -3396,6 +4723,7 @@
             catcher.parentNode.replaceChild(el, catcher);
 
             el.addEventListener('touchstart', (e) => {
+                lastTouchInteractionTs = Date.now();
                 if (e.touches.length === 2) {
                     e.preventDefault();
                     lastDist  = dist(e.touches);
@@ -3438,6 +4766,7 @@
             }, { passive: false });
 
             el.addEventListener('touchend', (e) => {
+                lastTouchInteractionTs = Date.now();
                 if (e.touches.length < 2) lastDist = null;
                 if (e.touches.length === 0) {
                     panStartX = null;
@@ -3471,6 +4800,28 @@
                     tapStartT = null;
                 }
                 // ⚠️ PAS de reset automatique ici — seul le double-tap reset le zoom
+            });
+
+            // Desktop / pointeur: réaffiche la barre au mouvement et au clic
+            el.addEventListener('mousemove', () => {
+                const now = Date.now();
+                if (now - lastMouseMoveTs > 120) {
+                    vcbShow();
+                    lastMouseMoveTs = now;
+                }
+            });
+
+            el.addEventListener('click', () => {
+                // Ignore le click synthétique juste après un touch
+                if (Date.now() - lastTouchInteractionTs < 700) return;
+                vcbShow();
+                if (player && typeof player.getPlayerState === 'function') {
+                    try {
+                        const ps = player.getPlayerState();
+                        if (ps === YT.PlayerState.PLAYING) player.pauseVideo();
+                        else player.playVideo();
+                    } catch(err) {}
+                }
             });
         }
         // ─────────────────────────────────────────────────────────────────────

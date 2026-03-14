@@ -179,10 +179,11 @@ function parseScoutLine(line) {
     else if (teamCode === 'a') team = 'away';
     else return null; // ligne de marqueur ou vide
 
-    // Numéro de joueur : chars 1-2 (toujours 2 chiffres, ex: "09", "13")
+    // Numéro de joueur : chars 1-2 (toujours 2 chiffres, ex: "09", "13", "00")
     const playerStr = line.substring(1, 3);
     const playerNumber = parseInt(playerStr);
-    if (isNaN(playerNumber) || playerNumber <= 0) return null;
+    // playerNumber = 0 est autorisé : service exporté sans serveur connu (*00SM/~~~)
+    if (isNaN(playerNumber) || playerNumber < 0) return null;
 
     // Skill : char 3
     const skill = line[3];
@@ -202,10 +203,13 @@ function parseScoutLine(line) {
 
     // Métadonnées : split par ";" → champs indexés
     const fields = line.split(';');
-    // f[8] = numéro de set
-    const setNumber = parseInt(fields[8]) || 1;
-    // f[12] = secondes vidéo directes enregistrées par DataVolley (= position exacte dans la vidéo)
-    const videoSecondsStr = (fields[12] || '').trim();
+    // Détection du format :
+    // - Nouveau format (corrigé) : f[7]=timestamp HH.MM.SS, f[8]=set, f[12]=videoSeconds
+    // - Ancien format (bug export) : f[8]=timestamp, f[9]=set, f[13]=videoSeconds
+    // Heuristique : si f[8] contient un point, c'est un timestamp → ancien format
+    const isOldFormat = (fields[8] || '').includes('.');
+    const setNumber = isOldFormat ? (parseInt(fields[9]) || 1) : (parseInt(fields[8]) || 1);
+    const videoSecondsStr = isOldFormat ? (fields[13] || '').trim() : (fields[12] || '').trim();
     const videoSeconds = videoSecondsStr ? parseInt(videoSecondsStr, 10) : null;
 
     // Modificateur "p" dans f[1-6] = point marqué sur cette action
@@ -218,6 +222,7 @@ function parseScoutLine(line) {
     return {
         team,
         playerNumber,
+        isGeneric: playerNumber === 0, // service sans numéro de serveur connu
         skill,
         quality,
         comboCode,

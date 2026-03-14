@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📹 Guide Filmeur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --dark: #1F2937;
+            --gray: #6B7280;
+            --light-gray: #F3F4F6;
+            --youtube: #FF0000;
+            --facebook: #1877F2;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 16px;
+            color: var(--dark);
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header .emoji { font-size: 3rem; display: block; margin-bottom: 8px; }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* ── Match info card ── */
+        .match-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px 18px;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .match-card .equipes {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .match-card .details {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+
+        /* ── Section card ── */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--dark);
+        }
+
+        /* ── Boutons plateforme ── */
+        .platform-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-platform {
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 20px 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-platform .icon { font-size: 2.2rem; }
+
+        .btn-youtube {
+            background: #FFF0F0;
+            color: var(--youtube);
+            border-color: #FFCDD2;
+        }
+
+        .btn-youtube:hover, .btn-youtube.selected {
+            background: var(--youtube);
+            color: white;
+            border-color: var(--youtube);
+        }
+
+        .btn-facebook {
+            background: #F0F4FF;
+            color: var(--facebook);
+            border-color: #BBDEFB;
+        }
+
+        .btn-facebook:hover, .btn-facebook.selected {
+            background: var(--facebook);
+            color: white;
+            border-color: var(--facebook);
+        }
+
+        /* ── Boutons sous-option Facebook ── */
+        .option-btns {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn-option {
+            border: 2px solid var(--light-gray);
+            border-radius: 14px;
+            padding: 16px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--light-gray);
+            color: var(--dark);
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .btn-option .opt-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .btn-option .opt-desc { font-size: 0.8rem; color: var(--gray); font-weight: 400; }
+
+        .btn-option:hover, .btn-option.selected {
+            border-color: var(--primary);
+            background: #EEF2FF;
+            color: var(--primary);
+        }
+
+        .btn-option.selected .opt-desc { color: var(--primary); opacity: 0.75; }
+
+        /* ── Guide étapes ── */
+        .guide-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .step-num {
+            min-width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-youtube .step-num { background: var(--youtube); }
+        .step-facebook .step-num { background: var(--facebook); }
+
+        .step-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--dark);
+        }
+
+        .step-text strong { font-weight: 700; }
+        .step-text .tag {
+            display: inline-block;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1px 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 2px 0;
+        }
+
+        /* ── Alerte ── */
+        .alert {
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .alert-warning {
+            background: #FFFBEB;
+            border: 1px solid #FCD34D;
+            color: #92400E;
+        }
+
+        .alert-info {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            color: #1E40AF;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            color: #065F46;
+        }
+
+        /* ── Champ URL ── */
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus { border-color: var(--primary); }
+
+        /* ── Bouton sauvegarder ── */
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: var(--primary);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-save:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-save.youtube { background: var(--youtube); }
+        .btn-save.youtube:hover { background: #CC0000; }
+
+        .btn-save.facebook { background: var(--facebook); }
+        .btn-save.facebook:hover { background: #166FE5; }
+
+        /* ── Section cachée ── */
+        .section { display: none; }
+        .section.visible { display: block; }
+
+        /* ── Confirmation ── */
+        .confirmation {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .confirmation .big-check { font-size: 4rem; margin-bottom: 10px; }
+        .confirmation h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--success); }
+        .confirmation p { font-size: 0.9rem; color: var(--gray); }
+
+        /* ── Séparateur ── */
+        .ou {
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        /* ── Profil Facebook animateur ── */
+        .info-animateur {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .info-animateur p { font-size: 0.88rem; color: #1E40AF; line-height: 1.5; }
+
+        /* ── Loading ── */
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card { animation: fadeInUp 0.4s ease; }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <span class="emoji">📹</span>
+        <h1>Guide Filmeur</h1>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Chargement du match...</p>
+    </div>
+
+    <!-- Contenu principal (caché pendant le chargement) -->
+    <div id="mainContent" style="display:none;">
+
+        <!-- Info match -->
+        <div class="match-card" id="matchCard">
+            <div class="equipes" id="matchEquipes">— vs —</div>
+            <div class="details" id="matchDetails"></div>
+        </div>
+
+        <!-- ÉTAPE 1 : Choix de la plateforme -->
+        <div class="card section visible" id="step1">
+            <h2>📱 Tu filmes avec quelle plateforme ?</h2>
+            <div class="platform-btns">
+                <button class="btn-platform btn-youtube" onclick="choisirPlateforme('youtube')">
+                    <span class="icon">▶️</span>
+                    YouTube
+                </button>
+                <button class="btn-platform btn-facebook" onclick="choisirPlateforme('facebook')">
+                    <span class="icon">👍</span>
+                    Facebook
+                </button>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 2A : YouTube -->
+        <div class="card section" id="stepYoutube">
+            <h2>▶️ Comment filmer avec YouTube</h2>
+
+            <div class="alert alert-warning">
+                ⚠️ <span><strong>Prérequis :</strong> ta chaîne YouTube doit avoir au moins <strong>50 abonnés</strong> pour diffuser en direct depuis ton téléphone.</span>
+            </div>
+
+            <p style="font-size:0.9rem; font-weight:600; color:var(--gray); margin-bottom:12px;">
+                Suis ces étapes <strong>avant le match</strong> pour obtenir le lien à l'avance :
+            </p>
+
+            <div class="guide-steps">
+                <div class="step step-youtube">
+                    <div class="step-num">1</div>
+                    <div class="step-text">
+                        Ouvre l'app <strong>YouTube Studio</strong> sur ton téléphone
+                        <br><span style="font-size:0.8rem; color:var(--gray);">(Gratuit, à télécharger si besoin)</span>
+                    </div>
+                </div>
+                <div class="step step-youtube">
+                    <div class="step-num">2</div>
+                    <div class="step-text">
+                        Appuie sur <span class="tag">✏️ Créer</span> puis <span class="tag">▶ Aller en direct</span>
+                    </div>
+                </div>
+                <div class="step step-youtube">
+                    <div class="step-num">3</div>
+                    <div class="step-text">
+                        Avant d'appuyer sur "Démarrer", sélectionne <span class="tag">📅 Planifier</span> et entre l'heure du match
+                    </div>
+                </div>
+                <div class="step step-youtube">
+                    <div class="step-num">4</div>
+                    <div class="step-text">
+                        YouTube génère <strong>immédiatement une URL</strong> → appuie sur <span class="tag">Partager</span> puis <span class="tag">Copier le lien</span>
+                    </div>
+                </div>
+                <div class="step step-youtube">
+                    <div class="step-num">5</div>
+                    <div class="step-text">
+                        <strong>Colle ce lien ci-dessous</strong> et sauvegarde. Le jour du match, démarre ton live planifié depuis la notification YouTube.
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Lien YouTube du live :</label>
+                <input type="url" id="urlYoutube" placeholder="https://youtube.com/live/..." />
+            </div>
+
+            <button class="btn-save youtube" onclick="sauvegarderUrl('youtube')">
+                ✅ Sauvegarder le lien YouTube
+            </button>
+        </div>
+
+        <!-- ÉTAPE 2B : Facebook — choix sous-option -->
+        <div class="card section" id="stepFacebook">
+            <h2>👍 Comment filmes-tu sur Facebook ?</h2>
+            <div class="option-btns">
+                <button class="btn-option" onclick="choisirOptionFacebook('programme')">
+                    <div class="opt-title">📅 Je programme mon live à l'avance</div>
+                    <div class="opt-desc">Tu obtiens le lien avant le match — solution recommandée</div>
+                </button>
+                <div class="ou">— ou —</div>
+                <button class="btn-option" onclick="choisirOptionFacebook('animateur')">
+                    <div class="opt-title">👤 L'animateur récupère le lien</div>
+                    <div class="opt-desc">Il ira sur ton profil Facebook dès que ton live démarre</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ÉTAPE 3A : Facebook programmé -->
+        <div class="card section" id="stepFbProgramme">
+            <h2>📅 Programmer ton live Facebook</h2>
+
+            <p style="font-size:0.9rem; font-weight:600; color:var(--gray); margin-bottom:12px;">
+                Fais ça depuis l'app Facebook, <strong>avant le match</strong> :
+            </p>
+
+            <div class="guide-steps">
+                <div class="step step-facebook">
+                    <div class="step-num">1</div>
+                    <div class="step-text">
+                        Ouvre <strong>l'app Facebook</strong> et appuie sur <span class="tag">+ Créer</span>
+                    </div>
+                </div>
+                <div class="step step-facebook">
+                    <div class="step-num">2</div>
+                    <div class="step-text">
+                        Sélectionne <span class="tag">🎥 Vidéo en direct</span>
+                    </div>
+                </div>
+                <div class="step step-facebook">
+                    <div class="step-num">3</div>
+                    <div class="step-text">
+                        <strong>AVANT</strong> d'appuyer sur "Démarrer", cherche l'option <span class="tag">📅 Programmer</span> et entre l'heure du match
+                    </div>
+                </div>
+                <div class="step step-facebook">
+                    <div class="step-num">4</div>
+                    <div class="step-text">
+                        Facebook génère <strong>immédiatement un lien de partage</strong> → appuie sur <span class="tag">Copier le lien</span>
+                    </div>
+                </div>
+                <div class="step step-facebook">
+                    <div class="step-num">5</div>
+                    <div class="step-text">
+                        <strong>Colle ce lien ci-dessous</strong>. Le jour du match, tu démarreras le live programmé depuis la notification Facebook.
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Lien Facebook du live :</label>
+                <input type="url" id="urlFacebook" placeholder="https://www.facebook.com/..." />
+            </div>
+
+            <button class="btn-save facebook" onclick="sauvegarderUrl('facebook')">
+                ✅ Sauvegarder le lien Facebook
+            </button>
+        </div>
+
+        <!-- ÉTAPE 3B : Animateur récupère le lien -->
+        <div class="card section" id="stepFbAnimateur">
+            <h2>👤 L'animateur récupère le lien</h2>
+
+            <div class="info-animateur">
+                <p>
+                    💡 Dès que tu démarres ton live Facebook, <strong>l'animateur du match ira sur ton profil</strong> pour copier le lien et l'ajouter dans l'interface.
+                </p>
+            </div>
+
+            <div class="alert alert-warning" style="margin-bottom:16px;">
+                ⚠️ <span>Pour que ça fonctionne, ton profil Facebook ou ton live doit être <strong>public</strong>, ou l'animateur doit être ton ami sur Facebook.</span>
+            </div>
+
+            <div class="input-group">
+                <label>Ton nom ou ton URL de profil Facebook :</label>
+                <input type="text" id="profilFacebook" placeholder="ex: Marie Dupont ou facebook.com/marie.dupont" />
+            </div>
+
+            <button class="btn-save facebook" onclick="sauvegarderProfilAnimateur()">
+                ✅ Confirmer — L'animateur s'en charge
+            </button>
+        </div>
+
+        <!-- CONFIRMATION -->
+        <div class="card section" id="stepConfirmation">
+            <div class="confirmation">
+                <div class="big-check">✅</div>
+                <h3 id="confirmTitre">Lien sauvegardé !</h3>
+                <p id="confirmMessage">Le lien vidéo a été ajouté au match. Les spectateurs pourront regarder en direct.</p>
+
+                <div class="alert alert-success" style="margin-top:16px; text-align:left;">
+                    🎬 <span id="confirmDetails"></span>
+                </div>
+
+                <button class="btn-save" style="margin-top:20px; background:var(--gray);" onclick="modifierLien()">
+                    ✏️ Modifier le lien
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const matchId = params.get('match');
+        let matchData = null;
+        let plateformeChoisie = null;
+        let optionFbChoisie = null;
+
+        // ── Chargement match ──────────────────────────────────────────
+        async function chargerMatch() {
+            if (!matchId) {
+                document.getElementById('loading').innerHTML =
+                    '<p style="color:white;">❌ Lien invalide — aucun match spécifié.</p>';
+                return;
+            }
+
+            try {
+                const snap = await firebase.database().ref(`matches/${matchId}`).once('value');
+                matchData = snap.val();
+
+                if (!matchData) {
+                    document.getElementById('loading').innerHTML =
+                        '<p style="color:white;">❌ Match introuvable.</p>';
+                    return;
+                }
+
+                // Afficher infos du match
+                const eq1 = (matchData.team1 && matchData.team1.name) || 'Équipe 1';
+                const eq2 = (matchData.team2 && matchData.team2.name) || 'Équipe 2';
+                document.getElementById('matchEquipes').textContent = `${eq1} vs ${eq2}`;
+
+                const details = [];
+                if (matchData.date) details.push(formatDate(matchData.date));
+                if (matchData.time) details.push(matchData.time);
+                document.getElementById('matchDetails').textContent = details.join(' à ');
+
+                // Si un lien existe déjà, afficher la confirmation
+                if (matchData.youtubeUrl || matchData.filmeurInfo) {
+                    afficherConfirmationExistante();
+                }
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+
+            } catch (e) {
+                document.getElementById('loading').innerHTML =
+                    `<p style="color:white;">❌ Erreur de chargement : ${e.message}</p>`;
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long' });
+        }
+
+        // ── Wizard ────────────────────────────────────────────────────
+        function masquerTout() {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+        }
+
+        function afficher(id) {
+            masquerTout();
+            document.getElementById(id).classList.add('visible');
+        }
+
+        function choisirPlateforme(plateforme) {
+            plateformeChoisie = plateforme;
+            document.querySelectorAll('.btn-platform').forEach(b => b.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            setTimeout(() => {
+                if (plateforme === 'youtube') {
+                    afficher('stepYoutube');
+                } else {
+                    afficher('stepFacebook');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 200);
+        }
+
+        function choisirOptionFacebook(option) {
+            optionFbChoisie = option;
+            document.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            setTimeout(() => {
+                if (option === 'programme') {
+                    afficher('stepFbProgramme');
+                } else {
+                    afficher('stepFbAnimateur');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 200);
+        }
+
+        // ── Sauvegarde URL ────────────────────────────────────────────
+        async function sauvegarderUrl(source) {
+            const inputId = source === 'youtube' ? 'urlYoutube' : 'urlFacebook';
+            const url = document.getElementById(inputId).value.trim();
+
+            if (!url) {
+                alert('❌ Veuillez coller le lien du live avant de sauvegarder.');
+                return;
+            }
+
+            if (!url.startsWith('http')) {
+                alert('❌ Le lien doit commencer par "https://..."');
+                return;
+            }
+
+            const btn = event.currentTarget;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sauvegarde...';
+
+            try {
+                await firebase.database().ref(`matches/${matchId}`).update({
+                    youtubeUrl: url,
+                    videoSource: source,
+                    filmeurInfo: { option: 'programme', plateforme: source }
+                });
+
+                afficherConfirmation(
+                    'Lien sauvegardé !',
+                    'Le lien vidéo a bien été enregistré. Les spectateurs pourront regarder le match en direct.',
+                    `Plateforme : ${source === 'youtube' ? 'YouTube' : 'Facebook'} · Lien programmé à l'avance ✓`
+                );
+
+            } catch (e) {
+                alert(`❌ Erreur : ${e.message}`);
+                btn.disabled = false;
+                btn.textContent = source === 'youtube' ? '✅ Sauvegarder le lien YouTube' : '✅ Sauvegarder le lien Facebook';
+            }
+        }
+
+        // ── Sauvegarde profil animateur ───────────────────────────────
+        async function sauvegarderProfilAnimateur() {
+            const profil = document.getElementById('profilFacebook').value.trim();
+
+            if (!profil) {
+                alert('❌ Entre ton nom ou profil Facebook pour que l\'animateur puisse te trouver.');
+                return;
+            }
+
+            const btn = event.currentTarget;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sauvegarde...';
+
+            try {
+                await firebase.database().ref(`matches/${matchId}`).update({
+                    filmeurInfo: { option: 'animateur', facebookProfile: profil }
+                });
+
+                afficherConfirmation(
+                    'Confirmé !',
+                    'L\'animateur du match a été informé. Il récupèrera le lien sur ton profil Facebook dès que tu démarreras ton live.',
+                    `Profil Facebook : ${profil}`
+                );
+
+            } catch (e) {
+                alert(`❌ Erreur : ${e.message}`);
+                btn.disabled = false;
+                btn.textContent = '✅ Confirmer — L\'animateur s\'en charge';
+            }
+        }
+
+        // ── Confirmation ──────────────────────────────────────────────
+        function afficherConfirmation(titre, message, details) {
+            document.getElementById('confirmTitre').textContent = titre;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmDetails').textContent = details;
+            afficher('stepConfirmation');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function afficherConfirmationExistante() {
+            let titre = 'Lien déjà enregistré';
+            let message = '';
+            let details = '';
+
+            if (matchData.youtubeUrl) {
+                const source = matchData.videoSource || 'vidéo';
+                message = 'Un lien vidéo est déjà enregistré pour ce match.';
+                details = `Lien ${source} enregistré · Tu peux le modifier si besoin`;
+            } else if (matchData.filmeurInfo?.option === 'animateur') {
+                titre = 'Animateur en charge du lien';
+                message = 'L\'animateur récupèrera le lien sur ton profil Facebook.';
+                details = `Profil : ${matchData.filmeurInfo.facebookProfile || 'Non précisé'}`;
+            }
+
+            document.getElementById('confirmTitre').textContent = titre;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmDetails').textContent = details;
+
+            // Afficher d'abord step1, puis la confirmation par-dessus
+            document.getElementById('stepConfirmation').classList.add('visible');
+        }
+
+        function modifierLien() {
+            masquerTout();
+            document.getElementById('step1').classList.add('visible');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ── Init ──────────────────────────────────────────────────────
+        chargerMatch();
+    </script>
+</body>
+</html>

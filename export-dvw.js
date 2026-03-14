@@ -24,12 +24,12 @@ const exportDvw = {
     // Mapping skills UI → codes DVW
     SKILL_DVW: {
         'service': 'S', 'reception': 'R', 'defense': 'D',
-        'attaque': 'A', 'passe': 'E', 'contre': 'B',
+        'attaque': 'A', 'passe': 'E', 'contre': 'B', 'relance': 'F',
         // Codes Level 1bis directs (déjà en DVW)
         'S': 'S', 'A': 'A', 'B': 'B', 'R': 'R', 'F': 'F', 'E': 'E', 'D': 'D',
     },
 
-    SKILL_LABEL:   { S:'Service', A:'Attaque', B:'Bloc', R:'Réception', E:'Passe', D:'Défense', F:'Balle libre' },
+    SKILL_LABEL:   { S:'Service', A:'Attaque', B:'Bloc', R:'Réception', E:'Passe', D:'Défense', F:'Relance' },
     QUALITY_LABEL: { '#':'Kill/Ace', '+':'Positif', '!':'Neutre', '-':'Négatif', '/':'Bloqué', '=':'Faute' },
 
     // ID de l'élément de statut — mis à jour par l'appelant (admin-matches.html)
@@ -53,10 +53,12 @@ const exportDvw = {
             const match = await dbService.getMatch(matchId);
             if (!match) throw new Error('Match introuvable : ' + matchId);
 
-            const [ralliesSnap, actionsSnap, syncSnap] = await Promise.all([
+            const [ralliesSnap, actionsSnap, syncSnap, editsSnap, fdmeSnap] = await Promise.all([
                 firebase.database().ref('matches/' + matchId + '/rallies').once('value'),
                 firebase.database().ref('matches/' + matchId + '/playerActions').once('value'),
                 firebase.database().ref('matches/' + matchId + '/videoSync').once('value'),
+                firebase.database().ref('matches/' + matchId + '/dvwEdits').once('value'),
+                firebase.database().ref('matches/' + matchId + '/fdmeData').once('value'),
             ]);
 
             const rallies = Object.values(ralliesSnap.val() || {})
@@ -64,6 +66,8 @@ const exportDvw = {
             const playerActions = Object.values(actionsSnap.val() || {})
                 .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
             const videoOffset = syncSnap.val()?.offsetSeconds || 0;
+            const dvwEdits    = editsSnap.val() || {};
+            const fdmeData    = fdmeSnap.val() || {};
 
             this._afficherStatut('🔍 Analyse et fusion des données…');
 
@@ -75,9 +79,9 @@ const exportDvw = {
 
             if (this._conflitsPending.length > 0) {
                 // Demander à l'animateur de trancher
-                this._afficherModalConflits(match, rallies, actionsAttachees, videoOffset, matchId);
+                this._afficherModalConflits(match, rallies, actionsAttachees, videoOffset, matchId, dvwEdits, fdmeData);
             } else {
-                await this._genererEtTelecharger(match, rallies, actionsAttachees, videoOffset);
+                await this._genererEtTelecharger(match, rallies, actionsAttachees, videoOffset, dvwEdits, fdmeData);
             }
 
         } catch (err) {
@@ -145,7 +149,7 @@ const exportDvw = {
     // -------------------------------------------------------
     // 3. MODAL DE RÉSOLUTION — L'animateur tranche
     // -------------------------------------------------------
-    _afficherModalConflits(match, rallies, playerActions, videoOffset, matchId) {
+    _afficherModalConflits(match, rallies, playerActions, videoOffset, matchId, dvwEdits, fdmeData) {
         let modal = document.getElementById('dvwConflitModal');
         if (modal) modal.remove();
         modal = document.createElement('div');
@@ -200,7 +204,7 @@ const exportDvw = {
                 </div>
             </div>`;
 
-        this._modalData = { match, rallies, playerActions, videoOffset };
+        this._modalData = { match, rallies, playerActions, videoOffset, dvwEdits: dvwEdits || {}, fdmeData: fdmeData || {} };
         this._conflitsResolus = {};
     },
 
@@ -237,8 +241,8 @@ const exportDvw = {
         }
         this._fermerModalConflits();
         if (!this._modalData) return;
-        const { match, rallies, playerActions, videoOffset } = this._modalData;
-        await this._genererEtTelecharger(match, rallies, playerActions, videoOffset);
+        const { match, rallies, playerActions, videoOffset, dvwEdits, fdmeData } = this._modalData;
+        await this._genererEtTelecharger(match, rallies, playerActions, videoOffset, dvwEdits, fdmeData);
     },
 
     _fermerModalConflits() {
@@ -249,10 +253,10 @@ const exportDvw = {
     // -------------------------------------------------------
     // 4. GÉNÉRATION ET TÉLÉCHARGEMENT
     // -------------------------------------------------------
-    async _genererEtTelecharger(match, rallies, playerActions, videoOffset) {
+    async _genererEtTelecharger(match, rallies, playerActions, videoOffset, dvwEdits, fdmeData) {
         this._afficherStatut('⚙️ Génération du fichier DVW…');
         try {
-            const contenu = this._genererDvw(match, rallies, playerActions, videoOffset);
+            const contenu = this._genererDvw(match, rallies, playerActions, videoOffset, dvwEdits, fdmeData || {});
             this._telecharger(contenu, match);
             this._afficherStatut('✅ Export DVW réussi !', 'succes');
         } catch (err) {
@@ -261,7 +265,7 @@ const exportDvw = {
         }
     },
 
-    _genererDvw(match, rallies, playerActions, videoOffset) {
+    _genererDvw(match, rallies, playerActions, videoOffset, dvwEdits, fdmeData) {
         // ── Reconstruire la liste complète des joueuses ──
         const joueusesMap = { team1: {}, team2: {} };
         (Array.isArray(match.joueuses) ? match.joueuses : Object.values(match.joueuses || {}))
@@ -300,6 +304,17 @@ const exportDvw = {
         const team1Code = team1Nom.replace(/[^A-Z0-9]/g, '').substring(0, 3) || 'T1';
         const team2Code = team2Nom.replace(/[^A-Z0-9]/g, '').substring(0, 3) || 'T2';
 
+        // ── Rotations de départ depuis FDME (positions des joueuses par set) ──
+        // fdmeData.fdmeSwapped=true → team1/team2 FDME inversées par rapport à Firebase
+        const rotDepart = fdmeData.rotationsDepart || {};
+        const swapped   = !!fdmeData.fdmeSwapped;
+
+        // ── Numéros de passeuses → rôles 5-1 dans [3PLAYERS] ──
+        // fdmeData.passeuses = { team1: N, team2: N } (côté FDME, avant swap)
+        const passeuses   = fdmeData.passeuses || {};
+        const setterNumT1 = swapped ? (passeuses.team2 || 0) : (passeuses.team1 || 0);
+        const setterNumT2 = swapped ? (passeuses.team1 || 0) : (passeuses.team2 || 0);
+
         const sections = [
             this._sectionDataVolleyscout(),
             this._sectionMatch(match, team1Nom, team2Nom),
@@ -307,14 +322,15 @@ const exportDvw = {
             '[3MORE]\r\n;',
             '[3COMMENTS]\r\n',
             this._sectionSet(match, rallies),
-            this._sectionPlayers(joueusesT1, 'H', playerIndex, 'team1'),
-            this._sectionPlayers(joueusesT2, 'V', playerIndex, 'team2'),
+            this._sectionPlayers(joueusesT1, 'H', playerIndex, 'team1', rotDepart, swapped ? 'team2' : 'team1', setterNumT1),
+            this._sectionPlayers(joueusesT2, 'V', playerIndex, 'team2', rotDepart, swapped ? 'team1' : 'team2', setterNumT2),
             '[3ATTACKCOMBINATION]\r\n',
             '[3SETTERCALL]\r\n',
             '[3WINNINGSYMBOLS]\r\n',
             '[3RESERVE]\r\n',
             this._sectionVideo(match),
-            this._sectionScout(match, rallies, playerActions, calcVS),
+            this._sectionRotation(rallies),
+            this._sectionScout(match, rallies, playerActions, calcVS, dvwEdits || {}, rotDepart, swapped),
         ];
         return sections.join('\r\n') + '\r\n';
     },
@@ -371,9 +387,33 @@ const exportDvw = {
         return `[3VIDEO]\r\nCamera0=${match.youtubeUrl || ''}`;
     },
 
-    _sectionPlayers(joueuses, side, playerIndex, teamKey) {
-        const teamNum = side === 'H' ? 0 : 1;
-        const lines   = [`[3PLAYERS-${side}]`];
+    // rotDepart = fdmeData.rotationsDepart, fdmeTeamKey = 'team1'/'team2' côté FDME de cette équipe
+    // setterNum = numéro de la passeuse (0 = inconnu) → calcule les rôles 5-1
+    _sectionPlayers(joueuses, side, playerIndex, teamKey, rotDepart, fdmeTeamKey, setterNum) {
+        const teamNum   = side === 'H' ? 0 : 1;
+        const lines     = [`[3PLAYERS-${side}]`];
+        rotDepart       = rotDepart || {};
+        fdmeTeamKey     = fdmeTeamKey || teamKey;
+        setterNum       = parseInt(setterNum) || 0;
+
+        // Rotation du set 1 pour calculer les rôles 5-1 (dist relative à la passeuse)
+        const rot1 = rotDepart['set1']?.[fdmeTeamKey] || [];
+        const setterZoneIdx = setterNum ? rot1.indexOf(setterNum) : -1; // -1 si inconnue
+
+        // Rôle DVW : 1=Libero, 2=Ailière, 3=Opposée, 4=Centrale, 5=Passeuse
+        const dvwRole = (playerNum, isLibero) => {
+            if (isLibero) return 1;
+            if (!setterNum || setterZoneIdx < 0) return 2; // pas d'info passeuse
+            if (playerNum == setterNum) return 5;
+            const playerZoneIdx = rot1.indexOf(playerNum);
+            if (playerZoneIdx < 0) return 2; // joueuse non dans rot1
+            const dist = (playerZoneIdx - setterZoneIdx + 6) % 6;
+            // Système 5-1 : passeuse(0), ailière(1), centrale(2), opposée(3), centrale(4+1=5→4), ailière(4)
+            if (dist === 3) return 3; // opposée (diagonale de la passeuse)
+            if (dist === 2 || dist === 4) return 4; // centrales (zones intercalées)
+            return 2; // ailières (dist 1 et 5, adjacentes à passeuse/opposée)
+        };
+
         joueuses.forEach((j, i) => {
             const num    = String(j.numero || 0).padStart(2, '0');
             const gIdx   = playerIndex[`${teamKey}_${j.numero}`] || (i + 1);
@@ -382,8 +422,23 @@ const exportDvw = {
             const prenom = parts.slice(0, -1).join(' ') || '';
             const abbr   = `${nom.substring(0,3)}-${prenom.substring(0,3)}`;
             const pos    = j.libero ? 'L' : '';
-            const role   = j.libero ? 1 : 2;
-            lines.push(`${teamNum};${num};${gIdx};*;*;*;;;${abbr};${nom};${prenom};;${pos};${role};False;;;00000000;00000000;;;;`);
+            const role   = dvwRole(j.numero, j.libero);
+
+            // Zone de départ pour chaque set (1-5) depuis fdmeData.rotationsDepart
+            // rotDepart['set1'][fdmeTeamKey] = [numZone1, numZone2, ..., numZone6]
+            // Titulaire → zone (1-6) | Remplaçante → '*' | Set non joué → vide
+            const setZones = [];
+            for (let s = 1; s <= 5; s++) {
+                const rotSet = rotDepart['set' + s]?.[fdmeTeamKey];
+                if (Array.isArray(rotSet) && rotSet.length === 6) {
+                    const zoneIdx = rotSet.indexOf(j.numero);
+                    setZones.push(zoneIdx >= 0 ? String(zoneIdx + 1) : '*');
+                } else {
+                    setZones.push('');
+                }
+            }
+
+            lines.push(`${teamNum};${num};${gIdx};${setZones.join(';')};${abbr};${nom};${prenom};;${pos};${role};False;;;00000000;00000000;;;;`);
         });
         return lines.join('\r\n');
     },
@@ -430,10 +485,42 @@ const exportDvw = {
     },
 
     // -------------------------------------------------------
+    // SECTION ROTATION — présente si fdmeData + rotations calculées
+    // -------------------------------------------------------
+    _sectionRotation(rallies) {
+        // N'inclure que les rallies qui ont des rotations calculées
+        const withRot = (rallies || []).filter(r => r.rotationTeam1 && r.rotationTeam1.length === 6);
+        if (withRot.length === 0) return '[3ROTATION]';
+
+        const lines = ['[3ROTATION]'];
+        withRot.forEach(r => {
+            const sn   = r.set || 1;
+            const h    = r.scoreAvant?.pointsTeam1 ?? 0;
+            const v    = r.scoreAvant?.pointsTeam2 ?? 0;
+            const rot1 = r.rotationTeam1.join(';');
+            const rot2 = (r.rotationTeam2 || []).join(';');
+            lines.push(`>>${r.index || 0};${sn};${h}-${v};${rot1};${rot2}`);
+        });
+        return lines.join('\r\n');
+    },
+
+    // Retourne la zone (1-6) d'un joueur dans son équipe pour un rally donné
+    _getPlayerZoneForAction(action, rally) {
+        const team = action.joueuse?.equipe || 'team1';
+        const num  = parseInt(action.joueuse?.numero || 0);
+        if (!num) return null;
+        const rotation = team === 'team1' ? rally.rotationTeam1 : rally.rotationTeam2;
+        if (!rotation || rotation.length !== 6) return null;
+        const idx = rotation.indexOf(num);
+        return idx === -1 ? null : (idx + 1); // Zone 1-6
+    },
+
+    // -------------------------------------------------------
     // SECTION SCOUT — cœur de l'algorithme
     // -------------------------------------------------------
-    _sectionScout(match, rallies, playerActions, calcVS) {
+    _sectionScout(match, rallies, playerActions, calcVS, dvwEdits, rotDepart, swapped) {
         const lines = ['[3SCOUT]'];
+        dvwEdits = dvwEdits || {};
 
         // Grouper playerActions par rallyId
         const byRally = {};
@@ -458,31 +545,75 @@ const exportDvw = {
                     const prevSet = sh[setActuel - 1];
                     if (prevSet) {
                         const tw = prevSet.winner === 'team1' ? '*' : 'a';
-                        lines.push(`${tw}p${prevSet.team1Points||0}:${prevSet.team2Points||0};;;;;;;00.00.00;${setActuel};1;1;1;0;;`);
+                        lines.push(`${tw}p${prevSet.team1Points||0}:${prevSet.team2Points||0};;;;;;00.00.00;${setActuel};1;1;1;0;;`);
                     }
                     lines.push(`**${setActuel}set`);
                 }
                 setActuel = setRally;
 
-                // Lineups des joueuses connues (seulement au début de chaque set)
+                // Lineups début de set : 4 lignes (server+zone team1, server+zone team2)
+                // Format DVW : *P{srv}>LUp;;;;;;;{ts};{set};1;3;1;{vs};;{rot1x6};{rot2x6};
                 const tsL = rally.timestampServe || 0;
-                joueusesRaw.filter(j => j.equipe === 'team1').forEach(j => {
-                    lines.push(`*P${String(j.numero||0).padStart(2,'0')}>LUp;;;;;;;;${setRally};1;1;1;${calcVS(tsL)};;`);
-                });
-                joueusesRaw.filter(j => j.equipe === 'team2').forEach(j => {
-                    lines.push(`aP${String(j.numero||0).padStart(2,'0')}>LUp;;;;;;;;${setRally};1;1;1;${calcVS(tsL)};;`);
-                });
+                const tsLup = this._msToTs(tsL);
+                const vsLup = calcVS(tsL);
+                const fdmeT1 = swapped ? 'team2' : 'team1';
+                const fdmeT2 = swapped ? 'team1' : 'team2';
+                const rot1Arr = (rotDepart || {})['set' + setRally]?.[fdmeT1] || [];
+                const rot2Arr = (rotDepart || {})['set' + setRally]?.[fdmeT2] || [];
+                const rot1Str = rot1Arr.length === 6 ? rot1Arr.join(';') : '';
+                const rot2Str = rot2Arr.length === 6 ? rot2Arr.join(';') : '';
+                const rotSuffix = `;;${rot1Str};${rot2Str};`;
+
+                // Zone 1 de chaque équipe = le serveur (index 0 du tableau de rotation)
+                const srv1 = rot1Arr[0] ? String(rot1Arr[0]).padStart(2, '0') : '00';
+                const srv2 = rot2Arr[0] ? String(rot2Arr[0]).padStart(2, '0') : '00';
+
+                lines.push(`*P${srv1}>LUp;;;;;;;${tsLup};${setRally};1;3;1;${vsLup}${rotSuffix}`);
+                lines.push(`*z1>LUp;;;;;;;${tsLup};${setRally};1;3;1;${vsLup}${rotSuffix}`);
+                lines.push(`aP${srv2}>LUp;;;;;;;${tsLup};${setRally};1;3;1;${vsLup}${rotSuffix}`);
+                lines.push(`az1>LUp;;;;;;;${tsLup};${setRally};1;3;1;${vsLup}${rotSuffix}`);
             }
 
             // ── Actions du rally ──
             const actionsRally    = (byRally[rid] || []).sort((a, b) => (a.timestamp||0) - (b.timestamp||0));
             const actionsFusionnees = this._fusionnerActions(actionsRally, rally);
 
+            // Ligne de service automatique depuis servingPlayerNumber_computed (flux replay FDME)
+            // Injectée seulement si aucun playerAction de type 'S' n'est déjà présent
+            const serverNumRaw = parseInt(rally.servingPlayerNumber || rally.servingPlayerNumber_computed || 0);
+            const hasServiceAction = actionsFusionnees.some(a => {
+                const sk = this.SKILL_DVW[a.skill] || (a.skill||'').charAt(0).toUpperCase();
+                return sk === 'S';
+            });
+            if (serverNumRaw > 0 && !hasServiceAction) {
+                const srvTeam = (rally.servingTeam || 'team1');
+                const srvPfx  = srvTeam === 'team2' ? 'a' : '*';
+                const srvNum  = String(serverNumRaw).padStart(2, '0');
+                const srvTs   = this._msToTs(rally.timestampServe);
+                const srvVs   = calcVS(rally.timestampServe);
+                // Injecter marqueur de rotation DataProject (*z{n} ou az{n}) quand disponible
+                const rotN = srvTeam === 'team2' ? (rally.rotationNum2 || null) : (rally.rotationNum1 || null);
+                if (rotN) lines.push(`${srvPfx}z${rotN}`);
+                lines.push(`${srvPfx}${srvNum}SM+~~~;;;;;;${srvTs};${setRally};1;1;1;${srvVs};;`);
+            }
+
             if (actionsFusionnees.length > 0) {
                 // Niveau 2 : actions joueuses individuelles (numéro identifié)
-                actionsFusionnees.forEach(action => {
-                    const ligne = this._ligneDvwAction(action, rally, calcVS);
-                    if (ligne) lines.push(ligne);
+                actionsFusionnees.forEach((action, pi) => {
+                    const skillCode = ({'service':'S','attaque':'A','reception':'R','defense':'D','passe':'E','contre':'B','relance':'F'}[action.skill] || (action.skill||'A').charAt(0).toUpperCase());
+                    const paTeam    = action.joueuse?.equipe || 'team1';
+                    const qual      = action.quality || '#';
+                    const aKey      = (rid + '__' + skillCode + '__' + qual + '__' + paTeam + '__' + pi).replace(/[.#$[\]]/g,'_');
+                    const edit      = dvwEdits[aKey];
+                    if (edit) {
+                        (edit.before || []).forEach(l => { if (l.trim()) lines.push(l.trim()); });
+                        const ligne = edit.line || this._ligneDvwAction(action, rally, calcVS);
+                        if (ligne) lines.push(ligne);
+                        (edit.after || []).forEach(l => { if (l.trim()) lines.push(l.trim()); });
+                    } else {
+                        const ligne = this._ligneDvwAction(action, rally, calcVS);
+                        if (ligne) lines.push(ligne);
+                    }
                 });
             } else if (rally.actionFinale) {
                 // Niveau 1bis : action finale sans numéro (joueur 00 ou $$)
@@ -493,7 +624,7 @@ const exportDvw = {
                 const eq = rally.pointTeam === 'team1' ? '*' : 'a';
                 const ts = this._msToTs(rally.timestampPoint || rally.timestampServe);
                 const vs = calcVS(rally.timestampPoint || rally.timestampServe);
-                lines.push(`${eq}00AH#~~~;p;;;;;;;${ts};${setRally};1;1;1;${vs};;`);
+                lines.push(`${eq}00AH#~~~;p;;;;;;${ts};${setRally};1;1;1;${vs};;`);
             }
 
             // ── Ligne *p après chaque rally (score après le point) ──
@@ -503,7 +634,7 @@ const exportDvw = {
                 const tw = rally.pointTeam === 'team1' ? '*' : 'a';
                 const ts = this._msToTs(rally.timestampPoint || rally.timestampServe);
                 const vs = calcVS(rally.timestampPoint || rally.timestampServe);
-                lines.push(`${tw}p${h}:${v};;;;;;;${ts};${setRally};1;1;1;${vs};;`);
+                lines.push(`${tw}p${h}:${v};;;;;;${ts};${setRally};1;1;1;${vs};;`);
             }
         });
 
@@ -556,16 +687,19 @@ const exportDvw = {
 
         // Joueur $$ si faute sans numéro identifié
         const joueur  = (action.joueuse?.numero || 0) > 0 ? num : (qual === '=' ? '$$' : '00');
+        // Zone de départ depuis la rotation (disponible en flux replay avec FDME)
+        const zone = rally.rotationTeam1 ? this._getPlayerZoneForAction(action, rally) : null;
+        const startZone = zone ? String(zone) : '~';
         const actCode = joueur === '$$'
-            ? `${eq}${joueur}&${bt}${qual}~~~`
-            : `${eq}${joueur}${skill}${bt}${qual}~~~`;
+            ? `${eq}${joueur}&${bt}${qual}${startZone}~~`
+            : `${eq}${joueur}${skill}${bt}${qual}${startZone}~~`;
 
         // Modificateur ;p; si l'action a marqué le point
         const mod1 = this._estDecisive(action, rally) ? 'p' : '';
 
         const ts = this._msToTs(action.timestamp || rally.timestampServe);
         const vs = calcVS(action.timestamp || rally.timestampServe);
-        return `${actCode};${mod1};;;;;;;${ts};${sn};1;1;1;${vs};;`;
+        return `${actCode};${mod1};;;;;;${ts};${sn};1;1;1;${vs};;`;
     },
 
     // Convertit une actionFinale (Niveau 1bis) en ligne DVW complète
@@ -587,7 +721,7 @@ const exportDvw = {
 
         const ts = this._msToTs(rally.timestampPoint || rally.timestampServe);
         const vs = calcVS(rally.timestampPoint || rally.timestampServe);
-        return `${actCode};p;;;;;;;${ts};${sn};1;1;1;${vs};;`;
+        return `${actCode};p;;;;;;${ts};${sn};1;1;1;${vs};;`;
     },
 
     // Détermine si une action a marqué un point dans ce rally
