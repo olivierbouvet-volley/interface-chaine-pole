@@ -659,7 +659,10 @@ const exportDvw = {
                 const tw = rally.pointTeam === 'team1' ? '*' : 'a';
                 const ts = this._msToTs(rally.timestampPoint || rally.timestampServe);
                 const vs = calcVS(rally.timestampPoint || rally.timestampServe);
-                lines.push(`${tw}p${h}:${v};;;;;;${ts};${setRally};1;1;1;${vs};;`);
+                // Inclure les numéros de rotation réels depuis Firebase (pour rapport-match.js)
+                const rH = rally.rotationNum1 || 1;
+                const rV = rally.rotationNum2 || 1;
+                lines.push(`${tw}p${h}:${v};;;;;;${ts};${setRally};${rH};${rV};1;${vs};;`);
             }
         });
 

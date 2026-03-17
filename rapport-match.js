@@ -140,6 +140,20 @@
         return map;
     }
 
+    // Vérifie si les données de rotation sont réellement variées (pas toutes à 1)
+    function _hasRotationData(rotStats) {
+        for (const side of ['home', 'away']) {
+            for (const setNum of Object.keys(rotStats[side] || {})) {
+                const rots = rotStats[side][setNum];
+                for (let r = 2; r <= 6; r++) {
+                    const d = rots[r];
+                    if (d && (d.won > 0 || d.lost > 0)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // ─── Distribution par rotation ────────────────────────────────────────────────
 
     function _rotationStats(pointLines) {
@@ -416,9 +430,11 @@
         const tableV = _tableJoueuses(playersV, statsV, teams.away, mode);
         const tableSo = _tableSideout(sideout, teams);
 
-        // Rotation : masquée en mode basique (rotations toutes à 1)
+        // Rotation : affichée si au moins un point a une rotation réelle (≠ 1 dans tous les sets)
+        // En mode basique avec FDME, les rotationNum1/2 Firebase sont maintenant incluses dans *p
+        const hasRotations = _hasRotationData(rotStats);
         let tableRotH = '', tableRotV = '';
-        if (mode === 'expert') {
+        if (hasRotations) {
             tableRotH = _tableRotation(rotStats, 'home', teams.home, setScores);
             tableRotV = _tableRotation(rotStats, 'away', teams.away, setScores);
         }
@@ -445,7 +461,7 @@
     <div class="sets-bar">${setsChips}</div>
     <div style="text-align:center;margin-bottom:16px">
         <span class="mode-badge ${modeClass}">${modeLabel}</span>
-        ${mode === 'basique' ? '<div style="font-size:0.72rem;color:#92400e">⚠ Réception/Défense/Passe non incluses — rotations non disponibles</div>' : ''}
+        ${mode === 'basique' ? `<div style="font-size:0.72rem;color:#92400e">⚠ Réception/Défense/Passe non incluses${hasRotations ? '' : ' — rotations non disponibles (FDME requise)'}</div>` : ''}
     </div>
 
     ${tableH}
