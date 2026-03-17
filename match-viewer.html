@@ -2215,27 +2215,33 @@
                     <button class="dvw-btn-filter dvw-btn-inline" onclick="applyDvwFilters()">🔍 Filtrer</button>
                 </div>
                 <!-- Filtre Rotation : visible seulement quand passeuses sont configurées -->
-                <div class="dvw-filter-row" id="dvwFilterRotationRow" style="display:none;">
-                    <label>🔄 Rotation</label>
-                    <select class="dvw-select" id="dvwFilterRotation">
+                <div class="dvw-filter-row" id="dvwFilterRotationRow" style="display:none;gap:6px;align-items:center;flex-wrap:wrap;">
+                    <label style="white-space:nowrap">🔄 Rot.</label>
+                    <select class="dvw-select" id="dvwFilterRotation" style="flex:1;min-width:120px">
                         <option value="">Toutes</option>
                         <optgroup label="— Service —">
-                            <option value="S1">S1 — Passeuse en zone 1 🏐</option>
-                            <option value="S2">S2 — Passeuse en zone 2</option>
-                            <option value="S3">S3 — Passeuse en zone 3</option>
-                            <option value="S4">S4 — Passeuse en zone 4</option>
-                            <option value="S5">S5 — Passeuse en zone 5</option>
-                            <option value="S6">S6 — Passeuse en zone 6</option>
+                            <option value="S1">Service P1</option>
+                            <option value="S2">Service P2</option>
+                            <option value="S3">Service P3</option>
+                            <option value="S4">Service P4</option>
+                            <option value="S5">Service P5</option>
+                            <option value="S6">Service P6</option>
                         </optgroup>
                         <optgroup label="— Sideout —">
-                            <option value="R1">R1 — Passeuse en zone 1</option>
-                            <option value="R2">R2 — Passeuse en zone 2</option>
-                            <option value="R3">R3 — Passeuse en zone 3</option>
-                            <option value="R4">R4 — Passeuse en zone 4</option>
-                            <option value="R5">R5 — Passeuse en zone 5</option>
-                            <option value="R6">R6 — Passeuse en zone 6</option>
+                            <option value="R1">Sideout P1</option>
+                            <option value="R2">Sideout P2</option>
+                            <option value="R3">Sideout P3</option>
+                            <option value="R4">Sideout P4</option>
+                            <option value="R5">Sideout P5</option>
+                            <option value="R6">Sideout P6</option>
                         </optgroup>
                     </select>
+                    <button id="dvwTeamHomeBtn" onclick="setDvwStudiedTeam('home')"
+                        style="padding:3px 8px;font-size:0.72rem;border:1px solid #4a6fa5;border-radius:4px;cursor:pointer;background:#1a3668;color:#fff;white-space:nowrap"
+                        title="Analyser équipe domicile">🏠</button>
+                    <button id="dvwTeamAwayBtn" onclick="setDvwStudiedTeam('away')"
+                        style="padding:3px 8px;font-size:0.72rem;border:1px solid #555;border-radius:4px;cursor:pointer;background:#333;color:#aaa;white-space:nowrap"
+                        title="Analyser équipe extérieure">✈️</button>
                 </div>
             </div>
             <div id="dvwNoTimestampBanner" style="display:none; background:#7c3aed22; border:1px solid #7c3aed; border-radius:8px; padding:10px 12px; margin:8px 0; font-size:0.8rem; color:#c4b5fd; line-height:1.5;">
@@ -2380,8 +2386,10 @@
         let fbRosterCache = { team1: [], team2: [] }; // Effectif des joueuses
         let fbDataLoaded = false;          // true dès le premier chargement Firebase
         let fbRalliesMap = {};              // rallyId → rally (rotationTeam1/2 incluse si dispo)
-        let currentPasseuses = {};          // { team1: N, team2: N } numéros des passeuses
-        let rotationByScoreKey = {};        // "set:h:v" → { rot1, rot2, servingTeam } pour filtre rotation
+        let currentPasseuses = {};          // { team1: N, team1b: N, team2: N, team2b: N }
+        let rotationByScoreKey = {};        // "set:h:v" → { rot1[], rot2[], servingTeam } (données Firebase FDME)
+        let dvwRotByScoreKey = {};          // "set:h:v" → { rotH, rotV, homeServes } (données DVW *p/ap)
+        let dvwStudiedTeam = 'home';        // 'home' | 'away' : équipe analysée pour le filtre rotation
         let currentFdmeData = null;         // fdmeData Firebase (disponible en flux replay post-FDME)
         let currentFdmeSwapped = false;     // true si teams FDME ont été permutées pour matcher home/away
         let fbTAncrage = 0;                 // timestamp ms du 1er rally (ancre vidéo)
@@ -3482,6 +3490,55 @@
                     }
                 }
 
+                // Construire dvwRotByScoreKey depuis les lignes *p/ap du DVW
+                // Clé = "set:scoreHome:scoreAway" au DEBUT du rally (= scores avant ce point)
+                // Valeur = { rotH, rotV, homeServes } pour le filtre rotation sans FDME
+                dvwRotByScoreKey = {};
+                (function() {
+                    const normDvw = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                    const scoutMarker = '[3SCOUT]';
+                    const scoutStart = normDvw.indexOf(scoutMarker);
+                    if (scoutStart === -1) return;
+                    const scoutLines = normDvw.slice(normDvw.indexOf('\n', scoutStart) + 1).split('\n');
+                    // Premier serveur par set : première action 'S' du set
+                    const firstSrv = {};
+                    for (const raw of scoutLines) {
+                        const t = raw.trim();
+                        if (t.length < 5) continue;
+                        const tm = t[0] === '*' ? 'home' : (t[0] === 'a' ? 'away' : null);
+                        if (!tm) continue;
+                        const skill = t[3];
+                        if (skill === 'S') {
+                            const f = t.split(';');
+                            const isOld = (f[8]||'').includes('.');
+                            const sn = parseInt(isOld ? f[9] : f[8]) || 1;
+                            if (!firstSrv[sn]) firstSrv[sn] = tm;
+                        }
+                    }
+                    const curSrv = {};
+                    for (const raw of scoutLines) {
+                        const t = raw.trim();
+                        if (!t.startsWith('*p') && !t.startsWith('ap')) continue;
+                        const scorer = t.startsWith('*p') ? 'home' : 'away';
+                        const f = t.split(';');
+                        const code = t.slice(0, t.indexOf(';') > -1 ? t.indexOf(';') : t.length);
+                        const pts = code.slice(2).split(':');
+                        const H = parseInt(pts[0]) || 0;
+                        const V = parseInt(pts[1]) || 0;
+                        const isOld = (f[8]||'').includes('.');
+                        const sn = parseInt(isOld ? f[9] : f[8]) || 1;
+                        const rotH = Math.min(6, Math.max(1, parseInt(isOld ? f[10] : f[9]) || 1));
+                        const rotV = Math.min(6, Math.max(1, parseInt(isOld ? f[11] : f[10]) || 1));
+                        if (!curSrv[sn]) curSrv[sn] = firstSrv[sn] || 'home';
+                        const homeServes = curSrv[sn] === 'home';
+                        // Clé = score au DEBUT du rally = score avant le point
+                        const startH = scorer === 'home' ? H - 1 : H;
+                        const startV = scorer === 'away' ? V - 1 : V;
+                        dvwRotByScoreKey[`${sn}:${startH}:${startV}`] = { rotH, rotV, homeServes };
+                        curSrv[sn] = scorer;
+                    }
+                })();
+
                 // Afficher un bandeau si le fichier n'a pas de timestamps vidéo
                 const noTsEl = document.getElementById('dvwNoTimestampBanner');
                 if (noTsEl) {
@@ -3620,20 +3677,51 @@
             if (activeTab === 'dvw' && dvwFilteredActions && dvwFilteredActions.length > 0) renderDvwActionsList();
         }
 
-        // Retourne le label de rotation home pour une action DVW : 'S1'...'S6' ou 'R1'...'R6', ou null
+        // Sélectionne l'équipe analysée pour le filtre rotation
+        function setDvwStudiedTeam(team) {
+            dvwStudiedTeam = team;
+            const btnH = document.getElementById('dvwTeamHomeBtn');
+            const btnA = document.getElementById('dvwTeamAwayBtn');
+            const activeStyle = 'background:#1a3668;color:#fff;border-color:#4a6fa5';
+            const inactiveStyle = 'background:#333;color:#aaa;border-color:#555';
+            if (btnH) btnH.style.cssText = btnH.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+/, team === 'home' ? activeStyle : inactiveStyle);
+            if (btnA) btnA.style.cssText = btnA.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+/, team === 'away' ? activeStyle : inactiveStyle);
+            if (dvwData) applyDvwFilters();
+        }
+
+        // Retourne le label de rotation pour une action DVW : 'S1'...'S6' ou 'R1'...'R6', ou null
+        // Utilise dvwStudiedTeam ('home'|'away') pour choisir l'équipe analysée
         function getRotationLabel(action) {
-            // Chercher titulaire + remplaçante team1
-            const setters = [currentPasseuses?.team1, currentPasseuses?.team1b]
-                .map(s => parseInt(s || 0)).filter(s => s > 0);
-            if (!setters.length) return null;
+            const studyHome = dvwStudiedTeam !== 'away';
             const key = `${action.setNumber}:${action.homeScore}:${action.awayScore}`;
+
+            // Essai 1 : données Firebase FDME (tableaux de 6 jerseys par rotation)
             const rotData = rotationByScoreKey[key];
-            if (!rotData || !Array.isArray(rotData.rot1) || rotData.rot1.length !== 6) return null;
-            const isServing = rotData.servingTeam === 'team1';
-            for (const setter of setters) {
-                const idx = rotData.rot1.indexOf(setter);
-                if (idx >= 0) return (isServing ? 'S' : 'R') + (idx + 1);
+            if (rotData) {
+                const rotArr = studyHome ? rotData.rot1 : rotData.rot2;
+                if (Array.isArray(rotArr) && rotArr.length === 6) {
+                    const setters = (studyHome
+                        ? [currentPasseuses?.team1, currentPasseuses?.team1b]
+                        : [currentPasseuses?.team2, currentPasseuses?.team2b]
+                    ).map(s => parseInt(s || 0)).filter(s => s > 0);
+                    const isServing = studyHome
+                        ? rotData.servingTeam === 'team1'
+                        : rotData.servingTeam === 'team2';
+                    for (const setter of setters) {
+                        const idx = rotArr.indexOf(setter);
+                        if (idx >= 0) return (isServing ? 'S' : 'R') + (idx + 1);
+                    }
+                }
             }
+
+            // Essai 2 : données DVW *p/ap (numéro de rotation 1-6 direct)
+            const dvwRot = dvwRotByScoreKey[key];
+            if (dvwRot) {
+                const isServing = studyHome ? dvwRot.homeServes : !dvwRot.homeServes;
+                const rotNum = studyHome ? dvwRot.rotH : dvwRot.rotV;
+                return (isServing ? 'S' : 'R') + rotNum;
+            }
+
             return null;
         }
 
