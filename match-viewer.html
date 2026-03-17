@@ -2181,15 +2181,25 @@
 
             <!-- Zone filtres (DVW uniquement) -->
             <div id="dvwFiltersZone" class="dvw-filters">
+
+                <!-- Onglets équipe (sélection équipe analysée + filtre joueurs) -->
+                <div style="display:flex;gap:4px;margin-bottom:6px;">
+                    <button id="dvwTeamHomeBtn" onclick="setDvwStudiedTeam('home')"
+                        style="flex:1;padding:5px 4px;font-size:0.72rem;font-weight:700;border:1px solid #4a6fa5;border-radius:5px;cursor:pointer;background:#1a3668;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                        id="dvwTeamHomeBtn">🏠 <span id="dvwTeamHomeLabel">Domicile</span></button>
+                    <button id="dvwTeamAwayBtn" onclick="setDvwStudiedTeam('away')"
+                        style="flex:1;padding:5px 4px;font-size:0.72rem;font-weight:700;border:1px solid #444;border-radius:5px;cursor:pointer;background:#1e1e2e;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">✈️ <span id="dvwTeamAwayLabel">Extérieur</span></button>
+                </div>
+
                 <div class="dvw-filter-row">
-                    <label>👤 Joueur</label>
-                    <select class="dvw-select" id="dvwFilterPlayer">
+                    <label>👤</label>
+                    <select class="dvw-select" id="dvwFilterPlayer" style="flex:1">
                         <option value="">Tous</option>
                     </select>
                 </div>
                 <div class="dvw-filter-row">
-                    <label>🏐 Action</label>
-                    <select class="dvw-select" id="dvwFilterSkill">
+                    <label>🏐</label>
+                    <select class="dvw-select" id="dvwFilterSkill" style="flex:1">
                         <option value="">Toutes</option>
                         <option value="A">Attaque</option>
                         <option value="S">Service</option>
@@ -2199,49 +2209,44 @@
                         <option value="E">Passe</option>
                         <option value="F">Relance</option>
                     </select>
-                    <button class="dvw-btn-filter dvw-btn-moneytime dvw-btn-inline" onclick="applyMoneyTimeFilter()" title="Moments décisifs : une équipe à ≥20pts avec écart ≤2 (tie-break : ≥10 écart ≤2)">⚡ Money Time</button>
+                    <button class="dvw-btn-filter dvw-btn-moneytime dvw-btn-inline" onclick="applyMoneyTimeFilter()" title="Moments décisifs : une équipe à ≥20pts avec écart ≤2 (tie-break : ≥10 écart ≤2)">⚡</button>
                 </div>
                 <div class="dvw-filter-row">
-                    <label>⚡ Qualité</label>
-                    <select class="dvw-select" id="dvwFilterQuality">
+                    <label>⚡</label>
+                    <select class="dvw-select" id="dvwFilterQuality" style="flex:1">
                         <option value="">Toutes</option>
-                        <option value="#"># Kill / Ace</option>
+                        <option value="#"># Kill/Ace</option>
                         <option value="+">+ Positif</option>
                         <option value="!">! Neutre</option>
                         <option value="-">- Négatif</option>
-                        <option value="/"># Bloqué</option>
-                        <option value="="># Faute</option>
+                        <option value="/">/ Bloqué</option>
+                        <option value="=">=  Faute</option>
                     </select>
-                    <button class="dvw-btn-filter dvw-btn-inline" onclick="applyDvwFilters()">🔍 Filtrer</button>
+                    <button class="dvw-btn-filter dvw-btn-inline" onclick="applyDvwFilters()"
+                        style="padding:5px 14px;font-size:0.82rem;font-weight:700">🔍 Filtrer</button>
                 </div>
                 <!-- Filtre Rotation : visible seulement quand passeuses sont configurées -->
-                <div class="dvw-filter-row" id="dvwFilterRotationRow" style="display:none;gap:6px;align-items:center;flex-wrap:wrap;">
-                    <label style="white-space:nowrap">🔄 Rot.</label>
-                    <select class="dvw-select" id="dvwFilterRotation" style="flex:1;min-width:120px">
-                        <option value="">Toutes</option>
+                <div class="dvw-filter-row" id="dvwFilterRotationRow" style="display:none;">
+                    <label>🔄</label>
+                    <select class="dvw-select" id="dvwFilterRotation" style="flex:1">
+                        <option value="">Toutes rot.</option>
                         <optgroup label="— Service —">
-                            <option value="S1">Service P1</option>
-                            <option value="S2">Service P2</option>
-                            <option value="S3">Service P3</option>
-                            <option value="S4">Service P4</option>
-                            <option value="S5">Service P5</option>
-                            <option value="S6">Service P6</option>
+                            <option value="S1">Srv P1</option>
+                            <option value="S2">Srv P2</option>
+                            <option value="S3">Srv P3</option>
+                            <option value="S4">Srv P4</option>
+                            <option value="S5">Srv P5</option>
+                            <option value="S6">Srv P6</option>
                         </optgroup>
                         <optgroup label="— Sideout —">
-                            <option value="R1">Sideout P1</option>
-                            <option value="R2">Sideout P2</option>
-                            <option value="R3">Sideout P3</option>
-                            <option value="R4">Sideout P4</option>
-                            <option value="R5">Sideout P5</option>
-                            <option value="R6">Sideout P6</option>
+                            <option value="R1">SO P1</option>
+                            <option value="R2">SO P2</option>
+                            <option value="R3">SO P3</option>
+                            <option value="R4">SO P4</option>
+                            <option value="R5">SO P5</option>
+                            <option value="R6">SO P6</option>
                         </optgroup>
                     </select>
-                    <button id="dvwTeamHomeBtn" onclick="setDvwStudiedTeam('home')"
-                        style="padding:3px 8px;font-size:0.72rem;border:1px solid #4a6fa5;border-radius:4px;cursor:pointer;background:#1a3668;color:#fff;white-space:nowrap"
-                        title="Analyser équipe domicile">🏠</button>
-                    <button id="dvwTeamAwayBtn" onclick="setDvwStudiedTeam('away')"
-                        style="padding:3px 8px;font-size:0.72rem;border:1px solid #555;border-radius:4px;cursor:pointer;background:#333;color:#aaa;white-space:nowrap"
-                        title="Analyser équipe extérieure">✈️</button>
                 </div>
             </div>
             <div id="dvwNoTimestampBanner" style="display:none; background:#7c3aed22; border:1px solid #7c3aed; border-radius:8px; padding:10px 12px; margin:8px 0; font-size:0.8rem; color:#c4b5fd; line-height:1.5;">
@@ -3677,15 +3682,23 @@
             if (activeTab === 'dvw' && dvwFilteredActions && dvwFilteredActions.length > 0) renderDvwActionsList();
         }
 
-        // Sélectionne l'équipe analysée pour le filtre rotation
+        // Sélectionne l'équipe analysée (onglets + filtre joueurs + rotation)
         function setDvwStudiedTeam(team) {
             dvwStudiedTeam = team;
             const btnH = document.getElementById('dvwTeamHomeBtn');
             const btnA = document.getElementById('dvwTeamAwayBtn');
-            const activeStyle = 'background:#1a3668;color:#fff;border-color:#4a6fa5';
-            const inactiveStyle = 'background:#333;color:#aaa;border-color:#555';
-            if (btnH) btnH.style.cssText = btnH.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+/, team === 'home' ? activeStyle : inactiveStyle);
-            if (btnA) btnA.style.cssText = btnA.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+/, team === 'away' ? activeStyle : inactiveStyle);
+            if (btnH) {
+                btnH.style.background = team === 'home' ? '#1a3668' : '#1e1e2e';
+                btnH.style.color      = team === 'home' ? '#fff'    : '#888';
+                btnH.style.borderColor= team === 'home' ? '#4a6fa5' : '#444';
+            }
+            if (btnA) {
+                btnA.style.background = team === 'away' ? '#1a3668' : '#1e1e2e';
+                btnA.style.color      = team === 'away' ? '#fff'    : '#888';
+                btnA.style.borderColor= team === 'away' ? '#4a6fa5' : '#444';
+            }
+            // Repopuler le filtre joueurs avec seulement l'équipe sélectionnée
+            populatePlayerFilter();
             if (dvwData) applyDvwFilters();
         }
 
@@ -3729,18 +3742,23 @@
             if (!dvwData) return;
             const select = document.getElementById('dvwFilterPlayer');
             select.innerHTML = '<option value="">Tous</option>';
-            // Trier : domicile d'abord, puis extérieur, par numéro
-            const sorted = [...dvwData.players].sort((a, b) => {
-                if (a.team !== b.team) return a.team === 'home' ? -1 : 1;
-                return a.number - b.number;
-            });
-            sorted.forEach(p => {
+            // Filtrer selon l'équipe sélectionnée (dvwStudiedTeam)
+            const filtered = dvwData.players
+                .filter(p => p.team === dvwStudiedTeam)
+                .sort((a, b) => a.number - b.number);
+            filtered.forEach(p => {
                 const opt = document.createElement('option');
-                // Clé composite équipe:numéro pour distinguer N°7 home vs N°7 away
                 opt.value = p.team + ':' + p.number;
-                opt.textContent = 'N°' + p.number + ' — ' + p.name + ' (' + (p.team === 'home' ? '🏠' : '✈️') + ')';
+                opt.textContent = 'N°' + p.number + ' — ' + p.name;
                 select.appendChild(opt);
             });
+            // Mettre à jour les labels des onglets avec les vrais noms d'équipes
+            if (dvwData.teams) {
+                const lH = document.getElementById('dvwTeamHomeLabel');
+                const lA = document.getElementById('dvwTeamAwayLabel');
+                if (lH) lH.textContent = dvwData.teams.home || 'Domicile';
+                if (lA) lA.textContent = dvwData.teams.away || 'Extérieur';
+            }
         }
 
         function applyDvwFilters() {
