@@ -213,27 +213,38 @@
     function _tableJoueuses(players, statsMap, teamName, mode) {
         const rows = players.map(p => {
             const s = statsMap[p.number] || {};
-            const sets = s.setsIn ? s.setsIn.size : 0;
+
+            // Sets joués : priorité aux zones FDME (setsPlayedRaw), fallback sur les actions
+            const setsFromFdme = (p.setsPlayedRaw || []).filter(v => v && v !== 'False' && v !== '').length;
+            const setsFromActions = s.setsIn ? s.setsIn.size : 0;
+            const sets = setsFromFdme > 0 ? setsFromFdme : setsFromActions;
+
+            const hasActivity = (s.srv || 0) + (s.rec || 0) + (s.att || 0) + (s.blc || 0) > 0;
+
+            // Cellules stats : '-' si aucune activité (joueuse au roster mais pas saisie)
             const attEff = s.att
                 ? Math.round((s.attKill - s.attErr - s.attBlq) / s.att * 100) + '%'
                 : '-';
             const recPctPos = _pct(s.recPos, s.rec);
 
-            let srvCell = `${s.srv || 0} / ${s.srvErr || 0} / ${s.srvAce || 0}`;
-            let recCell = mode === 'expert'
-                ? `${s.rec || 0} / ${s.recErr || 0} / ${recPctPos} / ${_pct(s.recExc, s.rec)}`
-                : `${s.rec || 0} / ${s.recErr || 0} / ${recPctPos}`;
-            let attCell = `${s.att || 0} / ${s.attErr || 0} / ${s.attBlq || 0} / ${s.attKill || 0} (${attEff})`;
-            let blcCell = s.blcKill || 0;
+            const dash = (v) => hasActivity ? v : '-';
 
-            const hasActivity = (s.srv || 0) + (s.rec || 0) + (s.att || 0) + (s.blc || 0) > 0;
-            const rowClass = hasActivity ? '' : 'row-inactive';
+            let srvCell = dash(`${s.srv || 0} / ${s.srvErr || 0} / ${s.srvAce || 0}`);
+            let recCell = !hasActivity ? '-' : (mode === 'expert'
+                ? `${s.rec || 0} / ${s.recErr || 0} / ${recPctPos} / ${_pct(s.recExc, s.rec)}`
+                : `${s.rec || 0} / ${s.recErr || 0} / ${recPctPos}`);
+            let attCell = dash(`${s.att || 0} / ${s.attErr || 0} / ${s.attBlq || 0} / ${s.attKill || 0} (${attEff})`);
+            let blcCell = hasActivity ? (s.blcKill || 0) : '-';
+
+            // Joueuses sans aucune action saisie ET sans set FDME = absente du match → grisée
+            const absent = !hasActivity && sets === 0;
+            const rowClass = absent ? 'row-inactive' : '';
 
             return `<tr class="${rowClass}">
                 <td class="num">${p.number}</td>
                 <td class="nom">${p.lastname} ${p.firstname}</td>
                 <td class="role">${ROLE_LABEL[p.role] || ''}</td>
-                <td class="center">${sets}</td>
+                <td class="center">${sets || '-'}</td>
                 <td class="center">${srvCell}</td>
                 <td class="center">${recCell}</td>
                 <td class="center">${attCell}</td>
