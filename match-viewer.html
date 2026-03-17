@@ -3448,11 +3448,11 @@
                 const rapportBtn = document.getElementById('dvwRapportBtn');
                 if (rapportBtn) rapportBtn.style.display = 'inline-flex';
 
-                // DVW expert (DataVolley) → auto-détecter les passeuses depuis [3PLAYERS-H/V]
-                const isExpertDvw = /GENERATOR-PRG:\s*Data Volley/i.test(text);
-                if (isExpertDvw && !currentPasseuses.team1 && !currentPasseuses.team2) {
+                // Auto-détecter les passeuses depuis [3PLAYERS-H/V] (role=5)
+                // Fonctionne pour tout DVW (expert DataVolley ou basique ICP)
+                if (!currentPasseuses.team1 && !currentPasseuses.team2) {
                     const normText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-                    const getSection = (name) => {
+                    const getDvwSection = (name) => {
                         const marker = '[' + name + ']';
                         const start = normText.indexOf(marker);
                         if (start === -1) return '';
@@ -3472,8 +3472,8 @@
                         }
                         return null;
                     };
-                    const setterH = findSetterNum(getSection('3PLAYERS-H'));
-                    const setterV = findSetterNum(getSection('3PLAYERS-V'));
+                    const setterH = findSetterNum(getDvwSection('3PLAYERS-H'));
+                    const setterV = findSetterNum(getDvwSection('3PLAYERS-V'));
                     if (setterH || setterV) {
                         currentPasseuses = { team1: setterH || null, team2: setterV || null };
                         const banner = document.getElementById('dvwPasseuseBanner');
