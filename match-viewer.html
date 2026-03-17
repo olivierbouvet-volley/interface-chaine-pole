@@ -2160,13 +2160,18 @@
             <!-- Bannière saisie passeuses (s'affiche si non configurées) -->
             <div id="dvwPasseuseBanner" style="display:none;padding:8px 10px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;margin:6px 0 4px 0;font-size:0.8rem;">
                 <div style="font-weight:600;color:#f59e0b;margin-bottom:7px;">🏐 Passeuses — activer le filtre Rotation</div>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
                     <span id="dvwPasseuseLabelT1" style="opacity:0.75;font-size:0.75rem;"></span>
-                    <input type="number" id="dvwPasseuseT1" placeholder="N°" min="1" max="99"
-                        style="width:55px;padding:4px 7px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:0.9rem;">
+                    <input type="number" id="dvwPasseuseT1" placeholder="N° titulaire" min="1" max="99"
+                        style="width:72px;padding:4px 7px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:0.9rem;">
+                    <input type="number" id="dvwPasseuseT1b" placeholder="N° rempl." min="1" max="99"
+                        style="width:72px;padding:4px 7px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:#ccc;font-size:0.9rem;" title="Passeuse remplaçante équipe 1">
+                    <span style="opacity:0.4;font-size:0.7rem;">|</span>
                     <span id="dvwPasseuseLabelT2" style="opacity:0.75;font-size:0.75rem;"></span>
-                    <input type="number" id="dvwPasseuseT2" placeholder="N°" min="1" max="99"
-                        style="width:55px;padding:4px 7px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:0.9rem;">
+                    <input type="number" id="dvwPasseuseT2" placeholder="N° titulaire" min="1" max="99"
+                        style="width:72px;padding:4px 7px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:0.9rem;">
+                    <input type="number" id="dvwPasseuseT2b" placeholder="N° rempl." min="1" max="99"
+                        style="width:72px;padding:4px 7px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:#ccc;font-size:0.9rem;" title="Passeuse remplaçante équipe 2">
                     <button onclick="savePasseusesViewer()"
                         style="padding:4px 12px;background:#f59e0b;color:#000;border:none;border-radius:5px;font-size:0.8rem;font-weight:700;cursor:pointer;">✓ OK</button>
                     <button onclick="document.getElementById('dvwPasseuseBanner').style.display='none'"
@@ -3444,10 +3449,18 @@
                 if (rapportBtn) rapportBtn.style.display = 'inline-flex';
 
                 // DVW expert (DataVolley) → auto-détecter les passeuses depuis [3PLAYERS-H/V]
-                // role=5 dans le champ f[13] de chaque ligne joueur
                 const isExpertDvw = /GENERATOR-PRG:\s*Data Volley/i.test(text);
                 if (isExpertDvw && !currentPasseuses.team1 && !currentPasseuses.team2) {
-                    function _findSetterInSection(sectionText) {
+                    const normText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                    const getSection = (name) => {
+                        const marker = '[' + name + ']';
+                        const start = normText.indexOf(marker);
+                        if (start === -1) return '';
+                        const ls = normText.indexOf('\n', start) + 1;
+                        const nx = normText.indexOf('\n[3', ls);
+                        return nx === -1 ? normText.slice(ls) : normText.slice(ls, nx);
+                    };
+                    const findSetterNum = (sectionText) => {
                         for (const raw of sectionText.split('\n')) {
                             const f = raw.trim().split(';');
                             if (f.length < 14) continue;
@@ -3458,18 +3471,13 @@
                             if (role === 5) return num;
                         }
                         return null;
-                    }
-                    const dvwSectionH = dvwRawText.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-                    const secH = dvwSectionH.slice(
-                        dvwSectionH.indexOf('[3PLAYERS-H]\n') + '[3PLAYERS-H]\n'.length,
-                        dvwSectionH.indexOf('\n[3', dvwSectionH.indexOf('[3PLAYERS-H]\n') + 1));
-                    const secV = dvwSectionH.slice(
-                        dvwSectionH.indexOf('[3PLAYERS-V]\n') + '[3PLAYERS-V]\n'.length,
-                        dvwSectionH.indexOf('\n[3', dvwSectionH.indexOf('[3PLAYERS-V]\n') + 1));
-                    const setterH = _findSetterInSection(secH);
-                    const setterV = _findSetterInSection(secV);
+                    };
+                    const setterH = findSetterNum(getSection('3PLAYERS-H'));
+                    const setterV = findSetterNum(getSection('3PLAYERS-V'));
                     if (setterH || setterV) {
                         currentPasseuses = { team1: setterH || null, team2: setterV || null };
+                        const banner = document.getElementById('dvwPasseuseBanner');
+                        if (banner) banner.style.display = 'none';
                         _onPasseusesLoaded();
                     }
                 }
@@ -3580,16 +3588,20 @@
             if (el1) el1.textContent = t1Name + ' :';
             if (el2) el2.textContent = t2Name + ' :';
             // Pré-remplir si déjà saisis précédemment
-            if (currentPasseuses.team1) { const i = document.getElementById('dvwPasseuseT1'); if (i) i.value = currentPasseuses.team1; }
-            if (currentPasseuses.team2) { const i = document.getElementById('dvwPasseuseT2'); if (i) i.value = currentPasseuses.team2; }
+            if (currentPasseuses.team1)  { const i = document.getElementById('dvwPasseuseT1');  if (i) i.value = currentPasseuses.team1; }
+            if (currentPasseuses.team1b) { const i = document.getElementById('dvwPasseuseT1b'); if (i) i.value = currentPasseuses.team1b; }
+            if (currentPasseuses.team2)  { const i = document.getElementById('dvwPasseuseT2');  if (i) i.value = currentPasseuses.team2; }
+            if (currentPasseuses.team2b) { const i = document.getElementById('dvwPasseuseT2b'); if (i) i.value = currentPasseuses.team2b; }
             banner.style.display = 'block';
         }
 
         async function savePasseusesViewer() {
-            const t1 = parseInt(document.getElementById('dvwPasseuseT1')?.value) || 0;
-            const t2 = parseInt(document.getElementById('dvwPasseuseT2')?.value) || 0;
-            if (!t1 && !t2) { alert('Entrez au moins un numéro de passeuse.'); return; }
-            currentPasseuses = { team1: t1 || null, team2: t2 || null };
+            const t1  = parseInt(document.getElementById('dvwPasseuseT1')?.value)  || 0;
+            const t1b = parseInt(document.getElementById('dvwPasseuseT1b')?.value) || 0;
+            const t2  = parseInt(document.getElementById('dvwPasseuseT2')?.value)  || 0;
+            const t2b = parseInt(document.getElementById('dvwPasseuseT2b')?.value) || 0;
+            if (!t1 && !t1b && !t2 && !t2b) { alert('Entrez au moins un numéro de passeuse.'); return; }
+            currentPasseuses = { team1: t1||null, team1b: t1b||null, team2: t2||null, team2b: t2b||null };
             await firebase.database().ref('matches/' + currentMatchId + '/fdmeData/passeuses').set(currentPasseuses);
             document.getElementById('dvwPasseuseBanner').style.display = 'none';
             _onPasseusesLoaded();
@@ -3608,16 +3620,19 @@
 
         // Retourne le label de rotation home pour une action DVW : 'S1'...'S6' ou 'R1'...'R6', ou null
         function getRotationLabel(action) {
-            const setter = parseInt(currentPasseuses?.team1 || 0);
-            if (!setter) return null;
+            // Chercher titulaire + remplaçante team1
+            const setters = [currentPasseuses?.team1, currentPasseuses?.team1b]
+                .map(s => parseInt(s || 0)).filter(s => s > 0);
+            if (!setters.length) return null;
             const key = `${action.setNumber}:${action.homeScore}:${action.awayScore}`;
             const rotData = rotationByScoreKey[key];
             if (!rotData || !Array.isArray(rotData.rot1) || rotData.rot1.length !== 6) return null;
-            const idx = rotData.rot1.indexOf(setter);
-            if (idx < 0) return null;
-            const zone = idx + 1; // 1-6
             const isServing = rotData.servingTeam === 'team1';
-            return (isServing ? 'S' : 'R') + zone;
+            for (const setter of setters) {
+                const idx = rotData.rot1.indexOf(setter);
+                if (idx >= 0) return (isServing ? 'S' : 'R') + (idx + 1);
+            }
+            return null;
         }
 
         function populatePlayerFilter() {
