@@ -3579,6 +3579,8 @@
         // ──────────────────────────────────────────
 
         function _afficherBannierePasseuses() {
+            // Ne pas afficher si déjà détectées (DVW expert auto-détecté ou Firebase)
+            if (currentPasseuses.team1 || currentPasseuses.team2) return;
             const banner = document.getElementById('dvwPasseuseBanner');
             if (!banner) return;
             const t1Name = lastMatchState?.team1?.name || lastMatchState?.team1?.nom || 'Équipe 1';
