@@ -453,6 +453,8 @@
     <script src="db-service.js"></script>
     <script src="storage-service.js"></script>
     <script src="export-dvw.js"></script>
+    <script src="dvw-parser-lite.js"></script>
+    <script src="rapport-match.js"></script>
     <script src="fdme-service.js"></script>
     <script src="rotation-engine.js"></script>
     <!-- Clé API Gemini — fichier local uniquement, gitignored, non déployé -->
@@ -617,6 +619,22 @@
                                         📥 Générer DVW
                                     </button>
                                     <div id="exportDvwStatut-${id}" style="display:none;"></div>
+                                </div>
+                                <!-- Rapport de match -->
+                                <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);">
+                                    <strong style="color:#34d399;font-size:0.85rem;">📋 Rapport de match</strong>
+                                    <p style="font-size:0.78rem;opacity:0.7;margin:4px 0 8px 0;">Générez un rapport style DataVolley depuis le DVW expert chargé.</p>
+                                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                        ${match.dvwStorageUrl ? `
+                                        <button onclick="genererRapportExpert('${id}')"
+                                            style="flex:1;padding:8px 12px;background:rgba(52,211,153,0.15);border:1px solid #34d399;color:#34d399;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.82rem;">
+                                            📊 Rapport Expert (DVW chargé)
+                                        </button>` : ''}
+                                        <button onclick="genererRapportBasique('${id}')"
+                                            style="flex:1;padding:8px 12px;background:rgba(251,191,36,0.1);border:1px solid #fbbf24;color:#fbbf24;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.82rem;">
+                                            📄 Rapport Basique (générer DVW d'abord)
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1067,6 +1085,31 @@
         function lancerExportDvw(id) {
             exportDvw._statutElId = 'exportDvwStatut-' + id;
             exportDvw.exporterMatch(id);
+        }
+
+        // ========== RAPPORT DE MATCH ==========
+
+        async function genererRapportExpert(id) {
+            if (!window.rapportMatch) { alert('rapport-match.js non chargé.'); return; }
+            // Récupérer l'URL DVW depuis Firebase, télécharger le texte, générer le rapport
+            const snap = await firebase.database().ref('matches/' + id + '/dvwStorageUrl').get();
+            const url = snap.val();
+            if (!url) { alert('Aucun DVW expert chargé pour ce match.'); return; }
+            try {
+                const resp = await fetch(url);
+                const text = await resp.text();
+                window.rapportMatch.genererDepuisDvw(text);
+            } catch (e) {
+                alert('Erreur chargement DVW : ' + e.message);
+            }
+        }
+
+        async function genererRapportBasique(id) {
+            if (!window.rapportMatch) { alert('rapport-match.js non chargé.'); return; }
+            // Générer le DVW en mémoire puis ouvrir le rapport
+            const dvwText = await exportDvw.exporterMatchEnMemoire(id);
+            if (!dvwText) { alert('Impossible de générer le DVW basique.'); return; }
+            window.rapportMatch.genererDepuisDvw(dvwText);
         }
 
         // ========== FDME — MODAL VALIDATION ==========

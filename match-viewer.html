@@ -2149,6 +2149,7 @@
             <div class="dvw-header">
                 <h3>📋 Actions</h3>
                 <button class="dvw-fdme-btn" id="dvwFdmeBtn" onclick="openFdme()" title="Ouvrir la feuille de match">📄 FDME</button>
+                <button class="dvw-fdme-btn" id="dvwRapportBtn" onclick="ouvrirRapportDvw()" title="Rapport de match" style="display:none;">📊 Rapport</button>
                 <button class="dvw-close" onclick="toggleDvwPanel()">✕</button>
             </div>
             <!-- Onglets DVW / Saisies Firebase -->
@@ -2338,6 +2339,7 @@
     <script src="db-service.js"></script>
     <script src="export-dvw.js"></script>
     <script src="dvw-parser-lite.js"></script>
+    <script src="rapport-match.js"></script>
     <script src="fdme-service.js"></script>
     <script src="rotation-engine.js"></script>
 
@@ -2354,6 +2356,7 @@
 
         // ── DVW Replay ──
         let dvwData = null;          // { players, actions, teams }
+        let dvwRawText = null;       // texte brut pour rapport-match.js
         let dvwOffsetSeconds = 0;    // offset de synchro calibré
         let dvwLoaded = false;       // true quand le fichier est parsé
         let dvwFilteredActions = []; // actions après filtrage
@@ -2705,6 +2708,12 @@
             const url = lastMatchState?.fdmeUrl;
             if (url) { window.open(url, '_blank'); }
             else { alert('Aucune feuille de match disponible pour ce match.'); }
+        }
+
+        function ouvrirRapportDvw() {
+            if (!dvwRawText) { alert('Aucun fichier DVW chargé.'); return; }
+            if (!window.rapportMatch) { alert('rapport-match.js non chargé.'); return; }
+            window.rapportMatch.genererDepuisDvw(dvwRawText);
         }
 
         function toggleDvwPanel() {
@@ -3415,8 +3424,11 @@
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Erreur HTTP ' + response.status);
                 const text = await response.text();
+                dvwRawText = text;
                 dvwData = window.dvwParserLite.parseDvwLite(text);
                 dvwLoaded = true;
+                const rapportBtn = document.getElementById('dvwRapportBtn');
+                if (rapportBtn) rapportBtn.style.display = 'inline-flex';
 
                 // Afficher un bandeau si le fichier n'a pas de timestamps vidéo
                 const noTsEl = document.getElementById('dvwNoTimestampBanner');

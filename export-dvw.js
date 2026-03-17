@@ -253,6 +253,31 @@ const exportDvw = {
     // -------------------------------------------------------
     // 4. GÉNÉRATION ET TÉLÉCHARGEMENT
     // -------------------------------------------------------
+    // Variante sans téléchargement — retourne le texte DVW (pour rapport-match.js)
+    async exporterMatchEnMemoire(matchId) {
+        try {
+            const match = await dbService.getMatch(matchId);
+            if (!match) return null;
+            const [ralliesSnap, actionsSnap, syncSnap, editsSnap, fdmeSnap] = await Promise.all([
+                firebase.database().ref('matches/' + matchId + '/rallies').once('value'),
+                firebase.database().ref('matches/' + matchId + '/playerActions').once('value'),
+                firebase.database().ref('matches/' + matchId + '/videoSync').once('value'),
+                firebase.database().ref('matches/' + matchId + '/dvwEdits').once('value'),
+                firebase.database().ref('matches/' + matchId + '/fdmeData').once('value'),
+            ]);
+            const rallies = Object.values(ralliesSnap.val() || {}).sort((a, b) => (a.index || 0) - (b.index || 0));
+            const playerActions = Object.values(actionsSnap.val() || {}).sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+            const videoOffset = syncSnap.val()?.offsetSeconds || 0;
+            const dvwEdits    = editsSnap.val() || {};
+            const fdmeData    = fdmeSnap.val() || {};
+            const actionsAttachees = this._rattacherOrphelines(playerActions, rallies);
+            return this._genererDvw(match, rallies, actionsAttachees, videoOffset, dvwEdits, fdmeData);
+        } catch (e) {
+            console.error('exporterMatchEnMemoire:', e);
+            return null;
+        }
+    },
+
     async _genererEtTelecharger(match, rallies, playerActions, videoOffset, dvwEdits, fdmeData) {
         this._afficherStatut('⚙️ Génération du fichier DVW…');
         try {
