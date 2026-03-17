@@ -378,8 +378,19 @@
         small { font-size: 0.7rem; opacity: 0.8; }
         .print-btn { position: fixed; top: 14px; right: 14px; background: #1a1a2e; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; z-index: 999; }
         .print-btn:hover { background: #2d2d6e; }
+        .legend {
+            position: fixed; bottom: 16px; right: 16px;
+            background: #fff; border: 1px solid #ccc; border-radius: 8px;
+            padding: 10px 14px; font-size: 0.72rem; color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12); max-width: 280px; z-index: 998;
+        }
+        .legend h4 { font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; color: #1a1a2e; }
+        .legend dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+        .legend dt { font-weight: 700; white-space: nowrap; }
+        .legend dd { color: #555; margin: 0; }
         @media print {
             .print-btn { display: none; }
+            .legend { position: static; box-shadow: none; border: 1px solid #ccc; margin-top: 24px; }
             body { padding: 10px; font-size: 11px; }
             .section { page-break-inside: avoid; }
         }`;
@@ -442,6 +453,24 @@
     ${tableSo}
     ${tableRotH}
     ${tableRotV}
+
+    <div class="legend">
+        <h4>📖 Légende des calculs</h4>
+        <dl>
+            <dt>Tot</dt><dd>Total d'actions</dd>
+            <dt>Err</dt><dd>Erreurs directes (faute)</dd>
+            <dt>Ace</dt><dd>Services gagnants directs</dd>
+            <dt>Pos%</dt><dd>Réceptions positives ou excellentes ÷ total</dd>
+            <dt>Exc%</dt><dd>Réceptions excellentes (parfaites) ÷ total</dd>
+            <dt>Blq</dt><dd>Attaques bloquées par l'adversaire</dd>
+            <dt>Kill</dt><dd>Attaques gagnantes directes</dd>
+            <dt>Eff%</dt><dd>(Kills − Erreurs − Bloquées) ÷ Total attaques</dd>
+            <dt>Sideout%</dt><dd>Points gagnés en réception ÷ rallies joués en réception</dd>
+            <dt>Break%</dt><dd>Points gagnés en service ÷ rallies joués en service</dd>
+            <dt>Rot 1–6</dt><dd>Rotation en cours au moment du point (DVW expert uniquement)</dd>
+            <dt>W–L</dt><dd>Points gagnés – Points perdus dans cette rotation</dd>
+        </dl>
+    </div>
 </body>
 </html>`;
     }

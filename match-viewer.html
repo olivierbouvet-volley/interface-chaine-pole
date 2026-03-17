@@ -3028,9 +3028,6 @@
 
                 fbDataLoaded = true;
                 if (activeTab === 'saisies') renderSaisiesList();
-                // Bouton Rapport disponible dès que les données Firebase sont là
-                const rapportBtnFb = document.getElementById('dvwRapportBtn');
-                if (rapportBtnFb) rapportBtnFb.style.display = 'inline-flex';
 
                 // Construire la map score→rotation pour le filtre Rotation du panneau DVW
                 // Clé "set:pointsH:pointsV" = score AVANT le rally → unique dans un match
@@ -3571,6 +3568,9 @@
             // Afficher le filtre Rotation
             const rotRow = document.getElementById('dvwFilterRotationRow');
             if (rotRow) rotRow.style.display = 'flex';
+            // Afficher le bouton Rapport (passeuses connues → rapport complet possible)
+            const rapportBtn = document.getElementById('dvwRapportBtn');
+            if (rapportBtn) rapportBtn.style.display = 'inline-flex';
             // Re-render si la liste est déjà affichée
             if (activeTab === 'dvw' && dvwFilteredActions && dvwFilteredActions.length > 0) renderDvwActionsList();
         }
