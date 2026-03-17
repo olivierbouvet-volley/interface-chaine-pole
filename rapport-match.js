@@ -198,21 +198,57 @@
     }
 
     // ─── Distribution par rotation ────────────────────────────────────────────────
+    // srvWon = points gagnés en service (Break = bloc/déf)
+    // recWon = points gagnés en réception (Sideout)
 
-    function _rotationStats(pointLines) {
+    function _rotationStats(pointLines, actions) {
         const res = { home: {}, away: {} };
+
+        // Premier serveur par set (première action S trouvée)
+        const firstServer = {};
+        for (const a of (actions || [])) {
+            if (a.skill === 'S' && !firstServer[a.setNumber]) {
+                firstServer[a.setNumber] = a.team;
+            }
+        }
+
+        // Grouper les lignes point par set (ordre séquentiel)
+        const bySet = {};
         for (const p of pointLines) {
-            const s = p.set;
+            if (!bySet[p.set]) bySet[p.set] = [];
+            bySet[p.set].push(p);
+        }
+
+        for (const [setStr, points] of Object.entries(bySet)) {
+            const s = parseInt(setStr);
+            let currentServer = firstServer[s] || 'home';
+
             ['home', 'away'].forEach(side => {
                 if (!res[side][s]) {
                     res[side][s] = {};
-                    for (let r = 1; r <= 6; r++) res[side][s][r] = { won: 0, lost: 0 };
+                    for (let r = 1; r <= 6; r++) res[side][s][r] = { won: 0, lost: 0, srvWon: 0, recWon: 0 };
                 }
             });
-            const rH = Math.min(6, Math.max(1, p.rotHome));
-            const rV = Math.min(6, Math.max(1, p.rotAway));
-            if (p.scorer === 'home') { res.home[s][rH].won++; res.away[s][rV].lost++; }
-            else                     { res.home[s][rH].lost++; res.away[s][rV].won++; }
+
+            for (const p of points) {
+                const rH = Math.min(6, Math.max(1, p.rotHome));
+                const rV = Math.min(6, Math.max(1, p.rotAway));
+                const homeServes = currentServer === 'home';
+
+                if (p.scorer === 'home') {
+                    res.home[s][rH].won++;
+                    res.away[s][rV].lost++;
+                    if (homeServes) res.home[s][rH].srvWon++; // Break
+                    else            res.home[s][rH].recWon++; // Sideout
+                    currentServer = 'home';
+                } else {
+                    res.home[s][rH].lost++;
+                    res.away[s][rV].won++;
+                    if (!homeServes) res.away[s][rV].srvWon++; // Break
+                    else             res.away[s][rV].recWon++; // Sideout
+                    currentServer = 'away';
+                }
+            }
         }
         return res;
     }
@@ -513,25 +549,33 @@ body { font-family: 'Arial Narrow', Arial, sans-serif; font-size: 12px; color: #
     // ─── Table distribution rotations ────────────────────────────────────────────
     // Ordre : 1, 6, 5, 4, 3, 2
 
+    // Formate une cellule rotation avec S: / R: / G-P
+    function _rotCell(d, cls) {
+        const diff = d.won - d.lost;
+        const gp = (diff > 0 ? '+' : '') + diff;
+        const sr = `<span style="font-size:0.65em;color:#888;display:block;line-height:1.3">S:${d.srvWon||0} R:${d.recWon||0}</span>`;
+        return `<td class="${cls}" style="padding:2px 4px;line-height:1.2">${sr}<span>${gp}</span></td>`;
+    }
+
     function _tableRotations(rotStats, teams, setScores) {
         // Totaux toutes rotations par équipe
         const totH = {}, totV = {};
-        ROT_ORDER.forEach(r => { totH[r] = {won:0,lost:0}; totV[r] = {won:0,lost:0}; });
+        ROT_ORDER.forEach(r => { totH[r] = {won:0,lost:0,srvWon:0,recWon:0}; totV[r] = {won:0,lost:0,srvWon:0,recWon:0}; });
 
         const setRows = setScores.map(ss => {
             const s  = ss.setNumber;
             const rdH = (rotStats.home[s] || {});
             const rdV = (rotStats.away[s] || {});
             const cols = ROT_ORDER.map(r => {
-                const h = rdH[r]||{won:0,lost:0};
-                const v = rdV[r]||{won:0,lost:0};
+                const h = rdH[r]||{won:0,lost:0,srvWon:0,recWon:0};
+                const v = rdV[r]||{won:0,lost:0,srvWon:0,recWon:0};
                 const dH = h.won - h.lost;
                 const dV = v.won - v.lost;
-                totH[r].won += h.won; totH[r].lost += h.lost;
-                totV[r].won += v.won; totV[r].lost += v.lost;
+                totH[r].won += h.won; totH[r].lost += h.lost; totH[r].srvWon += h.srvWon||0; totH[r].recWon += h.recWon||0;
+                totV[r].won += v.won; totV[r].lost += v.lost; totV[r].srvWon += v.srvWon||0; totV[r].recWon += v.recWon||0;
                 const clsH = dH>0?'rot-diff-pos':dH<0?'rot-diff-neg':'rot-diff-neu';
                 const clsV = dV>0?'rot-diff-pos':dV<0?'rot-diff-neg':'rot-diff-neu';
-                return `<td class="${clsH}">${dH>0?'+':''}${dH}</td><td class="${clsV}">${dV>0?'+':''}${dV}</td>`;
+                return _rotCell(h, clsH) + _rotCell(v, clsV);
             }).join('');
             const score = `${ss.homeScore}-${ss.awayScore}`;
             return `<tr><td class="rot-label">Set ${s} (${score})</td>${cols}</tr>`;
@@ -542,7 +586,10 @@ body { font-family: 'Arial Narrow', Arial, sans-serif; font-size: 12px; color: #
             const dV = totV[r].won - totV[r].lost;
             const cH = dH>0?'rot-diff-pos':dH<0?'rot-diff-neg':'rot-diff-neu';
             const cV = dV>0?'rot-diff-pos':dV<0?'rot-diff-neg':'rot-diff-neu';
-            return `<td class="${cH}"><b>${dH>0?'+':''}${dH}</b></td><td class="${cV}"><b>${dV>0?'+':''}${dV}</b></td>`;
+            const srH = `<span style="font-size:0.65em;display:block;line-height:1.3;opacity:0.8">S:${totH[r].srvWon} R:${totH[r].recWon}</span>`;
+            const srV = `<span style="font-size:0.65em;display:block;line-height:1.3;opacity:0.8">S:${totV[r].srvWon} R:${totV[r].recWon}</span>`;
+            return `<td class="${cH}" style="padding:2px 4px;line-height:1.2"><b>${srH}${dH>0?'+':''}${dH}</b></td>` +
+                   `<td class="${cV}" style="padding:2px 4px;line-height:1.2"><b>${srV}${dV>0?'+':''}${dV}</b></td>`;
         }).join('');
 
         // En-tête colonnes : "Rot N" avec sous-colonnes H / V par équipe
@@ -663,6 +710,8 @@ ${tableV}
         <dt>SO%</dt><dd>Pts gagnés en réception ÷ total réc</dd>
         <dt>Brk%</dt><dd>Pts gagnés en service ÷ total srv</dd>
         <dt>Rot N</dt><dd>Position au moment du point</dd>
+        <dt>S: (rot)</dt><dd>Pts gagnés en service = Break (bloc/déf)</dd>
+        <dt>R: (rot)</dt><dd>Pts gagnés en réception = Sideout</dd>
         <dt>G-P rot</dt><dd>Pts gagnés − Pts perdus dans cette rotation</dd>
     </dl>
 </div>
@@ -690,7 +739,7 @@ ${tableV}
         const statsV = _statsJoueuses(actions, playersV, 'away');
 
         const pointLines  = _parsePointLines(text);
-        const rotStats    = _rotationStats(pointLines);
+        const rotStats    = _rotationStats(pointLines, actions);
         const sideoutData = _sideout(actions);
 
         let date = '', competition = '';
