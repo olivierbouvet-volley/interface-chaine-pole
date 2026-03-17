@@ -2710,10 +2710,23 @@
             else { alert('Aucune feuille de match disponible pour ce match.'); }
         }
 
-        function ouvrirRapportDvw() {
-            if (!dvwRawText) { alert('Aucun fichier DVW chargé.'); return; }
+        async function ouvrirRapportDvw() {
             if (!window.rapportMatch) { alert('rapport-match.js non chargé.'); return; }
-            window.rapportMatch.genererDepuisDvw(dvwRawText);
+            if (dvwRawText) {
+                // DVW expert déjà chargé → rapport complet
+                window.rapportMatch.genererDepuisDvw(dvwRawText);
+            } else {
+                // Mode basique : générer le DVW depuis Firebase à la volée
+                const mid = new URLSearchParams(window.location.search).get('id') || new URLSearchParams(window.location.search).get('match');
+                if (!mid) { alert('Match ID introuvable.'); return; }
+                if (!window.exportDvw) { alert('export-dvw.js non chargé.'); return; }
+                const btn = document.getElementById('dvwRapportBtn');
+                if (btn) btn.textContent = '⏳…';
+                const text = await window.exportDvw.exporterMatchEnMemoire(mid);
+                if (btn) btn.textContent = '📄 Rapport';
+                if (!text) { alert('Impossible de générer le rapport (données insuffisantes).'); return; }
+                window.rapportMatch.genererDepuisDvw(text);
+            }
         }
 
         function toggleDvwPanel() {
@@ -3015,6 +3028,9 @@
 
                 fbDataLoaded = true;
                 if (activeTab === 'saisies') renderSaisiesList();
+                // Bouton Rapport disponible dès que les données Firebase sont là
+                const rapportBtnFb = document.getElementById('dvwRapportBtn');
+                if (rapportBtnFb) rapportBtnFb.style.display = 'inline-flex';
 
                 // Construire la map score→rotation pour le filtre Rotation du panneau DVW
                 // Clé "set:pointsH:pointsV" = score AVANT le rally → unique dans un match
