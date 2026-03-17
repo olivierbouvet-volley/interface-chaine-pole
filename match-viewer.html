@@ -3443,6 +3443,37 @@
                 const rapportBtn = document.getElementById('dvwRapportBtn');
                 if (rapportBtn) rapportBtn.style.display = 'inline-flex';
 
+                // DVW expert (DataVolley) → auto-détecter les passeuses depuis [3PLAYERS-H/V]
+                // role=5 dans le champ f[13] de chaque ligne joueur
+                const isExpertDvw = /GENERATOR-PRG:\s*Data Volley/i.test(text);
+                if (isExpertDvw && !currentPasseuses.team1 && !currentPasseuses.team2) {
+                    function _findSetterInSection(sectionText) {
+                        for (const raw of sectionText.split('\n')) {
+                            const f = raw.trim().split(';');
+                            if (f.length < 14) continue;
+                            const num = parseInt(f[1]);
+                            if (isNaN(num) || num <= 0) continue;
+                            const pos  = (f[12] || '').trim();
+                            const role = pos === 'L' ? 1 : (parseInt(f[13]) || 0);
+                            if (role === 5) return num;
+                        }
+                        return null;
+                    }
+                    const dvwSectionH = dvwRawText.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+                    const secH = dvwSectionH.slice(
+                        dvwSectionH.indexOf('[3PLAYERS-H]\n') + '[3PLAYERS-H]\n'.length,
+                        dvwSectionH.indexOf('\n[3', dvwSectionH.indexOf('[3PLAYERS-H]\n') + 1));
+                    const secV = dvwSectionH.slice(
+                        dvwSectionH.indexOf('[3PLAYERS-V]\n') + '[3PLAYERS-V]\n'.length,
+                        dvwSectionH.indexOf('\n[3', dvwSectionH.indexOf('[3PLAYERS-V]\n') + 1));
+                    const setterH = _findSetterInSection(secH);
+                    const setterV = _findSetterInSection(secV);
+                    if (setterH || setterV) {
+                        currentPasseuses = { team1: setterH || null, team2: setterV || null };
+                        _onPasseusesLoaded();
+                    }
+                }
+
                 // Afficher un bandeau si le fichier n'a pas de timestamps vidéo
                 const noTsEl = document.getElementById('dvwNoTimestampBanner');
                 if (noTsEl) {
